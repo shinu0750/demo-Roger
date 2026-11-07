@@ -448,7 +448,7 @@ function vDept(){
 }
 var MAPD=[{n:'資訊管理課',c:1}],MAPD_DONE=[];
 function hdrForced(d){return kids(d.id).length>0||recs.some(function(r){return r.active&&r.t==='P'&&r.personal&&r.dept===d.id})}
-function hdrBox(d){var f=hdrForced(d);return '<label class="ck" style="font-size:12px;color:var(--mut);margin-top:3px"><input type="checkbox" data-hd="'+d.id+'"'+((d.hdr!==false||f)?' checked':'')+(f?' disabled title="底下有子部門或有個人分機的人員，一定要印標題列"':'')+'>貼牆版印標題列</label>'}
+function hdrBox(d){var f=hdrForced(d);return '<label class="ck" style="font-size:12px;color:var(--mut);margin-top:3px"><input type="checkbox" data-hd="'+d.id+'"'+((d.hdr!==false||f)?' checked':'')+(f?' disabled title="底下有子部門或有個人分機的人員，一定要印標題列"':'')+'>印標題列</label>'}
 function drawDept(){
   var h='<div class="row head" style="grid-template-columns:1.5fr 90px 110px 80px 250px"><div>部門</div><div>預設分機</div><div>號段</div><div>人員／單位</div><div>操作</div></div>';
   flat().forEach(function(x,i){var d=x.d,sibs=(d.parent?kids(d.parent):tops()),ix=sibs.indexOf(d);
