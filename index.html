@@ -184,6 +184,29 @@ button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   </div>
 </section>
 
+<!-- 部門 -->
+<section class="wrap hide" id="v-dept">
+  <div><h1>部門表（一廠）</h1><div class="sub">決定分機表上怎麼分區、怎麼排序，由一廠廠務維護。這是分機表的顯示分組，不是人事的正式組織架構。</div></div>
+  <div class="cols">
+    <div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:560px" id="d-list" role="table" aria-label="一廠部門表"></div></div>
+    <div class="box panel" style="flex:1 1 320px;min-width:0">
+      <div style="font-size:18px;font-weight:700">新增部門</div>
+      <div class="fld"><label for="d-par">上層部門</label><select class="in" id="d-par"></select></div>
+      <div class="fld"><label for="d-name">部門名稱</label><input class="in" id="d-name" placeholder="例如：製五組"></div>
+      <button class="btn" id="d-add">新增</button>
+      <div class="muted">新增在同層最後面，再用 ↑ ↓ 調整順序。列印版會依這裡的順序排列。</div>
+      <div class="muted">改名只要改一次，底下所有人員自動跟著變。停用前，部門下不能還有人員。</div>
+    </div>
+  </div>
+  <div class="box panel" style="gap:12px">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline">
+      <div style="font-size:18px;font-weight:700">Domino 部門名稱對照 <span class="muted" id="d-map-n"></span></div>
+      <div class="muted">Domino 只有部門名稱，沒有階層。對不上的名稱要由廠務指定放哪裡。</div>
+    </div>
+    <div id="d-map" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</section>
+
 <!-- 匯出 -->
 <section class="wrap hide" id="v-export">
   <div><h1>匯出 Excel</h1><div class="sub">各廠分開匯出。檔案由系統即時整理，下載到的一定是目前網站上的最新資料。</div></div>
@@ -225,7 +248,7 @@ var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){r
 var $=function(id){return document.getElementById(id)};
 
 /* ---------- 導覽 ---------- */
-var VIEWS=[['search','查詢'],['edit','維護'],['export','匯出'],['p1','列印版 1'],['p2','列印版 2']];
+var VIEWS=[['search','查詢'],['edit','維護'],['dept','部門'],['export','匯出'],['p1','列印版 1'],['p2','列印版 2']];
 function go(v){
   VIEWS.forEach(function(x){$('v-'+x[0]).classList.toggle('hide',x[0]!==v)});
   var b=$('nav').children;for(var i=0;i<b.length;i++){b[i].classList.toggle('on',VIEWS[i][0]===v);b[i].setAttribute('aria-selected',VIEWS[i][0]===v)}
@@ -323,20 +346,104 @@ $('f-save').onclick=function(){
   form=Object.assign({},EMPTY);renderEdit();fillForm();
 };
 
+/* ---------- 部門表 ---------- */
+var DEPTS=['廠長室','人事室','生產一部','生產一部 › 合一課','生產一部 › 合一課 › 製一組','生產一部 › 合二課','生產一部 › 合二課 › 製三組','生產二部','生產二部 › 噴一課','品保部','品保部 › 品一課','技銷處五部','技銷處五部 › 製八組','實驗工場','總務'].map(function(p){return {path:p,on:true}});
+var MAPD={};
+function par(p){var a=p.split(' › ');a.pop();return a.join(' › ')}
+function dep(p){return p.split(' › ').length}
+function dIdx(p){for(var i=0;i<DEPTS.length;i++){if(DEPTS[i].path===p)return i}return -1}
+function blk(i){var j=i+1;while(j<DEPTS.length&&DEPTS[j].path.indexOf(DEPTS[i].path+' › ')===0)j++;return [i,j]}
+function ensureDept(p){
+  if(dIdx(p)>-1)return;
+  var pp=par(p);if(pp)ensureDept(pp);
+  if(!pp){DEPTS.push({path:p,on:true});return}
+  DEPTS.splice(blk(dIdx(pp))[1],0,{path:p,on:true});
+}
+function moveD(i,dir){
+  var b=blk(i),d=dep(DEPTS[i].path),pp=par(DEPTS[i].path),k;
+  if(dir<0){
+    k=i-1;while(k>=0&&dep(DEPTS[k].path)>d)k--;
+    if(k<0||dep(DEPTS[k].path)!==d||par(DEPTS[k].path)!==pp)return;
+    var cut=DEPTS.splice(b[0],b[1]-b[0]);DEPTS.splice.apply(DEPTS,[k,0].concat(cut));
+  }else{
+    var n=b[1];if(n>=DEPTS.length||dep(DEPTS[n].path)!==d||par(DEPTS[n].path)!==pp)return;
+    var nb=blk(n),nx=DEPTS.splice(n,nb[1]-nb[0]);DEPTS.splice.apply(DEPTS,[b[0],0].concat(nx));
+  }
+}
+function inDept(p,d){return p===d||p.indexOf(d+' › ')===0}
+function headCount(p){return list.filter(function(r){return r.dept===p}).length}
+function treeCount(p){return list.filter(function(r){return inDept(r.dept,p)}).length}
+function renameDept(from,to){
+  var sw=function(p){return inDept(p,from)?to+p.slice(from.length):p};
+  DEPTS.forEach(function(d){d.path=sw(d.path)});
+  list.forEach(function(r){r.dept=sw(r.dept)});
+  DATA.forEach(function(r){if(r.plant==='一廠')r.dept=sw(r.dept)});
+  if(form.dept)form.dept=sw(form.dept);
+  NOTES.forEach(function(n){if(n.dept)n.dept=sw(n.dept);if(n.from&&n.kind!=='改名')n.from=sw(n.from)});
+  Object.keys(MAPD).forEach(function(k){MAPD[k]=sw(MAPD[k])});
+}
+function mapNames(){
+  var s=[];DOMINO.forEach(function(d){if(s.indexOf(d[1])<0)s.push(d[1])});
+  NOTES.forEach(function(n){if(n.dept&&s.indexOf(n.dept)<0)s.push(n.dept)});
+  return s;
+}
+function renderDept(){
+  var g='grid-template-columns:2.6fr .7fr .9fr 2fr';
+  $('d-list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">人數</div><div role="columnheader">狀態</div><div role="columnheader">操作</div></div>'+
+   DEPTS.map(function(d,i){
+     var lv=dep(d.path)-1,nm=d.path.split(' › ').pop();
+     return '<div class="row" role="row" style="'+g+(d.on?'':';opacity:.55')+'"><div role="cell" style="padding-left:'+(lv*22)+'px;font-weight:'+(lv?400:700)+'">'+(lv?'└ ':'')+esc(nm)+'</div><div role="cell">'+treeCount(d.path)+'</div><div role="cell">'+(d.on?'使用中':'<span style="color:var(--mut)">已停用</span>')+'</div><div role="cell" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn s" data-u="'+i+'" aria-label="上移 '+esc(nm)+'">↑</button><button class="btn s" data-w="'+i+'" aria-label="下移 '+esc(nm)+'">↓</button><button class="btn s" data-r="'+i+'">改名</button><button class="btn s" data-t="'+i+'">'+(d.on?'停用':'啟用')+'</button></div></div>'}).join('');
+  var L=$('d-list');
+  L.querySelectorAll('[data-u]').forEach(function(b){b.onclick=function(){moveD(+b.getAttribute('data-u'),-1);renderDept()}});
+  L.querySelectorAll('[data-w]').forEach(function(b){b.onclick=function(){moveD(+b.getAttribute('data-w'),1);renderDept()}});
+  L.querySelectorAll('[data-r]').forEach(function(b){b.onclick=function(){
+    var d=DEPTS[+b.getAttribute('data-r')],old=d.path,cur=old.split(' › ').pop(),nn=prompt('部門改名（底下的人員會自動跟著變）：',cur);
+    if(!nn||!nn.trim()||nn.trim()===cur)return;
+    var np=(par(old)?par(old)+' › ':'')+nn.trim();
+    if(dIdx(np)>-1){alert('已經有同名的部門。');return}
+    renameDept(old,np);renderDept();renderEdit();renderNotes();
+  }});
+  L.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){
+    var d=DEPTS[+b.getAttribute('data-t')];
+    if(d.on){var c=treeCount(d.path);if(c){alert('「'+d.path.split(' › ').pop()+'」底下還有 '+c+' 位人員或單位，請先移到其他部門再停用。');return}}
+    d.on=!d.on;renderDept();
+  }});
+  var opt='<option value="">（最上層）</option>'+DEPTS.filter(function(d){return d.on}).map(function(d){return '<option value="'+esc(d.path)+'">'+'　'.repeat(dep(d.path)-1)+esc(d.path.split(' › ').pop())+'</option>'}).join('');
+  var cur=$('d-par').value;$('d-par').innerHTML=opt;$('d-par').value=cur;
+  var names=mapNames(),un=0;
+  $('d-map').innerHTML=names.map(function(n){
+    var tgt=dIdx(n)>-1?n:(MAPD[n]||'');
+    if(tgt)return '<div class="note" style="align-items:center"><div style="flex:1 1 260px"><b>'+esc(n)+'</b></div><div style="flex:1 1 260px;color:var(--acc-d)">→ '+esc(tgt)+'　<span class="muted">'+(dIdx(n)>-1?'名稱相同，自動對應':'廠務指定')+'</span></div></div>';
+    un++;
+    return '<div class="note" style="align-items:center"><div style="flex:1 1 260px"><span class="tag mv">未對應</span><b>'+esc(n)+'</b></div><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1 1 360px"><select class="in" style="width:auto;min-width:180px" data-m="'+esc(n)+'"><option value="">指定到…</option>'+DEPTS.filter(function(d){return d.on}).map(function(d){return '<option value="'+esc(d.path)+'">'+esc(d.path)+'</option>'}).join('')+'</select><button class="btn s" data-mn="'+esc(n)+'">新增為部門</button></div></div>'}).join('');
+  $('d-map-n').textContent=un?'（'+un+' 個未對應）':'（全部已對應）';
+  $('d-map').querySelectorAll('[data-m]').forEach(function(s){s.onchange=function(){if(s.value){MAPD[s.getAttribute('data-m')]=s.value;renderDept();renderNotes()}}});
+  $('d-map').querySelectorAll('[data-mn]').forEach(function(b){b.onclick=function(){ensureDept(b.getAttribute('data-mn'));renderDept();renderNotes()}});
+}
+$('d-add').onclick=function(){
+  var n=$('d-name').value.trim();if(!n)return;
+  var p=$('d-par').value,np=p?p+' › '+n:n;
+  if(dIdx(np)>-1){alert('已經有同名的部門。');return}
+  ensureDept(np);$('d-name').value='';renderDept();renderNotes();
+};
+
 /* ---------- Domino 異動通知 ---------- */
 var NOTES=[
  {id:1,kind:'新進',name:'蔡宗翰',dept:'生產二部 › 噴一課',email:'th.tsai@ecic.com.tw',sup:'鄭宇軒'},
  {id:2,kind:'異動',name:'林雅婷',from:'生產一部 › 合一課 › 製一組',dept:'生產一部 › 合二課 › 製三組',email:'yt.lin@ecic.com.tw',sup:'周柏翰'},
- {id:3,kind:'離職',name:'陳建宏',dept:'生產一部 › 合一課 › 製一組',email:'jh.chen@ecic.com.tw'}
+ {id:3,kind:'離職',name:'陳建宏',dept:'生產一部 › 合一課 › 製一組',email:'jh.chen@ecic.com.tw'},
+ {id:4,kind:'改名',from:'生產一部 › 合一課',dept:'生產一部 › 製造一課'}
 ];
+function unmapped(p){return dIdx(p)<0&&!MAPD[p]}
 function renderNotes(){
   var n=$('bell-n');n.textContent=NOTES.length;n.classList.toggle('hide',!NOTES.length);
   $('notes-count').textContent=NOTES.length?'（'+NOTES.length+' 筆待處理）':'';
   var box=$('notes');
   if(!NOTES.length){box.innerHTML='<div class="muted">目前沒有待處理的 Domino 異動。</div>';return}
   box.innerHTML=NOTES.map(function(x){
-    var cls=x.kind==='新進'?'new':x.kind==='異動'?'mv':'out',txt,btn;
-    if(x.kind==='新進'){txt='部門：'+esc(x.dept)+'　直屬主管：'+esc(x.sup)+'　Email：'+esc(x.email);btn='帶入表單新增'}
+    var cls=x.kind==='新進'?'new':(x.kind==='異動'||x.kind==='改名')?'mv':'out',txt,btn;
+    if(x.kind==='改名'){var c=list.filter(function(r){return inDept(r.dept,x.from)}).length;txt='Domino 的部門名稱變了：'+esc(x.from)+' → <b>'+esc(x.dept)+'</b>。分機表上有 '+c+' 筆受影響，可以整批套用，不用一筆一筆改。';btn='整批套用（'+c+' 筆）'}
+    else if(x.kind==='新進'){txt='部門：'+esc(x.dept)+'　直屬主管：'+esc(x.sup)+'　Email：'+esc(x.email)+(unmapped(x.dept)?'<div style="color:#8A4B00;margin-top:4px">這個部門還沒對應到部門表，請先到「部門」頁指定。</div>':'');btn='帶入表單新增'}
     else if(x.kind==='異動'){txt='部門：'+esc(x.from)+' → <b>'+esc(x.dept)+'</b>　直屬主管：'+esc(x.sup);btn='帶入表單更新'}
     else{txt='已從 Domino 移除（'+esc(x.dept)+'）。分機表上若還有這個人，建議移除。';btn='移除這筆分機'}
     return '<div class="note"><div style="min-width:0;flex:1 1 320px"><span class="tag '+cls+'">'+x.kind+'</span><b>'+esc(x.name)+'</b><div class="det">'+txt+'</div></div><div style="display:flex;gap:8px"><button class="btn s" style="background:var(--acc);color:#fff;border-color:var(--acc)" data-a="'+x.id+'">'+btn+'</button><button class="btn s" data-i="'+x.id+'">略過</button></div></div>'}).join('');
@@ -345,6 +452,11 @@ function renderNotes(){
 }
 function applyNote(id){
   var x=NOTES.filter(function(y){return y.id===id})[0];if(!x)return;
+  if(x.kind==='改名'){
+    renameDept(x.from,x.dept);NOTES=NOTES.filter(function(y){return y.id!==id});
+    renderNotes();renderEdit();renderDept();renderSearch();fillForm();
+    showToast('已整批套用：'+x.from+' → '+x.dept);return;
+  }
   var rec=list.filter(function(r){return r.name===x.name})[0];
   if(x.kind==='離職'){list=list.filter(function(r){return r.name!==x.name});if(form.name===x.name)form=Object.assign({},EMPTY)}
   else if(x.kind==='異動'&&rec){form=Object.assign({},rec,{dept:x.dept,email:x.email})}
@@ -375,7 +487,7 @@ $('p2').innerHTML='<div class="tt"><div style="display:flex;align-items:baseline
  CARDS.map(function(c){return '<div class="c"><h3>'+c[0]+'</h3>'+c[1].map(function(r){return '<div><span class="n"><span class="dot" style="background:'+(r.u?'var(--amber)':'transparent')+'"></span>'+esc(r.n)+'</span><span class="x">'+r.e+'</span></div>'}).join('')+'</div>'}).join('')+'</div>'+
  '<div class="foot"><b style="color:var(--acc-d)">跨廠撥號</b><span>公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84，聽到忙線音後直撥分機。</span><span>上海明德：#80 → 888 → 響鈴結束後按 66，由總機代轉。</span><span style="width:100%">一廠 (03)386-8081　二廠 (03)483-8088　三廠 (03)483-7682　四廠 (03)473-7366　台北 (02)2706-6006　中部 (04)2358-3378　南部 (06)215-2589</span></div>';
 
-renderSearch();renderEdit();fillForm();renderNotes();
+renderSearch();renderEdit();fillForm();renderNotes();renderDept();
 setTimeout(function(){if(NOTES.length)showToast('Domino 有 '+NOTES.length+' 筆人員異動，請維護人員確認分機。')},700);
 var h=(location.hash||'').slice(1);go(VIEWS.some(function(x){return x[0]===h})?h:'search');
 })();
