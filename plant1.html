@@ -202,7 +202,7 @@ var INBOX=[
  {id:'a2',kind:'auto',tag:'out',label:'離職',who:'陳小強（範例）',det:'原使用「製一組」公用分機 211 → 已停用（不刪除）。',done:false,rid:null},
  {id:'a3',kind:'auto',tag:'mv',label:'調部門',who:'黃小美（範例）',det:'「品一課」→「品二課」，新部門預設分機 323 → 分機由 311 改為 323。',done:false,rid:null},
  {id:'p1',kind:'pend',tag:'new',label:'新進・主管',who:'周大成（範例）',det:'Domino 部門「環資管理處」，職稱「副理」。主管需要個人分機，系統列出該部門空號供挑選。',btn:'新增並選分機',act:'newMgr'},
- {id:'p2',kind:'pend',tag:'mv',label:'部門對不上',who:'資訊管理課（1 位新進）',det:'Domino 出現部門名稱「資訊管理課」，部門表裡沒有對應。請指定放在哪個既有部門，或新增為部門。處理完之後，這位新進（吳小芬）會再產生一筆「補分機」的待確認。',btn:'到部門表處理',act:'mapDept'},
+ {id:'p2',kind:'pend',tag:'mv',label:'部門對不上',who:'資訊管理課（1 位新進）',det:'Domino 出現部門名稱「資訊管理課」，部門表裡沒有對應。請指定放在哪個既有部門，或新增為部門（在部門表新增同名部門也會自動對應）。處理完之後，這位新進（吳小芬）會再產生一筆「補分機」的待確認。',btn:'到部門表處理',act:'mapDept'},
  {id:'p3',kind:'pend',tag:'out',label:'離職・有個人分機',who:'蔡小宇（範例）',det:'環資管理處，個人分機 815。貼牆表會少一列，分機可能交接。確認後 815 回到環資管理處的空號。',btn:'確認停用',act:'confirmOut'},
  {id:'p4',kind:'pend',tag:'up',label:'原地升遷',who:'謝小春（範例）',det:'乾燥課，職稱「組長」→「課長」，但沒有個人分機。',btn:'新增個人分機',act:'newMgr2'},
  {id:'p5',kind:'pend',tag:'mv',label:'可能是部門改名',who:'9 人',det:'9 人同時從「品一課」換到「品質一課」。請到部門表改名後整批套用，不要逐人處理。',btn:'改名並整批套用',act:'renameBatch'}
@@ -504,20 +504,25 @@ function drawDept(){
   q('[data-rg]',function(s){s.onchange=function(){var d=dById(s.getAttribute('data-rg'));d.range=s.value;touch('廠務（範例）','設定「'+d.name+'」號段：'+s.value)}});
   q('[data-mpa]',function(b){b.onclick=function(){
     var n=b.getAttribute('data-mpa'),sel=document.querySelector('[data-mp="'+n+'"]'),dd;
-    if(sel.value){dd=dById(sel.value);touch('廠務（範例）','Domino 部門「'+n+'」對應到 '+path(dd.id))}
-    else{dd={id:'n'+(++nid),name:n,parent:null,fill:null,col:0,def:null,range:'',sort:2000+nid,active:true,hdr:true};depts.push(dd);touch('廠務（範例）','新增部門：'+n+'，並對應 Domino 部門「'+n+'」')}
-    MAPD=MAPD.filter(function(x){return x.n!==n});MAPD_DONE.push({n:n,to:dd.id});
-    var p2=INBOX.filter(function(i){return i.id==='p2'&&!i.done})[0];
-    if(p2){closeInbox('p2',(sel.value?'對應到「':'新增為部門「')+path(dd.id)+'」');
-      INBOX.push({id:'p6',kind:'pend',tag:'new',label:'新進・補分機',who:'吳小芬（範例）',person:'吳小芬（範例）',deptId:dd.id,defExt:dd.def||'',
-        det:'Domino 部門「'+n+'」已對應到「'+path(dd.id)+'」。'+(dd.def?'這個部門的預設分機是 '+dd.def+'，':'這個部門還沒有設定預設分機，')+'請補上分機後加入「人員與單位」。',btn:'新增人員與分機',act:'newHire'});
-      toast('部門已處理，收件匣多了一筆「新進・補分機」')}
-    drawDept();renderNav()}});
+    if(sel.value){dd=dById(sel.value)}
+    else{dd={id:'n'+(++nid),name:n,parent:null,fill:null,col:0,def:null,range:'',sort:2000+nid,active:true,hdr:true};depts.push(dd);touch('廠務（範例）','新增部門：'+n)}
+    mapDomino(n,dd,!sel.value);drawDept();renderNav()}});
+}
+function mapDomino(n,dd,isNew){
+  if(!MAPD.some(function(x){return x.n===n}))return false;
+  MAPD=MAPD.filter(function(x){return x.n!==n});MAPD_DONE.push({n:n,to:dd.id});
+  touch('廠務（範例）','Domino 部門「'+n+'」對應到 '+path(dd.id));
+  var p2=INBOX.filter(function(i){return i.id==='p2'&&!i.done})[0];
+  if(p2){closeInbox('p2',(isNew?'新增為部門「':'對應到「')+path(dd.id)+'」');
+    INBOX.push({id:'p6',kind:'pend',tag:'new',label:'新進・補分機',who:'吳小芬（範例）',person:'吳小芬（範例）',deptId:dd.id,defExt:dd.def||'',
+      det:'Domino 部門「'+n+'」已對應到「'+path(dd.id)+'」。'+(dd.def?'這個部門的預設分機是 '+dd.def+'，':'這個部門還沒有設定預設分機，')+'請補上分機後加入「人員與單位」。',btn:'新增人員與分機',act:'newHire'});
+    toast('部門已對應，異動收件匣多了一筆「新進・補分機」，請到收件匣處理');renderNav()}
+  return true;
 }
 function swap(id,dir){var d=dById(id),sibs=d.parent?kids(d.parent):tops(),i=sibs.indexOf(d),o=sibs[i+dir];if(!o)return;var t=d.sort;d.sort=o.sort;o.sort=t;touch('廠務（範例）','調整順序：'+d.name+(dir<0?' 上移':' 下移'));drawDept()}
 function renameDept(id,n){var d=dById(id),old=d.name;
   if(depts.some(function(x){return x.active&&x.parent===d.parent&&x.name===n&&x.id!==id})){toast('同層已有同名部門');return}
-  d.name=n;touch('廠務（範例）','部門改名：「'+old+'」→「'+n+'」（底下 '+treeCount(id)+' 人自動跟著變）');toast('已改名，底下人員自動跟著變');drawDept()}
+  d.name=n;mapDomino(n,d,false);touch('廠務（範例）','部門改名：「'+old+'」→「'+n+'」（底下 '+treeCount(id)+' 人自動跟著變）');toast('已改名，底下人員自動跟著變');drawDept()}
 function openMove(id){
   var d=dById(id),box=$('d-move');box.classList.remove('hide');
   var h='<h2>移動「'+esc(d.name)+'」</h2><div class="muted">連同底下 '+(depts.filter(function(x){return x.active&&x.id!==id&&inTree(x.id,id)}).length)+' 個子部門與 '+treeCount(id)+' 位人員／單位一起搬。</div><div class="fld"><label for="mv-to">搬到哪個上層（或最上層）</label><select class="in" id="mv-to"><option value="">（最上層）</option>';
@@ -533,7 +538,7 @@ function openMove(id){
 function bindDept(){
   $('d-add').onclick=function(){var n=$('d-name').value.trim(),p=$('d-par').value||null;if(!n)return;
     if(depts.some(function(x){return x.active&&x.parent===p&&x.name===n})){toast('同層已有同名部門');return}
-    depts.push({id:'n'+(++nid),name:n,parent:p,fill:null,col:0,def:null,range:'',sort:2000+nid,active:true,hdr:true});touch('廠務（範例）','新增部門：'+n+(p?'（上層：'+dById(p).name+'）':''));$('d-name').value='';drawDept()};
+    depts.push({id:'n'+(++nid),name:n,parent:p,fill:null,col:0,def:null,range:'',sort:2000+nid,active:true,hdr:true});touch('廠務（範例）','新增部門：'+n+(p?'（上層：'+dById(p).name+'）':''));mapDomino(n,depts[depts.length-1],true);$('d-name').value='';drawDept()};
   drawDept();
   if(goArg&&goArg.rename){var id=goArg.rename,to=goArg.to;goArg=null;var d=dById(id);if(confirm('把 9 人整批套用，並將部門「'+d.name+'」改名為「'+to+'」？（範例）')){renameDept(id,to);INBOX.forEach(function(i){if(i.id==='p5'){i.done=true;inboxDone.push('已整批套用：「品一課」改名為「'+to+'」，9 人自動跟著變')}});renderNav()}}
   else if(goArg&&goArg.focus==='map'){goArg=null;$('d-map').scrollIntoView({behavior:'smooth'})}
