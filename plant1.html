@@ -89,16 +89,19 @@ h2{margin:0;font-size:18px}
 .p1 .r.h2.c{background:#CCFFFF}.p1 .r.h2.y{background:#FFFF00}
 .p1 .r.gap{background:repeating-linear-gradient(45deg,#fff,#fff 4px,#f3f3f3 4px,#f3f3f3 8px)}
 .p1 .foot{margin-top:auto;border:1px solid #000;padding:5px 10px;font-size:10.5px;line-height:1.45;font-weight:400}
-.p2{padding:24px 30px;display:flex;flex-direction:column;gap:12px}
-.p2 .tt{display:flex;align-items:flex-end;justify-content:space-between}
-.p2 .g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
-.p2.portrait .g{grid-template-columns:repeat(3,minmax(0,1fr))}
-.p2 .c{border:1.5px solid var(--acc);border-radius:8px;overflow:hidden;margin-bottom:0}
-.p2 .c h3{margin:0;background:var(--acc);color:#fff;padding:4px 10px;font-size:13px}
-.p2 .c h5{margin:0;background:#EEF5F2;color:var(--acc-d);padding:2px 10px;font-size:11px}
-.p2 .c div.i{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 10px;height:20px;border-bottom:1px solid #E6EAE5;font-size:11.5px}
-.p2 .c .x{font-size:15px;font-weight:900;color:var(--acc)}
-.p2 .foot{margin-top:auto;background:#EEF5F2;border-radius:8px;padding:8px 14px;font-size:10px;line-height:1.5}
+.p2{padding:22px 26px;display:flex;flex-direction:column;gap:10px;--rh:18px;--f:11px}
+.sheet.p2{height:auto}.sheet.landscape.p2{min-height:794px}.sheet.portrait.p2{min-height:1123px}
+.p2 .tt{display:flex;align-items:baseline;justify-content:space-between}.p2 .tt b{font-size:20px}
+.p2 .g{display:flex;gap:10px;align-items:flex-start}
+.p2 .pc{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.p2 .c{border:1.5px solid var(--acc);border-radius:8px;overflow:hidden}
+.p2 .c h3{margin:0;background:var(--acc);color:#fff;padding:0 8px;height:calc(var(--rh) + 2px);display:flex;align-items:center;font-size:calc(var(--f) + 1.5px)}
+.p2 .c h5{margin:0;background:#EEF5F2;color:var(--acc-d);padding:0 8px;height:var(--rh);display:flex;align-items:center;font-size:var(--f)}
+.p2 .c div.i{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 8px;height:var(--rh);border-bottom:1px solid #E6EAE5;font-size:var(--f)}
+.p2 .c div.i.u{background:#FFFBEF}
+.p2 .c div.i span:first-child{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.p2 .c .x{font-size:calc(var(--f) + 3px);font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
+.p2 .foot{margin-top:auto;background:#EEF5F2;border-radius:8px;padding:6px 12px;font-size:10px;line-height:1.5}
 .sheetbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 @media print{
  body{background:#fff}.top,.demo,.noprint,.toast{display:none!important}
@@ -177,10 +180,10 @@ function titleRank(t){var o=['廠長','副廠長','處長','副處長','部長',
 /* ================= 導覽 ================= */
 var VIEWS=[['search','查詢'],['inbox','異動收件匣'],['edit','人員與單位'],['dept','部門表'],['ext','分機號碼表'],['layout','列印版面'],['export','匯出'],['log','異動紀錄']];
 var view='search';
-function go(v,arg){view=v;if(arg)goArg=arg;render()}
+function go(v,arg){if(v==='p2'){v='layout';arg={tab:2}}view=v;if(arg)goArg=arg;render()}
 var goArg=null;
 function renderNav(){
-  var h='';VIEWS.forEach(function(x){var on=x[0]===view||(view==='p2'&&x[0]==='export');h+='<button role="tab" aria-selected="'+on+'" class="'+(on?'on':'')+'" data-v="'+x[0]+'">'+x[1]+(x[0]==='inbox'&&pendingN()?'<span class="cnt">'+pendingN()+'</span>':'')+'</button>'});
+  var h='';VIEWS.forEach(function(x){var on=x[0]===view;h+='<button role="tab" aria-selected="'+on+'" class="'+(on?'on':'')+'" data-v="'+x[0]+'">'+x[1]+(x[0]==='inbox'&&pendingN()?'<span class="cnt">'+pendingN()+'</span>':'')+'</button>'});
   $('nav').innerHTML=h;
   Array.prototype.forEach.call($('nav').children,function(b){b.onclick=function(){go(b.getAttribute('data-v'))}});
 }
@@ -443,12 +446,14 @@ function vDept(){
   return h;
 }
 var MAPD=[{n:'資訊管理課',c:1}],MAPD_DONE=[];
+function hdrForced(d){return kids(d.id).length>0||recs.some(function(r){return r.active&&r.t==='P'&&r.personal&&r.dept===d.id})}
+function hdrBox(d){var f=hdrForced(d);return '<label class="ck" style="font-size:12px;color:var(--mut);margin-top:3px"><input type="checkbox" data-hd="'+d.id+'"'+((d.hdr!==false||f)?' checked':'')+(f?' disabled title="底下有子部門或有個人分機的人員，一定要印標題列"':'')+'>貼牆版印標題列</label>'}
 function drawDept(){
   var h='<div class="row head" style="grid-template-columns:1.5fr 90px 110px 80px 250px"><div>部門</div><div>預設分機</div><div>號段</div><div>人員／單位</div><div>操作</div></div>';
   flat().forEach(function(x,i){var d=x.d,sibs=(d.parent?kids(d.parent):tops()),ix=sibs.indexOf(d);
     var ue=recs.filter(function(r){return r.active&&r.t==='U'&&r.dept===d.id}).map(function(r){return r.ext});
     var sel='<select class="in" style="height:34px;padding:0 6px" data-def="'+d.id+'"><option value="">未設定</option>'+ue.map(function(e){return '<option'+(d.def===e?' selected':'')+'>'+e+'</option>'}).join('')+(d.def&&ue.indexOf(d.def)<0?'<option selected>'+d.def+'</option>':'')+'</select>';
-    h+='<div class="row" style="grid-template-columns:1.5fr 90px 110px 80px 250px"><div style="padding-left:'+(x.lv*22)+'px">'+(x.lv?'└ ':'')+esc(d.name)+(d.hdr===false?' <span class="badge g">不印標題列</span>':'')+'</div><div>'+sel+'</div><div><input class="in" style="height:34px" data-rg="'+d.id+'" value="'+esc(d.range||'')+'" placeholder="210-219"></div><div class="muted">'+headCount(d.id)+' ／ '+treeCount(d.id)+'</div><div style="display:flex;flex-wrap:wrap;gap:6px"><button class="btn s" data-up="'+d.id+'"'+(ix===0?' disabled':'')+' aria-label="上移">↑</button><button class="btn s" data-dn="'+d.id+'"'+(ix===sibs.length-1?' disabled':'')+' aria-label="下移">↓</button><button class="btn s" data-rn="'+d.id+'">改名</button><button class="btn s" data-mv="'+d.id+'">移動</button><button class="btn s d" data-off="'+d.id+'">停用</button></div></div>'});
+    h+='<div class="row" style="grid-template-columns:1.5fr 90px 110px 80px 250px"><div style="padding-left:'+(x.lv*22)+'px">'+(x.lv?'└ ':'')+esc(d.name)+hdrBox(d)+'</div><div>'+sel+'</div><div><input class="in" style="height:34px" data-rg="'+d.id+'" value="'+esc(d.range||'')+'" placeholder="210-219"></div><div class="muted">'+headCount(d.id)+' ／ '+treeCount(d.id)+'</div><div style="display:flex;flex-wrap:wrap;gap:6px"><button class="btn s" data-up="'+d.id+'"'+(ix===0?' disabled':'')+' aria-label="上移">↑</button><button class="btn s" data-dn="'+d.id+'"'+(ix===sibs.length-1?' disabled':'')+' aria-label="下移">↓</button><button class="btn s" data-rn="'+d.id+'">改名</button><button class="btn s" data-mv="'+d.id+'">移動</button><button class="btn s d" data-off="'+d.id+'">停用</button></div></div>'});
   $('d-list').innerHTML=h;
   var m='<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline"><h2>Domino 部門名稱對照</h2><div class="muted">Domino 只有部門名稱、沒有階層。名稱相同自動對應；對不上的由廠務指定，對應一次後記住。</div></div>';
   MAPD.forEach(function(x){m+='<div class="note"><div><span class="tag mv">未對應</span><b>'+esc(x.n)+'</b>　<span class="muted">'+x.c+' 人</span></div><div style="display:flex;gap:8px;align-items:center"><select class="in" style="width:auto" data-mp="'+esc(x.n)+'">'+deptOpts('',false)+'</select><button class="btn s" data-mpa="'+esc(x.n)+'">指定</button></div></div>'});
@@ -456,6 +461,7 @@ function drawDept(){
   if(!MAPD.length&&!MAPD_DONE.length)m+='<div class="ok">全部對得上。</div>';
   $('d-map').innerHTML=m;
   var q=function(s,f){Array.prototype.forEach.call(document.querySelectorAll(s),f)};
+  q('[data-hd]',function(c){c.onchange=function(){var d=dById(c.getAttribute('data-hd'));d.hdr=c.checked;touch('廠務（範例）','設定「'+d.name+'」貼牆版'+(c.checked?'印':'不印')+'標題列');toast(c.checked?'貼牆版會印這個部門的標題列':'貼牆版不印標題列，只印底下的單位列（範例）')}});
   q('[data-up]',function(b){b.onclick=function(){swap(b.getAttribute('data-up'),-1)}});
   q('[data-dn]',function(b){b.onclick=function(){swap(b.getAttribute('data-dn'),1)}});
   q('[data-rn]',function(b){b.onclick=function(){var d=dById(b.getAttribute('data-rn')),n=prompt('「'+d.name+'」改名為：',d.name);if(n&&n!==d.name)renameDept(d.id,n)}});
@@ -525,12 +531,16 @@ function bindExt(){
 }
 
 /* ================= 頁面：列印版面 ================= */
+var layTab=1,ori2='l';
 function vLayout(){
-  return '<section class="wrap"><div><h1>列印版面（貼牆版）</h1><div class="sub">以最上層部門為一塊，整塊放在同一欄、不拆開。決定每塊放第幾欄與順序，再看預覽與列印前檢查。</div></div>'+
+  return '<section class="wrap"><div><h1>列印版面</h1><div class="sub">以最上層部門為一塊，整塊放在同一欄、不拆開。決定每塊放第幾欄與順序，再看預覽與列印前檢查。</div></div>'+
+  '<div style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center"><div class="chips" role="tablist"><button class="chip'+(layTab===1?' on':'')+'" data-lt="1">列印版 1：貼牆版</button><button class="chip'+(layTab===2?' on':'')+'" data-lt="2">列印版 2：新風格</button></div>'+
+  (layTab===2?'<div class="chips" role="group" aria-label="紙張方向"><button class="chip'+(ori2==='l'?' on':'')+'" data-o="l">橫式（4 欄）</button><button class="chip'+(ori2==='p'?' on':'')+'" data-o="p">直式（3 欄）</button></div>':'')+'</div>'+
   '<div class="cols"><div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:16px"><div class="box panel" id="l-blocks"></div><div class="box panel" id="l-checks"></div></div>'+
-  '<div style="flex:999 1 640px;min-width:0"><div class="sheetbar" style="margin-bottom:10px"><div class="muted">A4 直式、縮放 80%、一頁印完。實際輸出為 Excel；這裡是版面預覽。</div><div style="display:flex;gap:8px"><button class="btn s" onclick="window.print()">列印／存成 PDF</button></div></div><div class="sheetscroll" id="l-sheet"></div></div></div></section>';
+  '<div style="flex:999 1 640px;min-width:0"><div class="sheetbar" style="margin-bottom:10px"><div class="muted">'+(layTab===1?'A4 直式、縮放 80%、一頁印完。':'A4 '+(ori2==='l'?'橫式':'直式')+'，列高與字級自動調整到一頁放得下。')+'實際輸出為 Excel；這裡是版面預覽（白色範圍就是一頁）。</div><div style="display:flex;gap:8px"><button class="btn s" onclick="window.print()">列印／存成 PDF</button></div></div><div class="sheetscroll" id="l-sheet"></div></div></div></section>';
 }
-function drawLayout(){
+function drawLayout(){if(layTab===2)drawLayout2();else drawLayout1()}
+function drawLayout1(){
   var L=layout(),h='<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px"><h2>各欄內容</h2><button class="btn s" id="l-bal">自動平衡欄高</button></div>';
   for(var c=1;c<=3;c++){var n=L.counts[c-1];h+='<div><div style="display:flex;justify-content:space-between;font-weight:700;margin:6px 0"><span>第 '+c+' 欄</span><span class="muted" style="color:'+(n>52?'#B3261E':'var(--mut)')+'">'+n+' 列'+(n>52?'（過長）':'')+'</span></div>';
     var bl=L.blocks.filter(function(b){return b.col===c-1});
@@ -552,7 +562,62 @@ function drawLayout(){
 function mv(id,dir){var d=dById(id),sib=tops().filter(function(t){return t.col===d.col}).sort(function(a,b){return a.ord-b.ord}),i=sib.indexOf(d),o=sib[i+dir];if(!o)return;var t=d.ord;d.ord=o.ord;o.ord=t;touch('廠務（範例）','貼牆版：調整「'+d.name+'」順序');drawLayout()}
 function fit(){Array.prototype.forEach.call(document.querySelectorAll('.sheetscroll'),function(w){var s=w.firstElementChild;if(!s)return;var a=w.clientWidth,need=s.classList.contains('landscape')?1123:794;s.style.zoom=a&&a<need?a/need:1})}
 window.addEventListener('resize',fit);
-function bindLayout(){drawLayout()}
+/* ----- 列印版 2：分欄 ----- */
+var P2={l:null,p:null};
+function p2Blocks(){
+  var out=[],tp=recs.filter(function(r){return printable(r)&&!r.dept}).sort(function(a,b){return a.sort-b.sort});
+  if(tp.length)out.push({id:'_top',name:'置頂',rows:tp.map(rowOfRec),lines:tp.length+1});
+  tops().forEach(function(d){var rows=blockRows(d,0).filter(function(r){return r.k!=='e'});out.push({id:d.id,name:d.name,rows:rows,lines:rows.length})});
+  return out;
+}
+function p2N(o){return o==='l'?4:3}
+function autoBal2(o){
+  var N=p2N(o),bs=p2Blocks(),tot=bs.reduce(function(s,b){return s+b.lines+1},0),tg=tot/N,cur=0,c=0,cfg={},cnt=[0,0,0,0];
+  bs.forEach(function(b){if(cur>0&&c<N-1&&cur+(b.lines+1)/2>tg){c++;cur=0}cfg[b.id]={c:c+1,o:++cnt[c]};cur+=b.lines+1});
+  P2[o]=cfg;
+}
+function p2Cols(o){
+  if(!P2[o])autoBal2(o);
+  var N=p2N(o),cfg=P2[o],cols=[];for(var i=0;i<N;i++)cols.push([]);
+  p2Blocks().forEach(function(b){var k=cfg[b.id]||(cfg[b.id]={c:1,o:99});b.k=k;cols[Math.min(N,k.c)-1].push(b)});
+  cols.forEach(function(c){c.sort(function(a,b){return a.k.o-b.k.o})});
+  var avail=o==='l'?690:1010,w=cols.map(function(c){return c.reduce(function(s,b){return s+b.lines+0.7},0)}),mx=Math.max.apply(null,w);
+  var raw=Math.floor(avail/mx),rh=Math.max(13,Math.min(24,raw));
+  return {N:N,cols:cols,w:w,rh:rh,over:raw<13,mx:mx,avail:avail};
+}
+function sheet2(o){
+  var P=p2Cols(o),h='<div class="sheet '+(o==='p'?'portrait':'landscape')+' p2" style="--rh:'+P.rh+'px;--f:'+(P.rh*0.62).toFixed(1)+'px"><div class="tt"><b>'+esc(PLANT.name)+'分機表</b><span class="muted">'+fmtDate()+'</span></div><div class="g">';
+  P.cols.forEach(function(c){h+='<div class="pc">';c.forEach(function(b){
+    h+='<div class="c"><h3>'+esc(b.name)+'</h3>';
+    b.rows.forEach(function(r,i){if(r.k==='h1')return;if(r.k==='h2')h+='<h5>'+esc(r.text)+'</h5>';else h+='<div class="i'+(r.k==='u'?' u':'')+'"><span>'+esc(r.text)+'</span><span class="x">'+r.ext+'</span></div>'});
+    h+='</div>'});h+='</div>'});
+  h+='</div><div class="foot">'+PLANT.foot.slice(0,3).map(esc).join('　｜　')+'</div></div>';
+  return h;
+}
+function drawLayout2(){
+  var P=p2Cols(ori2),h='<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px"><h2>各欄內容（'+(ori2==='l'?'橫式':'直式')+'）</h2><button class="btn s" id="l-bal">自動平衡欄高</button></div>';
+  P.cols.forEach(function(c,i){h+='<div><div style="display:flex;justify-content:space-between;font-weight:700;margin:6px 0"><span>第 '+(i+1)+' 欄</span><span class="muted">'+c.reduce(function(s,b){return s+b.lines},0)+' 列</span></div>';
+    c.forEach(function(b,j){h+='<div class="note" style="padding:6px 12px;margin-top:4px"><span>'+esc(b.name)+' <span class="muted">'+b.lines+' 列</span></span><span style="display:flex;gap:4px;align-items:center"><button class="btn s" data-bu="'+b.id+'"'+(j===0?' disabled':'')+' aria-label="上移">↑</button><button class="btn s" data-bd="'+b.id+'"'+(j===c.length-1?' disabled':'')+' aria-label="下移">↓</button><select class="in" style="height:34px;width:78px;padding:0 6px" data-bc="'+b.id+'" aria-label="換欄">'+P.cols.map(function(_,k){return '<option value="'+(k+1)+'"'+(k===i?' selected':'')+'>第'+(k+1)+'欄</option>'}).join('')+'</select></span></div>'});
+    h+='</div>'});
+  $('l-blocks').innerHTML=h;
+  var ck=checks().filter(function(x){return x.t.indexOf('欄')<0});
+  if(P.over)ck.push({t:'內容太多，一頁放不下（列高已縮到最小 13px）。正式版會自動接到第二頁；可以改用另一個方向，或把欄調平均。'});
+  var k='<h2>列印前檢查 <span class="muted">'+(ck.length?ck.length+' 項提醒':'')+'</span></h2><div class="'+(P.over?'warn':'ok')+'">目前列高 '+P.rh+'px（約 '+(P.rh*0.62*0.75).toFixed(1)+' pt 字），'+(P.over?'超過一頁':'一頁放得下')+'。</div>';
+  ck.forEach(function(x){k+='<div class="warn">'+esc(x.t)+'</div>'});k+='<div class="muted">警告只提醒、不擋匯出。</div>';$('l-checks').innerHTML=k;
+  $('l-sheet').innerHTML=sheet2(ori2);fit();
+  var q=function(s,f){Array.prototype.forEach.call(document.querySelectorAll(s),f)};
+  var nm=function(id){return id==='_top'?'置頂':dById(id).name};
+  q('[data-bc]',function(s){s.onchange=function(){var id=s.getAttribute('data-bc'),cfg=P2[ori2],mx=0;Object.keys(cfg).forEach(function(x){if(cfg[x].c===+s.value&&x!==id)mx=Math.max(mx,cfg[x].o)});cfg[id]={c:+s.value,o:mx+1};touch('廠務（範例）','新風格版：「'+nm(id)+'」移到第 '+s.value+' 欄');drawLayout2()}});
+  var mv2=function(id,dir){var cfg=P2[ori2],c=cfg[id].c,sib=Object.keys(cfg).filter(function(x){return cfg[x].c===c}).sort(function(a,b){return cfg[a].o-cfg[b].o}),i=sib.indexOf(id),o=sib[i+dir];if(!o)return;var t=cfg[id].o;cfg[id].o=cfg[o].o;cfg[o].o=t;touch('廠務（範例）','新風格版：調整「'+nm(id)+'」順序');drawLayout2()};
+  q('[data-bu]',function(b){b.onclick=function(){mv2(b.getAttribute('data-bu'),-1)}});q('[data-bd]',function(b){b.onclick=function(){mv2(b.getAttribute('data-bd'),1)}});
+  $('l-bal').onclick=function(){autoBal2(ori2);touch('廠務（範例）','新風格版：自動平衡欄高');drawLayout2();toast('已依序平均分到各欄')};
+}
+function bindLayout(){
+  if(goArg&&goArg.tab){layTab=goArg.tab;goArg=null;render();return}
+  Array.prototype.forEach.call(document.querySelectorAll('[data-lt]'),function(b){b.onclick=function(){layTab=+b.getAttribute('data-lt');render()}});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-o]'),function(b){b.onclick=function(){ori2=b.getAttribute('data-o');render()}});
+  drawLayout();
+}
 
 /* ================= 頁面：匯出 / 版 2 ================= */
 var lastExport='2026-11-07 17:30',ori2='l';
@@ -569,20 +634,6 @@ function bindExport(){
   Array.prototype.forEach.call(document.querySelectorAll('[data-go]'),function(b){b.onclick=function(){go(b.getAttribute('data-go'))}});
   Array.prototype.forEach.call(document.querySelectorAll('[data-dl]'),function(b){b.onclick=function(){lastExport=TODAY+' '+('0'+(new Date().getHours())).slice(-2)+':'+('0'+(new Date().getMinutes())).slice(-2);changed=0;touch('廠務（範例）','匯出：'+b.getAttribute('data-dl'));changed=0;toast('範例畫面：正式版會下載 Excel。已記錄匯出時間。');render()}});
 }
-function vP2(){
-  return '<section class="wrap printview"><div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 2：新風格</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽。<a href="#" id="p2-back">回匯出</a></div></div><div style="display:flex;gap:10px;align-items:center"><div class="chips"><button class="chip'+(ori2==='l'?' on':'')+'" data-o="l">橫式</button><button class="chip'+(ori2==='p'?' on':'')+'" data-o="p">直式</button></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div></div><div class="sheetscroll" id="p2"></div></section>';
-}
-function drawP2(){
-  var h='<div class="sheet '+(ori2==='p'?'portrait':'landscape')+' p2'+(ori2==='p'?' portrait':'')+'"><div class="tt"><div><b style="font-size:20px">'+PLANT.name+'分機表</b></div><div class="muted">'+fmtDate()+'</div></div><div class="g">';
-  var tp=recs.filter(function(r){return printable(r)&&!r.dept});
-  if(tp.length){h+='<div class="c"><h3>置頂</h3>'+tp.map(function(r){return '<div class="i"><span>'+esc(r.pn||r.name)+'</span><span class="x">'+r.ext+'</span></div>'}).join('')+'</div>'}
-  tops().forEach(function(d){var rows=blockRows(d,0);h+='<div class="c"><h3>'+esc(d.name)+'</h3>';
-    rows.forEach(function(r,i){if(r.k==='e')return;if(i===0&&r.k==='h1')return;if(r.k==='h2')h+='<h5>'+esc(r.text)+'</h5>';else if(r.k!=='h1')h+='<div class="i" style="'+(r.k==='u'?'background:#FFFBEF':'')+'"><span>'+esc(r.text)+'</span><span class="x">'+r.ext+'</span></div>'});h+='</div>'});
-  h+='</div><div class="foot">'+PLANT.foot.slice(0,3).map(esc).join('　｜　')+'</div></div>';
-  $('p2').innerHTML=h;fit();
-}
-function bindP2(){drawP2();$('p2-back').onclick=function(e){e.preventDefault();go('export')};Array.prototype.forEach.call(document.querySelectorAll('[data-o]'),function(b){b.onclick=function(){ori2=b.getAttribute('data-o');render()}})}
-
 /* ================= 頁面：異動紀錄 ================= */
 function vLog(){
   var h='<section class="wrap"><div><h1>異動紀錄</h1><div class="sub">誰（含系統自動處理）在何時改了什麼。這個畫面上的操作也會即時出現在這裡。</div></div><div class="box scroll"><div style="min-width:620px"><div class="row head" style="grid-template-columns:150px 130px 1fr"><div>時間</div><div>誰</div><div>內容</div></div>';
@@ -593,11 +644,11 @@ function vLog(){
 /* ================= 主流程 ================= */
 function render(){
   renderNav();var m=$('main');
-  var map={search:[vSearch,bindSearch],inbox:[vInbox,bindInbox],edit:[vEdit,bindEdit],dept:[vDept,bindDept],ext:[vExt,bindExt],layout:[vLayout,bindLayout],export:[vExport,bindExport],p2:[vP2,bindP2],log:[vLog,function(){}]};
+  var map={search:[vSearch,bindSearch],inbox:[vInbox,bindInbox],edit:[vEdit,bindEdit],dept:[vDept,bindDept],ext:[vExt,bindExt],layout:[vLayout,bindLayout],export:[vExport,bindExport],log:[vLog,function(){}]};
   var v=map[view];m.innerHTML=v[0]();v[1]();window.scrollTo(0,0);
   try{history.replaceState(null,'','#'+view)}catch(e){}
 }
-var h0=(location.hash||'').slice(1);if(h0&&['search','inbox','edit','dept','ext','layout','export','p2','log'].indexOf(h0)>-1)view=h0;
+var h0=(location.hash||'').slice(1);if(h0&&['search','inbox','edit','dept','ext','layout','export','log'].indexOf(h0)>-1)view=h0;
 window.__demo={recs:recs,depts:depts,exts:exts,layout:layout,checks:checks,go:go};
 render();
 })();
