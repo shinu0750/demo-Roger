@@ -202,7 +202,7 @@ var INBOX=[
  {id:'a2',kind:'auto',tag:'out',label:'離職',who:'陳小強（範例）',det:'原使用「製一組」公用分機 211 → 已停用（不刪除）。',done:false,rid:null},
  {id:'a3',kind:'auto',tag:'mv',label:'調部門',who:'黃小美（範例）',det:'「品一課」→「品二課」，新部門預設分機 323 → 分機由 311 改為 323。',done:false,rid:null},
  {id:'p1',kind:'pend',tag:'new',label:'新進・主管',who:'周大成（範例）',det:'Domino 部門「環資管理處」，職稱「副理」。主管需要個人分機，系統列出該部門空號供挑選。',btn:'新增並選分機',act:'newMgr'},
- {id:'p2',kind:'pend',tag:'new',label:'新進・部門對不上',who:'吳小芬（範例）',det:'Domino 部門名稱「資訊管理課」在部門表裡沒有對應。指定部門後，系統會依該部門的預設分機，把這個人加進「人員與單位」。',btn:'到部門表指定',act:'mapDept'},
+ {id:'p2',kind:'pend',tag:'mv',label:'部門對不上',who:'資訊管理課（1 位新進）',det:'Domino 出現部門名稱「資訊管理課」，部門表裡沒有對應。請指定放在哪個既有部門，或新增為部門。處理完之後，這位新進（吳小芬）會再產生一筆「補分機」的待確認。',btn:'到部門表處理',act:'mapDept'},
  {id:'p3',kind:'pend',tag:'out',label:'離職・有個人分機',who:'蔡小宇（範例）',det:'環資管理處，個人分機 815。貼牆表會少一列，分機可能交接。確認後 815 回到環資管理處的空號。',btn:'確認停用',act:'confirmOut'},
  {id:'p4',kind:'pend',tag:'up',label:'原地升遷',who:'謝小春（範例）',det:'乾燥課，職稱「組長」→「課長」，但沒有個人分機。',btn:'新增個人分機',act:'newMgr2'},
  {id:'p5',kind:'pend',tag:'mv',label:'可能是部門改名',who:'9 人',det:'9 人同時從「品一課」換到「品質一課」。請到部門表改名後整批套用，不要逐人處理。',btn:'改名並整批套用',act:'renameBatch'}
@@ -364,7 +364,8 @@ function bindInbox(){
     var x=INBOX.filter(function(i){return i.id===b.getAttribute('data-act')})[0];
     if(x.act==='newMgr')return go('edit',{draft:{t:'P',name:'周大成（範例）',dept:'hz',title:'副理',personal:true,inbox:'p1'}});
     if(x.act==='newMgr2')return go('edit',{edit:x.rid,patch:{title:'課長',personal:true,ext:''},inbox:'p4'});
-    if(x.act==='mapDept'){if(x.mappedDept)return go('edit',{draft:{t:'P',name:'吳小芬（範例）',dept:x.mappedDept,title:'',personal:false,inbox:'p2'}});return go('dept',{focus:'map'})}
+    if(x.act==='mapDept')return go('dept',{focus:'map'});
+    if(x.act==='newHire')return go('edit',{draft:{t:'P',name:x.person,dept:x.deptId,title:'',personal:false,ext:x.defExt||'',inbox:x.id}});
     if(x.act==='renameBatch')return go('dept',{rename:'q1',to:'品質一課'});
     if(x.act==='confirmOut'){var lr=rById(x.rid);lr.active=false;x.done=true;inboxDone.push('已確認停用：'+x.who+'，個人分機 815 回到環資管理處的空號（貼牆版該列名稱變空白、號碼仍印出）');touch('廠務（範例）','確認離職停用：'+x.who+'，815 回到空號');render()}
   }});
@@ -399,7 +400,7 @@ function drawEList(){
 function drawForm(){
   var r=eId?rById(eId):null,d=eDraft;
   var v=r?{t:r.t,name:r.name,pn:r.pn,dept:r.dept,title:r.title,ext:r.ext,personal:r.personal,inDir:r.inDir,hide:r.hide,note:r.note,active:r.active,email:r.email}:
-    {t:(d&&d.t)||'P',name:(d&&d.name)||'',pn:'',dept:(d&&d.dept)||'',title:(d&&d.title)||'',ext:'',personal:d?!!d.personal:false,inDir:true,hide:false,note:'',active:true,email:''};
+    {t:(d&&d.t)||'P',name:(d&&d.name)||'',pn:'',dept:(d&&d.dept)||'',title:(d&&d.title)||'',ext:(d&&d.ext)||'',personal:d?!!d.personal:false,inDir:true,hide:false,note:'',active:true,email:''};
   if(r&&ePatch&&ePatch.id===r.id){Object.keys(ePatch).forEach(function(k){if(k!=='id')v[k]=ePatch[k]})}
   var f=$('e-form');
   f.innerHTML='<h2>'+(r?'編輯：'+esc(r.name):'新增')+'</h2>'+
@@ -488,7 +489,7 @@ function drawDept(){
     h+='<div class="row" style="grid-template-columns:1.5fr 90px 110px 80px 250px"><div style="padding-left:'+(x.lv*22)+'px">'+(x.lv?'└ ':'')+esc(d.name)+hdrBox(d)+'</div><div>'+sel+'</div><div><input class="in" style="height:34px" data-rg="'+d.id+'" value="'+esc(d.range||'')+'" placeholder="210-219"></div><div class="muted">'+headCount(d.id)+' ／ '+treeCount(d.id)+'</div><div style="display:flex;flex-wrap:wrap;gap:6px"><button class="btn s" data-up="'+d.id+'"'+(ix===0?' disabled':'')+' aria-label="上移">↑</button><button class="btn s" data-dn="'+d.id+'"'+(ix===sibs.length-1?' disabled':'')+' aria-label="下移">↓</button><button class="btn s" data-rn="'+d.id+'">改名</button><button class="btn s" data-mv="'+d.id+'">移動</button><button class="btn s d" data-off="'+d.id+'">停用</button></div></div>'});
   $('d-list').innerHTML=h;
   var m='<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline"><h2>Domino 部門名稱對照</h2><div class="muted">Domino 只有部門名稱、沒有階層。名稱相同自動對應；對不上的由廠務指定，對應一次後記住。</div></div>';
-  MAPD.forEach(function(x){m+='<div class="note"><div><span class="tag mv">未對應</span><b>'+esc(x.n)+'</b>　<span class="muted">'+x.c+' 人</span></div><div style="display:flex;gap:8px;align-items:center"><select class="in" style="width:auto" data-mp="'+esc(x.n)+'">'+deptOpts('',false)+'</select><button class="btn s" data-mpa="'+esc(x.n)+'">指定</button></div></div>'});
+  MAPD.forEach(function(x){m+='<div class="note"><div><span class="tag mv">未對應</span><b>'+esc(x.n)+'</b>　<span class="muted">'+x.c+' 人</span></div><div style="display:flex;gap:8px;align-items:center"><select class="in" style="width:auto;max-width:260px" data-mp="'+esc(x.n)+'"><option value="">＋ 新增為部門（放在最上層）</option>'+flat().map(function(f){return '<option value="'+f.d.id+'">指定到：'+'　'.repeat(f.lv)+esc(f.d.name)+'</option>'}).join('')+'</select><button class="btn s" data-mpa="'+esc(x.n)+'">確定</button></div></div>'});
   MAPD_DONE.forEach(function(x){m+='<div class="muted">已對應：Domino「'+esc(x.n)+'」→ '+esc(path(x.to))+'</div>'});
   if(!MAPD.length&&!MAPD_DONE.length)m+='<div class="ok">全部對得上。</div>';
   $('d-map').innerHTML=m;
@@ -501,11 +502,16 @@ function drawDept(){
   q('[data-mv]',function(b){b.onclick=function(){openMove(b.getAttribute('data-mv'))}});
   q('[data-def]',function(s){s.onchange=function(){var d=dById(s.getAttribute('data-def'));d.def=s.value?+s.value:null;touch('廠務（範例）','設定「'+d.name+'」預設分機：'+(d.def||'未設定'));toast('已設定（範例）')}});
   q('[data-rg]',function(s){s.onchange=function(){var d=dById(s.getAttribute('data-rg'));d.range=s.value;touch('廠務（範例）','設定「'+d.name+'」號段：'+s.value)}});
-  q('[data-mpa]',function(b){b.onclick=function(){var n=b.getAttribute('data-mpa'),sel=document.querySelector('[data-mp="'+n+'"]');MAPD=MAPD.filter(function(x){return x.n!==n});MAPD_DONE.push({n:n,to:sel.value});touch('廠務（範例）','Domino 部門「'+n+'」對應到 '+path(sel.value));
+  q('[data-mpa]',function(b){b.onclick=function(){
+    var n=b.getAttribute('data-mpa'),sel=document.querySelector('[data-mp="'+n+'"]'),dd;
+    if(sel.value){dd=dById(sel.value);touch('廠務（範例）','Domino 部門「'+n+'」對應到 '+path(dd.id))}
+    else{dd={id:'n'+(++nid),name:n,parent:null,fill:null,col:0,def:null,range:'',sort:2000+nid,active:true,hdr:true};depts.push(dd);touch('廠務（範例）','新增部門：'+n+'，並對應 Domino 部門「'+n+'」')}
+    MAPD=MAPD.filter(function(x){return x.n!==n});MAPD_DONE.push({n:n,to:dd.id});
     var p2=INBOX.filter(function(i){return i.id==='p2'&&!i.done})[0];
-    if(p2){var dd=dById(sel.value);
-      if(dd&&dd.def){var nr={id:++nid,t:'P',name:'吳小芬（範例）',pn:'',dept:dd.id,title:'',ext:dd.def,personal:false,inDir:true,hide:false,active:true,sort:3000+nid,note:'',email:'e'+(1000+nid)+'@ecic.com.tw'};recs.push(nr);closeInbox('p2','已加入「'+path(dd.id)+'」，使用部門預設分機 '+dd.def)}
-      else{p2.mappedDept=dd.id;p2.det='已指定部門「'+path(dd.id)+'」，但這個部門沒有設定預設分機，請選一支分機後加入。';p2.btn='選分機並加入';toast('「'+dd.name+'」沒有設定預設分機，請選一支分機');return go('edit',{draft:{t:'P',name:'吳小芬（範例）',dept:dd.id,title:'',personal:false,inbox:'p2'}})}}
+    if(p2){closeInbox('p2',(sel.value?'對應到「':'新增為部門「')+path(dd.id)+'」');
+      INBOX.push({id:'p6',kind:'pend',tag:'new',label:'新進・補分機',who:'吳小芬（範例）',person:'吳小芬（範例）',deptId:dd.id,defExt:dd.def||'',
+        det:'Domino 部門「'+n+'」已對應到「'+path(dd.id)+'」。'+(dd.def?'這個部門的預設分機是 '+dd.def+'，':'這個部門還沒有設定預設分機，')+'請補上分機後加入「人員與單位」。',btn:'新增人員與分機',act:'newHire'});
+      toast('部門已處理，收件匣多了一筆「新進・補分機」')}
     drawDept();renderNav()}});
 }
 function swap(id,dir){var d=dById(id),sibs=d.parent?kids(d.parent):tops(),i=sibs.indexOf(d),o=sibs[i+dir];if(!o)return;var t=d.sort;d.sort=o.sort;o.sort=t;touch('廠務（範例）','調整順序：'+d.name+(dir<0?' 上移':' 下移'));drawDept()}
