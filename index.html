@@ -104,7 +104,8 @@ h1{margin:0;font-size:32px;line-height:1.25}
 .ccard .dot{width:9px;height:9px;border-radius:50%;flex:none}
 .ccard small{display:block;font-size:12px;color:var(--mut)}
 .ccard .x{font-size:22px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
-@media print{.toast{display:none!important}}
+.who{background:none;border:0;padding:6px 0;margin:-6px 0;font:inherit;font-weight:inherit;color:var(--acc-d);text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left}
+@media print{.toast{display:none!important}.who{text-decoration:none;color:inherit}}
 html{-webkit-text-size-adjust:100%}
 button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media(pointer:coarse),(max-width:1100px){
@@ -136,7 +137,7 @@ button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 <main>
 <!-- 查詢 -->
 <section class="wrap" id="v-search">
-  <div><h1>找分機</h1><div class="sub">輸入姓名、部門或分機號碼；也可以搜尋會議室、守衛室、公用電話等單位。</div></div>
+  <div><h1>找分機</h1><div class="sub">輸入姓名、部門或分機號碼；也可以搜尋會議室、守衛室、公用電話等單位。</div><div class="muted" style="margin-top:6px">你的權限：一廠廠務。一廠的姓名旁有 ✎，點下去就直接進入編輯。其他廠只能查詢。</div></div>
   <input class="in" style="max-width:560px;height:48px" type="search" id="q" aria-label="搜尋姓名、部門或分機" placeholder="例如：品保、守衛室、211">
   <div style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between">
     <div class="chips" id="tabs"></div>
@@ -159,6 +160,11 @@ button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
       <div class="muted">今天 08:30 已寄 Email 通知一廠廠務維護人員（3 位）</div>
     </div>
     <div id="notes" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+    <input class="in" style="flex:1 1 280px;max-width:420px" type="search" id="e-q" aria-label="搜尋姓名、部門或分機" placeholder="搜尋姓名、部門、分機、Email">
+    <select class="in" style="width:auto;min-width:160px" id="e-dept" aria-label="依部門篩選"></select>
+    <span class="muted" id="e-count"></span>
   </div>
   <div class="cols">
     <div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:720px" id="e-list" role="table" aria-label="一廠分機清單"></div></div>
@@ -187,6 +193,7 @@ button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 <!-- 部門 -->
 <section class="wrap hide" id="v-dept">
   <div><h1>部門表（一廠）</h1><div class="sub">決定分機表上怎麼分區、怎麼排序，由一廠廠務維護。這是分機表的顯示分組，不是人事的正式組織架構。</div></div>
+  <div class="box panel hide" id="d-move" style="gap:12px;border-color:var(--acc)"></div>
   <div class="cols">
     <div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:560px" id="d-list" role="table" aria-label="一廠部門表"></div></div>
     <div class="box panel" style="flex:1 1 320px;min-width:0">
@@ -253,6 +260,7 @@ function go(v){
   VIEWS.forEach(function(x){$('v-'+x[0]).classList.toggle('hide',x[0]!==v)});
   var b=$('nav').children;for(var i=0;i<b.length;i++){b[i].classList.toggle('on',VIEWS[i][0]===v);b[i].setAttribute('aria-selected',VIEWS[i][0]===v)}
   try{history.replaceState(null,'','#'+v)}catch(e){}
+  if(v==='search'&&typeof renderSearch==='function'&&typeof list!=='undefined')renderSearch();
   fitSheets();
 }
 /* 平板：列印預覽縮放到螢幕寬度 */
@@ -279,26 +287,35 @@ var DATA=[
 ].map(function(r){return {plant:r[0],dept:r[1],name:r[2],title:r[3],ext:r[4],type:r[5],ab:r[0]==='一廠'?(AB[r[4]]||''):''}});
 var PLANTS=['全部','一廠','二廠','三廠','四廠','台北'],sPlant='一廠',sQ='';
 function hit(d){var k=sQ.trim().toLowerCase();return !k||[d.dept,d.name,d.title,d.ext].some(function(s){return s.toLowerCase().indexOf(k)>-1})}
+var MYPLANT='一廠';
+function rowsAll(){return list.map(function(r){return Object.assign({},r,{plant:'一廠'})}).concat(DATA.filter(function(d){return d.plant!=='一廠'}))}
+function nameCell(d){return (d.plant===MYPLANT&&d.id)?'<button class="who" data-ed="'+d.id+'" aria-label="編輯 '+esc(d.name)+'">'+esc(d.name)+' ✎</button>':esc(d.name)}
+function bindEd(box){box.querySelectorAll('[data-ed]').forEach(function(b){b.onclick=function(){
+  var r=list.filter(function(x){return x.id==b.getAttribute('data-ed')})[0];if(!r)return;
+  form=Object.assign({},r);go('edit');renderEdit();fillForm();$('f-title-h').scrollIntoView({behavior:'smooth',block:'center'});
+}})}
 function renderSearchList(){
   $('tabs').innerHTML=PLANTS.map(function(p){
-    var n=DATA.filter(function(d){return (p==='全部'||d.plant===p)&&hit(d)}).length;
+    var n=rowsAll().filter(function(d){return (p==='全部'||d.plant===p)&&hit(d)}).length;
     return '<button class="chip'+(p===sPlant?' on':'')+'" data-p="'+p+'">'+p+'<small>'+n+'</small></button>'}).join('');
   $('tabs').querySelectorAll('button').forEach(function(b){b.onclick=function(){sPlant=b.getAttribute('data-p');renderSearch()}});
-  var rows=DATA.filter(function(d){return (sPlant==='全部'||d.plant===sPlant)&&hit(d)});
+  var rows=rowsAll().filter(function(d){return (sPlant==='全部'||d.plant===sPlant)&&hit(d)});
   var g='grid-template-columns:2.4fr 1.2fr 1fr .8fr .8fr';
   $('list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">姓名／單位</div><div role="columnheader">職稱</div><div role="columnheader">分機</div><div role="columnheader">類型</div></div>'+
-    rows.map(function(d){return '<div class="row" role="row" style="'+g+'"><div role="cell" style="color:#3C4640">'+esc(d.dept)+'</div><div role="cell" style="font-weight:500">'+esc(d.name)+'</div><div role="cell" style="color:#3C4640">'+esc(d.title)+'</div><div role="cell" class="ext">'+esc(d.ext)+'</div><div role="cell"><span class="badge'+(d.type==='單位'?' u':'')+'">'+d.type+'</span></div></div>'}).join('')+
+    rows.map(function(d){return '<div class="row" role="row" style="'+g+'"><div role="cell" style="color:#3C4640">'+esc(d.dept)+'</div><div role="cell" style="font-weight:500">'+nameCell(d)+'</div><div role="cell" style="color:#3C4640">'+esc(d.title)+'</div><div role="cell" class="ext">'+esc(d.ext)+'</div><div role="cell"><span class="badge'+(d.type==='單位'?' u':'')+'">'+d.type+'</span></div></div>'}).join('')+
     (rows.length?'':'<div style="padding:48px 24px;text-align:center;color:var(--mut)">找不到符合的分機。可以換個關鍵字，或切換到「全部」。</div>');
+  bindEd($('list'));
 }
 var sMode='list';
 function renderSearch(){
   renderSearchList();
-  var rows=DATA.filter(function(d){return (sPlant==='全部'||d.plant===sPlant)&&hit(d)}),groups={},order=[];
+  var rows=rowsAll().filter(function(d){return (sPlant==='全部'||d.plant===sPlant)&&hit(d)}),groups={},order=[];
   rows.forEach(function(d){var top=d.dept.split(' › ')[0],key=(sPlant==='全部'?d.plant+'・':'')+top;if(!groups[key]){groups[key]=[];order.push(key)}groups[key].push(d)});
   $('card-box').innerHTML=order.length?'<div class="cgrid">'+order.map(function(k){return '<div class="ccard"><h3>'+esc(k)+'</h3>'+groups[k].map(function(d){
     var sub=d.dept.split(' › ').slice(1).join(' › '),extra=[sub,d.title].filter(Boolean).join('　');
-    return '<div><span class="n"><span class="dot" style="background:'+(d.type==='單位'?'var(--amber)':'transparent')+'"></span><span>'+esc(d.name)+(extra?'<small>'+esc(extra)+'</small>':'')+'</span></span><span class="x">'+esc(d.ext)+'</span></div>'}).join('')+'</div>'}).join('')+'</div><div class="muted" style="margin-top:12px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber)"></span> 會議室、守衛室、公用電話等單位</div>'
+    return '<div><span class="n"><span class="dot" style="background:'+(d.type==='單位'?'var(--amber)':'transparent')+'"></span><span>'+nameCell(d)+(extra?'<small>'+esc(extra)+'</small>':'')+'</span></span><span class="x">'+esc(d.ext)+'</span></div>'}).join('')+'</div>'}).join('')+'</div><div class="muted" style="margin-top:12px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber)"></span> 會議室、守衛室、公用電話等單位</div>'
     :'<div class="box" style="padding:48px 24px;text-align:center;color:var(--mut)">找不到符合的分機。可以換個關鍵字，或切換到「全部」。</div>';
+  bindEd($('card-box'));
   $('list-box').classList.toggle('hide',sMode!=='list');$('card-box').classList.toggle('hide',sMode!=='card');
   $('m-list').className='chip'+(sMode==='list'?' on':'');$('m-card').className='chip'+(sMode==='card'?' on':'');
 }
@@ -313,11 +330,17 @@ var form=Object.assign({},EMPTY),nextId=100;
 var list=DATA.filter(function(d){return d.plant==='一廠'}).map(function(d,i){var m=DOMINO.filter(function(x){return x[0]===d.name&&d.dept.indexOf(x[1])===0})[0];return Object.assign({id:i+1,email:m?m[2]:''},d)});
 function renderEdit(){
   var g='grid-template-columns:2fr 1.2fr .8fr .6fr 1.3fr';
+  var k=($('e-q').value||'').trim().toLowerCase(),cd=$('e-dept').value;
+  $('e-dept').innerHTML='<option value="">全部部門</option>'+DEPTS.filter(function(d){return dep(d.path)===1}).map(function(d){return '<option value="'+esc(d.path)+'">'+esc(d.path)+'</option>'}).join('');
+  $('e-dept').value=cd;var df=$('e-dept').value;
+  var rows=list.filter(function(r){return (!df||inDept(r.dept,df))&&(!k||[r.name,r.dept,r.title,r.ext,r.email].some(function(s){return String(s||'').toLowerCase().indexOf(k)>-1}))});
+  $('e-count').textContent='顯示 '+rows.length+' / '+list.length+' 筆';
   $('e-list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">姓名／單位</div><div role="columnheader">分機</div><div role="columnheader">線路</div><div role="columnheader">操作</div></div>'+
-    list.map(function(r){return '<div class="row" role="row" style="'+g+(r.id===form.id?';background:#E3F0EC':'')+'"><div role="cell" style="color:#3C4640">'+esc(r.dept)+'</div><div role="cell" style="font-weight:500">'+esc(r.name)+(r.type==='單位'?' <span style="font-size:12px;color:#7A4B00">單位</span>':'')+'</div><div role="cell" class="ext" style="font-size:17px">'+esc(r.ext)+'</div><div role="cell" style="color:#3C4640">'+(esc(r.ab)||'<span style="color:#9AA39C">—</span>')+'</div><div role="cell" style="display:flex;gap:8px"><button class="btn s" data-e="'+r.id+'" aria-label="編輯 '+esc(r.name)+'">編輯</button><button class="btn s d" data-d="'+r.id+'" aria-label="刪除 '+esc(r.name)+'">刪除</button></div></div>'}).join('');
+    rows.map(function(r){return '<div class="row" role="row" style="'+g+(r.id===form.id?';background:#E3F0EC':'')+'"><div role="cell" style="color:#3C4640">'+esc(r.dept)+'</div><div role="cell" style="font-weight:500">'+esc(r.name)+(r.type==='單位'?' <span style="font-size:12px;color:#7A4B00">單位</span>':'')+'</div><div role="cell" class="ext" style="font-size:17px">'+esc(r.ext)+'</div><div role="cell" style="color:#3C4640">'+(esc(r.ab)||'<span style="color:#9AA39C">—</span>')+'</div><div role="cell" style="display:flex;gap:8px"><button class="btn s" data-e="'+r.id+'" aria-label="編輯 '+esc(r.name)+'">編輯</button><button class="btn s d" data-d="'+r.id+'" aria-label="刪除 '+esc(r.name)+'">刪除</button></div></div>'}).join('');
   $('e-list').querySelectorAll('[data-e]').forEach(function(b){b.onclick=function(){var r=list.filter(function(x){return x.id==b.getAttribute('data-e')})[0];form=Object.assign({},r);renderEdit();fillForm()}});
   $('e-list').querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){var id=+b.getAttribute('data-d');list=list.filter(function(x){return x.id!==id});if(form.id===id)form=Object.assign({},EMPTY);renderEdit();fillForm()}});
 }
+$('e-q').oninput=renderEdit;$('e-dept').onchange=renderEdit;
 function fillForm(){
   var p=form.type==='人員';
   $('f-title-h').textContent=form.id?'編輯分機':'新增分機';
@@ -392,7 +415,7 @@ function renderDept(){
   $('d-list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">人數</div><div role="columnheader">狀態</div><div role="columnheader">操作</div></div>'+
    DEPTS.map(function(d,i){
      var lv=dep(d.path)-1,nm=d.path.split(' › ').pop();
-     return '<div class="row" role="row" style="'+g+(d.on?'':';opacity:.55')+'"><div role="cell" style="padding-left:'+(lv*22)+'px;font-weight:'+(lv?400:700)+'">'+(lv?'└ ':'')+esc(nm)+'</div><div role="cell">'+treeCount(d.path)+'</div><div role="cell">'+(d.on?'使用中':'<span style="color:var(--mut)">已停用</span>')+'</div><div role="cell" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn s" data-u="'+i+'" aria-label="上移 '+esc(nm)+'">↑</button><button class="btn s" data-w="'+i+'" aria-label="下移 '+esc(nm)+'">↓</button><button class="btn s" data-r="'+i+'">改名</button><button class="btn s" data-t="'+i+'">'+(d.on?'停用':'啟用')+'</button></div></div>'}).join('');
+     return '<div class="row" role="row" style="'+g+(d.on?'':';opacity:.55')+'"><div role="cell" style="padding-left:'+(lv*22)+'px;font-weight:'+(lv?400:700)+'">'+(lv?'└ ':'')+esc(nm)+'</div><div role="cell">'+treeCount(d.path)+'</div><div role="cell">'+(d.on?'使用中':'<span style="color:var(--mut)">已停用</span>')+'</div><div role="cell" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn s" data-u="'+i+'" aria-label="上移 '+esc(nm)+'">↑</button><button class="btn s" data-w="'+i+'" aria-label="下移 '+esc(nm)+'">↓</button><button class="btn s" data-r="'+i+'">改名</button><button class="btn s" data-v="'+i+'">移動</button><button class="btn s" data-t="'+i+'">'+(d.on?'停用':'啟用')+'</button></div></div>'}).join('');
   var L=$('d-list');
   L.querySelectorAll('[data-u]').forEach(function(b){b.onclick=function(){moveD(+b.getAttribute('data-u'),-1);renderDept()}});
   L.querySelectorAll('[data-w]').forEach(function(b){b.onclick=function(){moveD(+b.getAttribute('data-w'),1);renderDept()}});
@@ -403,6 +426,7 @@ function renderDept(){
     if(dIdx(np)>-1){alert('已經有同名的部門。');return}
     renameDept(old,np);renderDept();renderEdit();renderNotes();
   }});
+  L.querySelectorAll('[data-v]').forEach(function(b){b.onclick=function(){openMove(+b.getAttribute('data-v'))}});
   L.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){
     var d=DEPTS[+b.getAttribute('data-t')];
     if(d.on){var c=treeCount(d.path);if(c){alert('「'+d.path.split(' › ').pop()+'」底下還有 '+c+' 位人員或單位，請先移到其他部門再停用。');return}}
@@ -419,6 +443,25 @@ function renderDept(){
   $('d-map-n').textContent=un?'（'+un+' 個未對應）':'（全部已對應）';
   $('d-map').querySelectorAll('[data-m]').forEach(function(s){s.onchange=function(){if(s.value){MAPD[s.getAttribute('data-m')]=s.value;renderDept();renderNotes()}}});
   $('d-map').querySelectorAll('[data-mn]').forEach(function(b){b.onclick=function(){ensureDept(b.getAttribute('data-mn'));renderDept();renderNotes()}});
+}
+function openMove(i){
+  var d=DEPTS[i],nm=d.path.split(' › ').pop(),box=$('d-move'),n=treeCount(d.path);
+  var opts='<option value="">（最上層）</option>'+DEPTS.filter(function(x){return x.on&&!inDept(x.path,d.path)}).map(function(x){return '<option value="'+esc(x.path)+'"'+(x.path===par(d.path)?' disabled':'')+'>'+'　'.repeat(dep(x.path)-1)+esc(x.path.split(' › ').pop())+(x.path===par(d.path)?'（目前）':'')+'</option>'}).join('');
+  box.innerHTML='<div style="font-size:18px;font-weight:700">移動「'+esc(nm)+'」</div><div class="muted">目前位置：'+(par(d.path)?esc(par(d.path)):'最上層')+'。移動後，這個部門底下的子部門和 '+n+' 位人員／單位會一起跟著搬，分機表和列印版會自動換位置。</div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><label for="d-mv" style="font-weight:500">移到</label><select class="in" style="width:auto;min-width:220px" id="d-mv">'+opts+'</select><button class="btn" id="d-mv-ok">確定移動</button><button class="btn s" id="d-mv-x">取消</button></div>';
+  box.classList.remove('hide');box.scrollIntoView({behavior:'smooth',block:'center'});
+  var cur=par(d.path);$('d-mv').value='';
+  if(cur==='')$('d-mv').options[0].disabled=true;
+  var f=[].filter.call($('d-mv').options,function(o){return !o.disabled})[0];if(f)$('d-mv').value=f.value;
+  $('d-mv-x').onclick=function(){box.classList.add('hide')};
+  $('d-mv-ok').onclick=function(){
+    var np=$('d-mv').value,newPath=(np?np+' › ':'')+nm;
+    if(dIdx(newPath)>-1){alert('目的地已經有同名的部門「'+nm+'」。');return}
+    renameDept(d.path,newPath);
+    var j=dIdx(newPath),b=blk(j),cut=DEPTS.splice(b[0],b[1]-b[0]);
+    if(np){DEPTS.splice.apply(DEPTS,[blk(dIdx(np))[1],0].concat(cut))}else{DEPTS.push.apply(DEPTS,cut)}
+    box.classList.add('hide');renderDept();renderEdit();renderNotes();renderSearch();fillForm();
+    showToast('已移動：'+nm+' → '+(np||'最上層'));
+  };
 }
 $('d-add').onclick=function(){
   var n=$('d-name').value.trim();if(!n)return;
