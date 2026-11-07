@@ -338,8 +338,8 @@ function bindInbox(){
     var x=INBOX.filter(function(i){return i.id===b.getAttribute('data-skip')})[0];x.done=true;inboxDone.push('略過：'+x.label+' '+x.who);touch('廠務（範例）','略過異動：'+x.label+' '+x.who);render()}});
   Array.prototype.forEach.call(document.querySelectorAll('[data-act]'),function(b){b.onclick=function(){
     var x=INBOX.filter(function(i){return i.id===b.getAttribute('data-act')})[0];
-    if(x.act==='newMgr')return go('edit',{draft:{t:'P',name:'周大成（範例）',dept:'hz',title:'副理',personal:true}});
-    if(x.act==='newMgr2')return go('edit',{draft:{t:'P',name:'謝小春（範例）',dept:'gz',title:'課長',personal:true}});
+    if(x.act==='newMgr')return go('edit',{draft:{t:'P',name:'周大成（範例）',dept:'hz',title:'副理',personal:true,inbox:'p1'}});
+    if(x.act==='newMgr2')return go('edit',{draft:{t:'P',name:'謝小春（範例）',dept:'gz',title:'課長',personal:true,inbox:'p4'}});
     if(x.act==='mapDept')return go('dept',{focus:'map'});
     if(x.act==='renameBatch')return go('dept',{rename:'q1',to:'品質一課'});
     if(x.act==='confirmOut'){x.done=true;inboxDone.push('已確認停用：'+x.who+'，個人分機 815 回到環資管理處的空號');touch('廠務（範例）','確認離職停用：'+x.who+'，815 回到空號');render()}
@@ -390,9 +390,9 @@ function drawForm(){
   '<div class="fld"><label for="f-note">備註</label><input class="in" id="f-note" value="'+esc(v.note)+'"></div>'+
   '<div style="display:flex;gap:10px"><button class="btn" style="flex:1" id="f-save">儲存</button>'+(r?'<button class="btn s'+(r.active?' d':'')+'" id="f-off">'+(r.active?'停用':'重新啟用')+'</button>':'')+'</div>'+
   '<div class="muted">儲存後，下次匯出的 EIP 與貼牆表會包含這筆變更。同一個分機可以有多人使用，不會被擋下。</div>';
-  var typ=v.t;
+  var typ=v.t,ibx=(!r&&d&&d.inbox)||null;
   $('t-p').onclick=function(){eDraftType('P')};$('t-u').onclick=function(){eDraftType('U')};
-  function eDraftType(t){var cur=readForm(typ);cur.t=t;eId=r?eId:null;eDraft=cur;if(r&&r.t!==t)return;drawForm()}
+  function eDraftType(t){var cur=readForm(typ);cur.t=t;cur.inbox=ibx;eId=r?eId:null;eDraft=cur;if(r&&r.t!==t)return;drawForm()}
   function readForm(t){return {t:t,name:$('f-name').value,pn:$('f-pn')?$('f-pn').value:'',dept:$('f-dept').value||null,title:$('f-title').value,ext:$('f-ext').value,personal:$('f-per')?$('f-per').checked:false,inDir:$('f-dir').checked,hide:$('f-hide').checked,note:$('f-note').value}}
   function hint(){
     var dp=$('f-dept').value,e=+$('f-ext').value,tt=$('f-title').value,per=$('f-per')?$('f-per').checked:false,h='';
@@ -418,7 +418,8 @@ function drawForm(){
     x.ext=+x.ext;
     if(r){r.name=x.name;r.pn=x.pn;r.dept=x.dept;r.title=x.title;r.ext=x.ext;r.personal=x.personal;r.inDir=x.inDir;r.hide=x.hide;r.note=x.note;touch('廠務（範例）','修改 '+(r.t==='U'?'單位':'人員')+'：'+r.name+'，分機 '+r.ext)}
     else{var n={id:++nid,t:typ,name:x.name,pn:x.pn,dept:x.dept,title:x.title,ext:x.ext,personal:typ==='P'?x.personal:false,inDir:x.inDir,hide:x.hide,active:true,sort:3000+nid,note:x.note,email:typ==='P'?'e'+(1000+nid)+'@ecic.com.tw':''};recs.push(n);
-      if(!extOf(x.ext))exts.push({ext:x.ext,dept:x.dept,grade:'',note:''});eId=n.id;touch('廠務（範例）','新增 '+(typ==='U'?'單位':'人員')+'：'+n.name+'，分機 '+n.ext)}
+      if(!extOf(x.ext))exts.push({ext:x.ext,dept:x.dept,grade:'',note:''});eId=n.id;touch('廠務（範例）','新增 '+(typ==='U'?'單位':'人員')+'：'+n.name+'，分機 '+n.ext);
+      if(ibx){var it=INBOX.filter(function(i){return i.id===ibx})[0];if(it&&!it.done){it.done=true;inboxDone.push('已處理：'+it.label+' '+it.who+'，個人分機 '+n.ext);log('廠務（範例）','處理異動：'+it.label+' '+it.who+'（個人分機 '+n.ext+'）')}}}
     eDraft=null;toast('已儲存（範例）');drawEList();drawForm();renderNav();
   };
   if(r&&$('f-off'))$('f-off').onclick=function(){r.active=!r.active;touch('廠務（範例）',(r.active?'重新啟用：':'停用：')+r.name);drawEList();drawForm()};
