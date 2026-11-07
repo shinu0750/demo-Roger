@@ -51,6 +51,7 @@ h1{margin:0;font-size:32px;line-height:1.25}
 .warn{padding:12px 14px;background:#FBEFD5;border-radius:8px;font-size:14px;color:#5E3A00;line-height:1.5}
 .sheetbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 .sheetscroll{overflow:auto;padding-bottom:8px}
+.sheet.portrait{width:794px;height:1123px}
 .sheet{width:1123px;height:794px;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.18);margin:0 auto}
 .hide{display:none!important}
 .muted{font-size:13px;color:var(--mut)}
@@ -72,6 +73,8 @@ h1{margin:0;font-size:32px;line-height:1.25}
 .p2{padding:28px 36px;display:flex;flex-direction:column;gap:14px}
 .p2 .tt{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
 .p2 .g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.p2.portrait .g{grid-template-columns:repeat(3,minmax(0,1fr))}
+.p1.portrait{padding:24px 28px}
 .p2 .c{border:1.5px solid var(--acc);border-radius:8px;overflow:hidden}
 .p2 .c h3{margin:0;background:var(--acc);color:#fff;padding:6px 12px;font-size:14px}
 .p2 .c div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;height:28px;border-bottom:1px solid #E6EAE5;font-size:13px}
@@ -80,12 +83,11 @@ h1{margin:0;font-size:32px;line-height:1.25}
 .p2 .c .x{font-size:19px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
 .p2 .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 24px;background:#EEF5F2;border-radius:8px;padding:12px 18px;font-size:12px;line-height:1.5}
 @media print{
-  @page{size:A4 landscape;margin:0}
   body{background:#fff}
   .top,.demo,.noprint,.wrap>:not(.printview){display:none!important}
   .wrap{padding:0;max-width:none}
   .sheetscroll{overflow:visible;padding:0}
-  .sheet{box-shadow:none;margin:0;width:1123px;height:794px;transform-origin:top left;zoom:.95}
+  .sheet{box-shadow:none;margin:0;transform-origin:top left;zoom:.95}
 }
 .bell{background:#fff;border:1px solid #B8BFB8;border-radius:8px;height:40px;padding:0 14px;font-size:15px;color:var(--ink);cursor:pointer}
 .cnt{margin-left:8px;display:inline-block;min-width:22px;padding:0 6px;border-radius:999px;background:#B3261E;color:#fff;font-size:13px;font-weight:700;text-align:center;line-height:22px}
@@ -122,6 +124,7 @@ button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media print{.sheet{zoom:.95!important}}
 @media(max-width:700px){.wrap{padding:24px 16px}.top-in{padding:12px 16px}h1{font-size:26px}}
 </style>
+<style id="pg">@media print{@page{size:A4 landscape;margin:0}}</style>
 </head>
 <body>
 <div class="top"><div class="top-in">
@@ -238,13 +241,13 @@ button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 
 <!-- 列印版 1 -->
 <section class="wrap hide printview" id="v-p1">
-  <div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 1：沿用分機表</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽，也可用「列印」輸出成 PDF。</div></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div>
+  <div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 1：沿用分機表</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽，也可用「列印」輸出成 PDF。</div></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><div class="chips" role="group" aria-label="紙張方向"><button class="chip on" data-ori="l">橫式</button><button class="chip" data-ori="p">直式</button></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div></div>
   <div class="sheetscroll"><div class="sheet p1" id="p1"></div></div>
 </section>
 
 <!-- 列印版 2 -->
 <section class="wrap hide printview" id="v-p2">
-  <div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 2：新風格</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽，也可用「列印」輸出成 PDF。</div></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div>
+  <div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 2：新風格</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽，也可用「列印」輸出成 PDF。</div></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><div class="chips" role="group" aria-label="紙張方向"><button class="chip on" data-ori="l">橫式</button><button class="chip" data-ori="p">直式</button></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div></div>
   <div class="sheetscroll"><div class="sheet p2" id="p2"></div></div>
 </section>
 </main>
@@ -268,7 +271,7 @@ function fitSheets(){
   document.querySelectorAll('.sheetscroll').forEach(function(w){
     var s=w.firstElementChild,avail=w.clientWidth;
     if(!avail){return}
-    s.style.zoom=Math.min(1,avail/1123);
+    s.style.zoom=Math.min(1,avail/(s.classList.contains('portrait')?794:1123));
   });
 }
 window.addEventListener('resize',fitSheets);
@@ -520,17 +523,34 @@ var COLS=[
  [H('品保部'),R('劉子瑜　經理','501','A'),R('蕭家榮　副理','503','A'),H('品一課'),R('許峰睿　課長','510','B'),R('品一課辦公室','511','B'),H('品二課'),R('余國良　課長','530','B'),R('應用組','531','B'),H('環保部'),R('呂明哲　經理','701','A'),R('環保課','710','A'),R('環資課','720','A'),H('廠務部'),R('孫立文　經理','150','A'),R('總務課','151','A'),R('原料課','160','A'),H('實驗工場'),R('實驗工場','260','A'),R('實驗室','261','B'),R('連續製程辦公室','262','B'),H('安全衛生室'),R('丁文豪　副主任','402','A')],
  [H('總經理室'),R('總機','613','A'),R('秘書室','610','A'),R('資訊室','612','A'),H('會議室'),R('第一會議室','697','A'),R('第二會議室','698','A'),R('第三會議室','699','A'),H('技銷處五部'),R('金技課','161','A'),R('皮技課','170','A'),R('紙技課','180','A'),H('工程管理處'),R('戴志明　處長','801','A'),R('工程管理部','811','A'),R('智慧製造部','931','A'),H('其他'),R('e-learning','615','A'),R('餐廳','617','B'),R('倉庫','640','B')]
 ];
-$('p1').innerHTML='<div class="tt"><b>一廠各部門分機號碼表</b><span style="font-size:13px">修訂日期：2026 年 07 月 08 日</span></div><div class="grid">'+
- COLS.map(function(c){return '<div class="col"><div class="r h0"><div>部門／姓名</div><div>分機</div><div>線路</div></div>'+c.map(function(r){return r.h?'<div class="r h"><div>'+esc(r.n)+'</div><div></div><div></div></div>':'<div class="r"><div>'+esc(r.n)+'</div><div class="e">'+r.e+'</div><div>'+r.a+'</div></div>'}).join('')+'</div>'}).join('')+'</div>'+
- '<div class="foot"><div style="font-weight:700">專線：公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84　聽到忙線音後直撥分機號碼，由總機接聽，代轉分機。</div><div>台北公司 TEL (02)2706-6006　FAX (02)2708-1254　　永光一廠 TEL (03)386-8081　FAX (03)386-8048</div><div>永光二廠 TEL (03)483-8088　FAX (03)483-8008　　中部辦事處 TEL (04)2358-3378　FAX (04)2358-2378</div><div>永光三廠 TEL (03)483-7682　FAX (03)483-7683　　南部辦事處 TEL (06)215-2589　FAX (06)215-3639</div><div>永光四廠 TEL (03)473-7366　FAX (03)473-7909　　上海明德專線：先按 #80，再按 888，等響鈴聲結束後再按 66，由總機接聽，代轉分機。</div></div>';
+function drawP1(){$('p1').innerHTML='<div class="tt"><b>一廠各部門分機號碼表</b><span style="font-size:13px">修訂日期：2026 年 07 月 08 日</span></div><div class="grid">'+
+ colsFor().map(function(c){return '<div class="col"><div class="r h0"><div>部門／姓名</div><div>分機</div><div>線路</div></div>'+c.map(function(r){return r.h?'<div class="r h"><div>'+esc(r.n)+'</div><div></div><div></div></div>':'<div class="r"><div>'+esc(r.n)+'</div><div class="e">'+r.e+'</div><div>'+r.a+'</div></div>'}).join('')+'</div>'}).join('')+'</div>'+
+ '<div class="foot"><div style="font-weight:700">專線：公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84　聽到忙線音後直撥分機號碼，由總機接聽，代轉分機。</div><div>台北公司 TEL (02)2706-6006　FAX (02)2708-1254　　永光一廠 TEL (03)386-8081　FAX (03)386-8048</div><div>永光二廠 TEL (03)483-8088　FAX (03)483-8008　　中部辦事處 TEL (04)2358-3378　FAX (04)2358-2378</div><div>永光三廠 TEL (03)483-7682　FAX (03)483-7683　　南部辦事處 TEL (06)215-2589　FAX (06)215-3639</div><div>永光四廠 TEL (03)473-7366　FAX (03)473-7909　　上海明德專線：先按 #80，再按 888，等響鈴聲結束後再按 66，由總機接聽，代轉分機。</div></div>';}
 
 var P=function(n,e){return {n:n,e:e,u:0}},U=function(n,e){return {n:n,e:e,u:1}};
 var CARDS=[['廠長室',[P('王小明　廠長','101'),P('李美華　特助','102'),P('張志偉　副理','104')]],['人事室',[P('林雅婷　副理','110'),P('陳建宏','112'),U('守衛室','111')]],['生產一部',[P('黃淑芬　經理','201'),P('吳家豪　副理','202'),P('蔡佳穎　合一課課長','210'),P('周柏翰　合二課課長','220')]],['生產二部',[P('楊雅筑　經理','301'),P('鄭宇軒　副理','302'),P('噴一課','311'),P('液品課','321')]],['品保部',[P('劉子瑜　經理','501'),P('蕭家榮　副理','503'),P('品一課　許峰睿','510'),P('品二課　余國良','530')]],['環保部',[P('呂明哲　經理','701'),P('環保課','710'),P('環資課','720')]],['廠務部',[P('孫立文　經理','150'),P('總務課','151'),P('原料課','160')]],['實驗工場',[U('實驗工場','260'),U('實驗室','261'),U('連續製程辦公室','262')]],['技銷處五部',[P('金技課','161'),P('皮技課','170'),P('紙技課','180')]],['工程管理處',[P('戴志明　處長','801'),P('工程管理部','811'),P('智慧製造部','931')]],['會議室',[U('第一會議室','697'),U('第二會議室','698'),U('第三會議室','699')]],['其他',[U('L 棟無塵室','252'),U('e-learning','615'),U('餐廳','617')]]];
-$('p2').innerHTML='<div class="tt"><div style="display:flex;align-items:baseline;gap:14px"><span style="font-size:34px;font-weight:900;color:var(--acc);line-height:1">一廠</span><span style="font-size:22px;font-weight:700">分機表</span></div><div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#3C4640"><span style="display:flex;align-items:center;gap:6px"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block"></span>會議室、守衛室、公用電話等單位</span><span>修訂：2026-07-08</span></div></div><div class="g">'+
+function drawP2(){$('p2').innerHTML='<div class="tt"><div style="display:flex;align-items:baseline;gap:14px"><span style="font-size:34px;font-weight:900;color:var(--acc);line-height:1">一廠</span><span style="font-size:22px;font-weight:700">分機表</span></div><div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#3C4640"><span style="display:flex;align-items:center;gap:6px"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block"></span>會議室、守衛室、公用電話等單位</span><span>修訂：2026-07-08</span></div></div><div class="g">'+
  CARDS.map(function(c){return '<div class="c"><h3>'+c[0]+'</h3>'+c[1].map(function(r){return '<div><span class="n"><span class="dot" style="background:'+(r.u?'var(--amber)':'transparent')+'"></span>'+esc(r.n)+'</span><span class="x">'+r.e+'</span></div>'}).join('')+'</div>'}).join('')+'</div>'+
- '<div class="foot"><b style="color:var(--acc-d)">跨廠撥號</b><span>公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84，聽到忙線音後直撥分機。</span><span>上海明德：#80 → 888 → 響鈴結束後按 66，由總機代轉。</span><span style="width:100%">一廠 (03)386-8081　二廠 (03)483-8088　三廠 (03)483-7682　四廠 (03)473-7366　台北 (02)2706-6006　中部 (04)2358-3378　南部 (06)215-2589</span></div>';
+ '<div class="foot"><b style="color:var(--acc-d)">跨廠撥號</b><span>公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84，聽到忙線音後直撥分機。</span><span>上海明德：#80 → 888 → 響鈴結束後按 66，由總機代轉。</span><span style="width:100%">一廠 (03)386-8081　二廠 (03)483-8088　三廠 (03)483-7682　四廠 (03)473-7366　台北 (02)2706-6006　中部 (04)2358-3378　南部 (06)215-2589</span></div>';}
 
-renderSearch();renderEdit();fillForm();renderNotes();renderDept();
+/* 直式／橫式 */
+var ori='l';
+function colsFor(){
+  if(ori==='l')return COLS;
+  var all=[].concat.apply([],COLS),half=Math.ceil(all.length/2),a=[],b=[],i=0;
+  for(;i<all.length;i++){if(i>=half&&all[i].h)break;a.push(all[i])}
+  for(;i<all.length;i++)b.push(all[i]);
+  return [a,b];
+}
+function setOri(o){
+  ori=o;
+  [].forEach.call(document.querySelectorAll('.sheet'),function(s){s.classList.toggle('portrait',o==='p')});
+  [].forEach.call(document.querySelectorAll('[data-ori]'),function(b){b.classList.toggle('on',b.getAttribute('data-ori')===o)});
+  $('pg').textContent='@media print{@page{size:A4 '+(o==='p'?'portrait':'landscape')+';margin:0}}';
+  drawP1();drawP2();fitSheets();
+}
+[].forEach.call(document.querySelectorAll('[data-ori]'),function(b){b.onclick=function(){setOri(b.getAttribute('data-ori'))}});
+renderSearch();renderEdit();fillForm();renderNotes();renderDept();drawP1();drawP2();
 setTimeout(function(){if(NOTES.length)showToast('Domino 有 '+NOTES.length+' 筆人員異動，請維護人員確認分機。')},700);
 var h=(location.hash||'').slice(1);go(VIEWS.some(function(x){return x[0]===h})?h:'search');
 })();
