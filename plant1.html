@@ -89,6 +89,9 @@ h2{margin:0;font-size:18px}
 .p1 .r.h1{background:#FFFF00;display:block;text-align:center;letter-spacing:.05em}
 .p1 .r.h2{background:#EDEDED;display:block}
 .p1 .r.h2.c{background:#CCFFFF}.p1 .r.h2.y{background:#FFFF00}
+.p1 .r.m{height:auto;line-height:16px}
+.p1 .r.m>div[style*="grid-column:1"]{border-left:0}
+.p1 .r.m .mx{display:flex;align-items:center;justify-content:center;border-left:1px solid #000}
 .p1 .r.gap{background:repeating-linear-gradient(45deg,#fff,#fff 4px,#f3f3f3 4px,#f3f3f3 8px)}
 .p1 .foot{margin-top:auto;border:1px solid #000;padding:5px 10px;font-size:10.5px;line-height:1.45;font-weight:400}
 .p2{padding:22px 26px;display:flex;flex-direction:column;gap:10px;--rh:18px;--f:11px}
@@ -249,13 +252,26 @@ function layout(){
   return res;
 }
 function fmtDate(){return '2026年11月08日'}
+function rowsHtml(rows){
+  var h='',i=0;
+  while(i<rows.length){
+    var r=rows[i];
+    if(r.k==='h1'){h+='<div class="r h1">'+esc(r.text)+'</div>';i++;continue}
+    if(r.k==='h2'){h+='<div class="r h2 '+(r.fill||'')+'">'+esc(r.text)+'</div>';i++;continue}
+    var j=i+1;while(j<rows.length&&rows[j].blank)j++;var n=j-i;
+    if(n===1){h+='<div class="r"><div>'+esc(r.text)+'</div><div>'+r.ext+'</div><div>'+esc(gradeOf(r.ext))+'</div></div>';i++;continue}
+    // 相鄰的列用同一支分機：分機欄合併成一格（和貼牆表的合併儲存格一樣）
+    h+='<div class="r m" style="grid-template-rows:repeat('+n+',17px)">';
+    for(var k=i;k<j;k++){var last=k===j-1,bb=last?'':'border-bottom:1px solid #000;';
+      h+='<div style="grid-column:1;grid-row:'+(k-i+1)+';'+bb+'">'+esc(rows[k].text)+'</div><div style="grid-column:3;grid-row:'+(k-i+1)+';'+bb+'">'+esc(gradeOf(rows[k].ext))+'</div>'}
+    h+='<div class="mx" style="grid-column:2;grid-row:1 / span '+n+'">'+r.ext+'</div></div>';
+    i=j;
+  }
+  return h;
+}
 function sheet1(){
   var L=layout(),h='<div class="sheet portrait p1"><div class="tt">'+esc(PLANT.name)+'各單位分機號碼表<small>修訂日期：'+fmtDate()+'</small></div><div class="grid">';
-  L.cols.forEach(function(c){h+='<div class="col">';c.forEach(function(b){b.rows.forEach(function(r){
-    if(r.k==='h1')h+='<div class="r h1">'+esc(r.text)+'</div>';
-    else if(r.k==='h2')h+='<div class="r h2 '+(r.fill||'')+'">'+esc(r.text)+'</div>';
-    else h+='<div class="r"><div>'+esc(r.text)+'</div><div>'+(r.blank?'':r.ext)+'</div><div>'+(r.blank?'':esc(gradeOf(r.ext)))+'</div></div>';
-  })});h+='</div>'});
+  L.cols.forEach(function(c){h+='<div class="col">';c.forEach(function(b){h+=rowsHtml(b.rows)});h+='</div>'});
   h+='</div><div class="foot">'+PLANT.foot.map(function(x){return '<div>'+esc(x)+'</div>'}).join('')+'</div></div>';
   return h;
 }
