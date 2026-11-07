@@ -3,797 +3,605 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>分機通訊錄（一廠實資料）</title>
+<title>分機通訊錄（一廠範例）</title>
 <style>
-:root{--bg:#F5F6F3;--ink:#1D2421;--mut:#5B655F;--line:#DCE0DB;--acc:#0F6B5C;--acc-d:#0A4A40;--amber:#E0A526}
+:root{--bg:#F5F6F3;--ink:#1D2421;--mut:#5B655F;--line:#DCE0DB;--acc:#0F6B5C;--acc-d:#0A4A40;--warn-bg:#FBEFD5;--warn-ink:#5E3A00}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif}
-button,input,select{font-family:inherit}
-button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #7FB8AB;outline-offset:2px}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7FB8AB;outline-offset:2px}
 .top{background:#fff;border-bottom:1px solid var(--line)}
-.top-in{max-width:1240px;margin:0 auto;padding:14px 32px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between}
+.top-in{max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
 .brand{font-size:20px;font-weight:700;color:var(--acc)}
-.nav{display:flex;flex-wrap:wrap;gap:4px 20px}
+.nav{display:flex;flex-wrap:wrap;gap:2px 18px}
 .nav button{background:none;border:0;padding:6px 2px;font-size:15px;color:var(--ink);cursor:pointer;border-bottom:3px solid transparent}
 .nav button.on{font-weight:700;border-bottom-color:var(--acc)}
-.demo{background:#FBEFD5;color:#5E3A00;font-size:13px;text-align:center;padding:6px 12px}
-.wrap{max-width:1240px;margin:0 auto;padding:36px 32px;display:flex;flex-direction:column;gap:22px}
-h1{margin:0;font-size:32px;line-height:1.25}
-.sub{font-size:15px;color:var(--mut)}
+.cnt{margin-left:6px;display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:#B3261E;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:20px}
+.demo{background:var(--warn-bg);color:var(--warn-ink);font-size:13px;text-align:center;padding:6px 12px}
+.wrap{max-width:1280px;margin:0 auto;padding:32px;display:flex;flex-direction:column;gap:20px}
+h1{margin:0;font-size:30px;line-height:1.25}
+h2{margin:0;font-size:18px}
+.sub{font-size:15px;color:var(--mut);margin-top:4px}
+.muted{font-size:13px;color:var(--mut)}
 .box{background:#fff;border:1px solid var(--line);border-radius:12px}
 .scroll{overflow-x:auto}
-.row{display:grid;gap:14px;padding:12px 22px;border-bottom:1px solid #ECEFEB;font-size:15px;align-items:center}
+.row{display:grid;gap:12px;padding:10px 18px;border-bottom:1px solid #ECEFEB;font-size:15px;align-items:center}
 .row.head{background:#EEF1ED;font-size:13px;font-weight:700;color:#3C4640;border-radius:12px 12px 0 0}
+.row.sel{background:#EEF5F2}
+.row.off{opacity:.55}
 .ext{font-size:18px;font-weight:700;color:var(--acc);font-variant-numeric:tabular-nums}
-.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;background:#E3F0EC;color:var(--acc-d)}
-.badge.u{background:#FBEFD5;color:#7A4B00}
+.badge{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;background:#E3F0EC;color:var(--acc-d);white-space:nowrap}
+.badge.u{background:#FBEFD5;color:#7A4B00}.badge.g{background:#ECEFEB;color:#3C4640}.badge.r{background:#F6E2DF;color:#8A2A20}.badge.b{background:#E4ECFA;color:#1F3F7A}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{height:40px;padding:0 16px;font-size:15px;border-radius:8px;cursor:pointer;background:#fff;color:var(--ink);border:1px solid #B8BFB8}
+.chip{height:38px;padding:0 15px;font-size:14px;border-radius:8px;cursor:pointer;background:#fff;color:var(--ink);border:1px solid #B8BFB8}
 .chip.on{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
-.chip small{margin-left:8px;opacity:.8}
-.in{width:100%;height:44px;padding:0 12px;font-size:16px;border:1px solid #B8BFB8;border-radius:8px;background:#fff;color:var(--ink)}
-.btn{height:44px;padding:0 20px;font-size:15px;font-weight:700;color:#fff;background:var(--acc);border:0;border-radius:8px;cursor:pointer}
+.in{width:100%;height:42px;padding:0 12px;font-size:15px;border:1px solid #B8BFB8;border-radius:8px;background:#fff;color:var(--ink)}
+.btn{height:42px;padding:0 18px;font-size:15px;font-weight:700;color:#fff;background:var(--acc);border:0;border-radius:8px;cursor:pointer}
 .btn.o{background:#fff;color:var(--acc);border:2px solid var(--acc)}
-.btn.s{height:36px;padding:0 14px;font-size:14px;font-weight:400;color:var(--ink);background:#fff;border:1px solid #B8BFB8;border-radius:6px}
+.btn.s{height:34px;padding:0 12px;font-size:13px;font-weight:400;color:var(--ink);background:#fff;border:1px solid #B8BFB8;border-radius:6px}
 .btn.s.d{color:#9B2C1F;border-color:#D9A9A2}
-.cols{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
-.panel{padding:24px;display:flex;flex-direction:column;gap:16px}
-.fld{display:flex;flex-direction:column;gap:6px}
+.btn[disabled]{opacity:.4;cursor:default}
+.cols{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.panel{padding:20px;display:flex;flex-direction:column;gap:14px}
+.fld{display:flex;flex-direction:column;gap:5px}
 .fld label{font-size:14px;font-weight:500}
-.sug{display:flex;flex-direction:column;border:1px solid #B8BFB8;border-radius:8px;overflow:hidden}
-.sug button{text-align:left;padding:10px 12px;font-size:14px;color:var(--ink);background:#fff;border:0;border-bottom:1px solid #ECEFEB;cursor:pointer}
-.sug button:hover{background:#EEF5F2}
-.cards{display:flex;flex-wrap:wrap;gap:20px}
-.card{flex:1 1 300px;padding:24px;display:flex;flex-direction:column;gap:14px}
-.card .k{font-size:13px;font-weight:700;color:var(--acc)}
-.card .t{font-size:20px;font-weight:700}
-.card p{margin:0;font-size:15px;color:#3C4640;line-height:1.6}
-.warn{padding:12px 14px;background:#FBEFD5;border-radius:8px;font-size:14px;color:#5E3A00;line-height:1.5}
-.sheetbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-.sheetscroll{overflow:auto;padding-bottom:8px}
-.sheet.portrait{width:794px;height:1123px}
-.sheet{width:1123px;height:794px;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.18);margin:0 auto}
+.ck{display:flex;gap:8px;align-items:center;font-size:14px}
+.ck input{width:18px;height:18px}
+.warn{padding:10px 12px;background:var(--warn-bg);border-radius:8px;font-size:14px;color:var(--warn-ink);line-height:1.5}
+.ok{padding:10px 12px;background:#E3F0EC;border-radius:8px;font-size:14px;color:var(--acc-d)}
 .hide{display:none!important}
-.muted{font-size:13px;color:var(--mut)}
-/* 列印版 1 */
-.p1{padding:32px 40px;display:flex;flex-direction:column;gap:10px;color:#000}
-.p1 .tt{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:6px}
-.p1 .tt b{font-size:24px}
-.p1 .grid{display:flex;border:1px solid #000}
-.p1 .col{flex:1;min-width:0}
-.p1 .col+.col{border-left:2px solid #000}
-.p1 .r{display:grid;grid-template-columns:1fr 64px 40px;border-bottom:1px solid #000;font-size:12px}
-.p1 .r>div{padding:2px 6px}
-.p1 .r>div+div{border-left:1px solid #000;text-align:center}
-.p1 .r.h0{background:#D9D9D9;font-weight:700}
-.p1 .r.h{background:#F0F0F0;font-weight:700;letter-spacing:.3em}
-.p1 .r .e{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
-.p1 .foot{font-size:12px;line-height:1.6;border:1px solid #000;padding:8px 12px}
-/* 列印版 2 */
-.p2{padding:28px 36px;display:flex;flex-direction:column;gap:14px}
-.p2 .tt{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
-.p2 .g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.p2.portrait .g{grid-template-columns:repeat(3,minmax(0,1fr))}
-.p1.portrait{padding:24px 28px}
-.p2 .c{border:1.5px solid var(--acc);border-radius:8px;overflow:hidden}
-.p2 .c h3{margin:0;background:var(--acc);color:#fff;padding:6px 12px;font-size:14px}
-.p2 .c div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;height:28px;border-bottom:1px solid #E6EAE5;font-size:13px}
-.p2 .c .n{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.p2 .c .dot{width:8px;height:8px;border-radius:50%;flex:none}
-.p2 .c .x{font-size:19px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
-.p2 .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 24px;background:#EEF5F2;border-radius:8px;padding:12px 18px;font-size:12px;line-height:1.5}
-@media print{
-  body{background:#fff}
-  .top,.demo,.noprint,.wrap>:not(.printview){display:none!important}
-  .wrap{padding:0;max-width:none}
-  .sheetscroll{overflow:visible;padding:0}
-  .sheet{box-shadow:none;margin:0;transform-origin:top left;zoom:.95}
-}
-.bell{background:#fff;border:1px solid #B8BFB8;border-radius:8px;height:40px;padding:0 14px;font-size:15px;color:var(--ink);cursor:pointer}
-.cnt{margin-left:8px;display:inline-block;min-width:22px;padding:0 6px;border-radius:999px;background:#B3261E;color:#fff;font-size:13px;font-weight:700;text-align:center;line-height:22px}
-.toast{position:fixed;right:20px;bottom:20px;max-width:400px;background:#1D2421;color:#fff;border-radius:12px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3);z-index:20;font-size:15px;line-height:1.5}
-.toast button{height:40px;padding:0 16px;font-size:14px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
-.toast .go{background:#fff;color:var(--ink)}.toast .x{background:transparent;color:#D5DBD6;border:1px solid #5B655F;font-weight:400}
-.note{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#FAFBF9}
-.note .tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;margin-right:10px}
-.tag.new{background:#E3F0EC;color:var(--acc-d)}.tag.mv{background:#E4ECFA;color:#1F3F7A}.tag.out{background:#F6E2DF;color:#8A2A20}
-.note .det{font-size:14px;color:#3C4640;margin-top:4px}
+.sug{display:flex;flex-direction:column;border:1px solid #B8BFB8;border-radius:8px;overflow:hidden}
+.sug button{text-align:left;padding:9px 12px;font-size:14px;background:#fff;border:0;border-bottom:1px solid #ECEFEB;cursor:pointer}
+.sug button:hover{background:#EEF5F2}
+.who{background:none;border:0;padding:4px 0;font:inherit;color:var(--acc-d);text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left}
+.cards{display:flex;flex-wrap:wrap;gap:18px}
+.card{flex:1 1 300px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.card .k{font-size:13px;font-weight:700;color:var(--acc)}
+.card .t{font-size:19px;font-weight:700}
+.card p{margin:0;font-size:14px;color:#3C4640;line-height:1.6}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .ccard{border:1.5px solid var(--acc);border-radius:10px;overflow:hidden;background:#fff}
-.ccard h3{margin:0;background:var(--acc);color:#fff;padding:8px 14px;font-size:15px}
-.ccard>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;min-height:44px;border-bottom:1px solid #E6EAE5;font-size:15px}
-.ccard .n{display:flex;align-items:center;gap:8px;min-width:0}
-.ccard .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.ccard h3{margin:0;background:var(--acc);color:#fff;padding:7px 14px;font-size:15px}
+.ccard h4{margin:0;background:#EEF5F2;color:var(--acc-d);padding:4px 14px;font-size:13px}
+.ccard>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 14px;min-height:40px;border-bottom:1px solid #E6EAE5;font-size:15px}
 .ccard small{display:block;font-size:12px;color:var(--mut)}
-.ccard .x{font-size:22px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
-.who{background:none;border:0;padding:6px 0;margin:-6px 0;font:inherit;font-weight:inherit;color:var(--acc-d);text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left}
-@media print{.toast{display:none!important}.who{text-decoration:none;color:inherit}}
-html{-webkit-text-size-adjust:100%}
-button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-@media(pointer:coarse),(max-width:1100px){
-  .nav button{padding:12px 4px;font-size:16px}
-  .chip{height:48px;padding:0 20px;font-size:16px}
-  .btn{height:48px}
-  .btn.s{height:44px;padding:0 18px;font-size:15px}
-  .in{height:48px}
-  .row{padding:14px 20px;font-size:16px}
-  .ext{font-size:20px}
-  .sug button{padding:14px 14px;font-size:15px}
-  .wrap{padding:28px 24px}
+.ccard .x{font-size:21px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
+.note{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#FAFBF9}
+.note .det{font-size:14px;color:#3C4640;margin-top:4px;line-height:1.5}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;margin-right:8px}
+.tag.new{background:#E3F0EC;color:var(--acc-d)}.tag.mv{background:#E4ECFA;color:#1F3F7A}.tag.out{background:#F6E2DF;color:#8A2A20}.tag.up{background:#EFE6F7;color:#4B2A7A}
+.toast{position:fixed;right:20px;bottom:20px;max-width:380px;background:#1D2421;color:#fff;border-radius:12px;padding:12px 16px;z-index:20;font-size:14px;line-height:1.5;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+/* 列印預覽 */
+.sheetscroll{overflow:auto;padding-bottom:8px}
+.sheet{background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.18);margin:0 auto}
+.sheet.portrait{width:794px;height:1123px}.sheet.landscape{width:1123px;height:794px}
+.p1{padding:22px 26px;display:flex;flex-direction:column;gap:6px;color:#000;font-family:"標楷體","DFKai-SB","KaiTi","Noto Serif TC",serif;font-weight:700}
+.p1 .tt{text-align:center;font-size:20px;line-height:1.3}
+.p1 .tt small{font-size:12px;margin-left:14px;font-weight:400}
+.p1 .grid{display:flex;border:1px solid #000;align-items:flex-start}
+.p1 .col{flex:1;min-width:0}
+.p1 .col+.col{border-left:2px solid #000}
+.p1 .r{display:grid;grid-template-columns:1fr 46px 34px;height:17px;line-height:16px;border-bottom:1px solid #000;font-size:12px;text-align:center}
+.p1 .r>div{border-left:1px solid #000;overflow:hidden;white-space:nowrap;padding:0 2px}
+.p1 .r>div:first-child{border-left:0}
+.p1 .r.h1{background:#FFFF00;display:block;text-align:center;letter-spacing:.05em}
+.p1 .r.h2{background:#EDEDED;display:block}
+.p1 .r.h2.c{background:#CCFFFF}.p1 .r.h2.y{background:#FFFF00}
+.p1 .r.gap{background:repeating-linear-gradient(45deg,#fff,#fff 4px,#f3f3f3 4px,#f3f3f3 8px)}
+.p1 .foot{margin-top:auto;border:1px solid #000;padding:5px 10px;font-size:10.5px;line-height:1.45;font-weight:400}
+.p2{padding:24px 30px;display:flex;flex-direction:column;gap:12px}
+.p2 .tt{display:flex;align-items:flex-end;justify-content:space-between}
+.p2 .g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
+.p2.portrait .g{grid-template-columns:repeat(3,minmax(0,1fr))}
+.p2 .c{border:1.5px solid var(--acc);border-radius:8px;overflow:hidden;margin-bottom:0}
+.p2 .c h3{margin:0;background:var(--acc);color:#fff;padding:4px 10px;font-size:13px}
+.p2 .c h5{margin:0;background:#EEF5F2;color:var(--acc-d);padding:2px 10px;font-size:11px}
+.p2 .c div.i{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 10px;height:20px;border-bottom:1px solid #E6EAE5;font-size:11.5px}
+.p2 .c .x{font-size:15px;font-weight:900;color:var(--acc)}
+.p2 .foot{margin-top:auto;background:#EEF5F2;border-radius:8px;padding:8px 14px;font-size:10px;line-height:1.5}
+.sheetbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+@media print{
+ body{background:#fff}.top,.demo,.noprint,.toast{display:none!important}
+ .wrap{padding:0;max-width:none}.wrap>:not(.printview){display:none!important}
+ .sheet{box-shadow:none;margin:0}
 }
-@media print{.sheet{zoom:.95!important}}
-@media(max-width:700px){.wrap{padding:24px 16px}.top-in{padding:12px 16px}h1{font-size:26px}}
+@media(max-width:700px){.wrap{padding:20px 14px}.top-in{padding:10px 14px}h1{font-size:24px}}
 </style>
-<style>
-.p1,.p2{padding:20px 28px}
-.p1 .tt b{font-size:20px}
-.p1 .r{font-size:var(--f,11px)}
-.p1 .r>div{padding:0 4px;line-height:calc(var(--rh,15px) - 1px);white-space:nowrap;overflow:hidden}
-.p1 .r .e{font-size:var(--f,11px)}
-.p1 .r{grid-template-columns:1fr 34px 20px}
-.p1 .r.h{letter-spacing:0}
-.p1 .foot{margin-top:auto}
-.p1 .grid{align-items:flex-start}
-.p1 .foot{column-count:2;column-gap:20px;font-size:9px;line-height:1.35;padding:4px 8px}
-.p1 .foot>div{break-inside:avoid}
-.p2{gap:12px}
-.p2 .g{display:flex;gap:10px}
-.p2 .pc{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
-.p2 .c h3{height:var(--hh,24px);box-sizing:border-box;padding:0 8px;display:flex;align-items:center;font-size:calc(var(--f,11px) + 2px)}
-.p2 .c div{height:var(--rh,15px);font-size:var(--f,11px);padding:0 8px}
-.p2 .c .x{font-size:calc(var(--f,11px) + 4px)}
-.p2 .c .sh{background:#EEF5F2;font-weight:700;color:var(--acc-d)}
-.p2 .c i{font-style:normal;color:#5B655F;margin-left:5px;font-size:.85em}
-.p2 .foot{font-size:10px;padding:6px 12px;gap:2px 16px;line-height:1.4}
-@media screen{#p1 .sheet+.sheet,#p2 .sheet+.sheet{margin-top:20px}}
-@media print{.sheet{break-after:page}#p1 .sheet:last-child,#p2 .sheet:last-child{break-after:auto}}
-</style>
-<style id="pg">@media print{@page{size:A4 landscape;margin:0}}</style>
 </head>
 <body>
 <div class="top"><div class="top-in">
   <div class="brand">分機通訊錄</div>
-  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px">
-    <div class="nav" id="nav" role="tablist"></div>
-    <button class="bell" id="bell" aria-label="Domino 人員異動通知">異動通知<span class="cnt" id="bell-n">3</span></button>
-  </div>
+  <div class="nav" id="nav" role="tablist"></div>
 </div></div>
-<div class="demo">一廠現有分機表（2026-11-07 匯入）。按鈕功能僅示意，不會真的儲存。</div>
-<div class="toast hide" id="toast" role="status"><span id="toast-t"></span><button class="go" id="toast-go">查看</button><button class="x" id="toast-x">關閉</button></div>
-
-<main>
-<!-- 查詢 -->
-<section class="wrap" id="v-search">
-  <div><h1>找分機</h1><div class="sub">輸入姓名、部門或分機號碼；也可以搜尋會議室、守衛室、公用電話等單位。</div><div class="muted" style="margin-top:6px">你的權限：一廠廠務。一廠的姓名旁有 ✎，點下去就直接進入編輯。其他廠只能查詢。</div></div>
-  <input class="in" style="max-width:560px;height:48px" type="search" id="q" aria-label="搜尋姓名、部門或分機" placeholder="例如：品保、守衛室、211">
-  <div style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between">
-    <div class="chips" id="tabs"></div>
-    <div class="chips" role="group" aria-label="顯示方式"><button class="chip on" id="m-list">清單</button><button class="chip" id="m-card">分機表</button></div>
-  </div>
-  <div class="box scroll" id="list-box"><div style="min-width:760px" id="list" role="table" aria-label="分機清單"></div></div>
-  <div class="hide" id="card-box"></div>
-  <div class="muted">分機資料由各廠廠務維護，最後更新：2026-11-07。撥打方式：先按廠別代碼（一廠 #81），聽到忙線音後直撥分機。</div>
-</section>
-
-<!-- 維護 -->
-<section class="wrap hide" id="v-edit">
-  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between">
-    <div><h1>維護一廠分機</h1><div class="sub">你的權限：一廠廠務，只能編輯一廠；其他廠可以查詢但不能修改。</div></div>
-    <button class="btn" id="e-new">＋ 新增分機</button>
-  </div>
-  <div class="box panel" id="notes-box" style="gap:12px">
-    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline">
-      <div style="font-size:18px;font-weight:700">Domino 人員異動 <span class="muted" id="notes-count"></span></div>
-      <div class="muted">目前沒有新的 Domino 異動</div>
-    </div>
-    <div id="notes" style="display:flex;flex-direction:column;gap:10px"></div>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
-    <input class="in" style="flex:1 1 280px;max-width:420px" type="search" id="e-q" aria-label="搜尋姓名、部門或分機" placeholder="搜尋姓名、部門、分機、Email">
-    <select class="in" style="width:auto;min-width:160px" id="e-dept" aria-label="依部門篩選"></select>
-    <span class="muted" id="e-count"></span>
-  </div>
-  <div class="cols">
-    <div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:720px" id="e-list" role="table" aria-label="一廠分機清單"></div></div>
-    <div class="box panel" style="flex:1 1 360px;min-width:0">
-      <div style="font-size:18px;font-weight:700" id="f-title-h">新增分機</div>
-      <div class="chips"><button class="chip" id="t-p">人員</button><button class="chip" id="t-u">單位／地點</button></div>
-      <div class="fld"><label for="f-name" id="f-name-l">姓名（從 Domino 選）</label>
-        <input class="in" id="f-name" autocomplete="off">
-        <div id="f-sug"></div>
-        <div id="f-linked" class="muted" style="color:var(--acc-d)"></div></div>
-      <div class="fld"><label for="f-dept">部門</label><input class="in" id="f-dept"></div>
-      <div style="display:flex;gap:12px">
-        <div class="fld" style="flex:1"><label for="f-title">職稱</label><input class="in" id="f-title"></div>
-        <div class="fld" style="flex:1"><label for="f-ext">分機</label><input class="in" id="f-ext" inputmode="numeric"></div>
-      </div>
-      <div class="fld"><label for="f-ab">線路（A／B）</label>
-        <select class="in" id="f-ab"><option value="">未填</option><option value="A">A</option><option value="B">B</option></select>
-        <div class="muted">A／B 的意義還需向廠務確認，先保留為選填。</div></div>
-      <div class="muted">同一個分機可以有多人使用，不會被擋下。</div>
-      <div style="display:flex;gap:12px"><button class="btn" style="flex:1" id="f-save">儲存</button><button class="btn o" style="border-width:1px;border-color:#B8BFB8;color:var(--ink)" id="f-clear">清除</button></div>
-      <div class="muted">儲存後，下次匯出的 EIP 檔會包含這筆變更。</div>
-    </div>
-  </div>
-</section>
-
-<!-- 部門 -->
-<section class="wrap hide" id="v-dept">
-  <div><h1>部門表（一廠）</h1><div class="sub">決定分機表上怎麼分區、怎麼排序，由一廠廠務維護。這是分機表的顯示分組，不是人事的正式組織架構。</div></div>
-  <div class="box panel hide" id="d-move" style="gap:12px;border-color:var(--acc)"></div>
-  <div class="cols">
-    <div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:560px" id="d-list" role="table" aria-label="一廠部門表"></div></div>
-    <div class="box panel" style="flex:1 1 320px;min-width:0">
-      <div style="font-size:18px;font-weight:700">新增部門</div>
-      <div class="fld"><label for="d-par">上層部門</label><select class="in" id="d-par"></select></div>
-      <div class="fld"><label for="d-name">部門名稱</label><input class="in" id="d-name" placeholder="例如：製五組"></div>
-      <button class="btn" id="d-add">新增</button>
-      <div class="muted">新增在同層最後面，再用 ↑ ↓ 調整順序。列印版會依這裡的順序排列。</div>
-      <div class="muted">改名只要改一次，底下所有人員自動跟著變。停用前，部門下不能還有人員。</div>
-    </div>
-  </div>
-  <div class="box panel" style="gap:12px">
-    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline">
-      <div style="font-size:18px;font-weight:700">Domino 部門名稱對照 <span class="muted" id="d-map-n"></span></div>
-      <div class="muted">Domino 只有部門名稱，沒有階層。對不上的名稱要由廠務指定放哪裡。</div>
-    </div>
-    <div id="d-map" style="display:flex;flex-direction:column;gap:8px"></div>
-  </div>
-</section>
-
-<!-- 匯出 -->
-<section class="wrap hide" id="v-export">
-  <div><h1>匯出 Excel</h1><div class="sub">各廠分開匯出。檔案由系統即時整理，下載到的一定是目前網站上的最新資料。</div></div>
-  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
-    <label for="plant" style="font-size:15px;font-weight:500">廠區</label>
-    <select id="plant" class="in" style="width:auto"><option>一廠</option><option>二廠</option><option>三廠</option><option>四廠</option><option>台北</option></select>
-    <div class="muted" style="font-size:14px">一廠目前 175 筆　·　最後修改 2026-11-07 10:12</div>
-  </div>
-  <div class="cards">
-    <div class="box card"><div class="k">給入口網站</div><div class="t">EIP 上傳檔</div>
-      <p>欄位：廠區／分公司、部門、姓名、職稱、市話、分機、簡碼、備註。部門以「＼」分層，和現在上傳的格式相同。</p>
-      <div class="warn">上傳到入口網站會<strong>覆蓋整個廠區</strong>。請確認網站上的資料是最新的再匯出。</div>
-      <div style="flex:1"></div><button class="btn" data-demo>下載 .xlsx</button></div>
-    <div class="box card"><div class="k">列印</div><div class="t">列印版 1：沿用分機表</div>
-      <p>維持現在貼牆的三欄版面，檔尾帶各廠總機、傳真、辦事處與撥號規則。大家習慣的樣子不變。</p>
-      <div style="flex:1"></div><button class="btn s" style="width:fit-content" data-go="p1">看預覽</button><button class="btn o" data-demo>下載 .xlsx</button></div>
-    <div class="box card"><div class="k">列印</div><div class="t">列印版 2：新風格</div>
-      <p>依部門分區塊，分機放大加粗，單位與地點另外標示，遠處也看得清楚。內容與版本 1 相同。</p>
-      <div style="flex:1"></div><button class="btn s" style="width:fit-content" data-go="p2">看預覽</button><button class="btn o" data-demo>下載 .xlsx</button></div>
-  </div>
-</section>
-
-<!-- 列印版 1 -->
-<section class="wrap hide printview" id="v-p1">
-  <div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 1：沿用分機表</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽，也可用「列印」輸出成 PDF。</div></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><div class="chips" role="group" aria-label="紙張方向"><button class="chip on" data-ori="l">橫式</button><button class="chip" data-ori="p">直式</button></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div></div>
-  <div class="sheetscroll"><div id="p1"></div></div>
-</section>
-
-<!-- 列印版 2 -->
-<section class="wrap hide printview" id="v-p2">
-  <div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 2：新風格</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽，也可用「列印」輸出成 PDF。</div></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><div class="chips" role="group" aria-label="紙張方向"><button class="chip on" data-ori="l">橫式</button><button class="chip" data-ori="p">直式</button></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div></div>
-  <div class="sheetscroll"><div id="p2"></div></div>
-</section>
-</main>
-
+<div class="demo">範例畫面（一廠）：資料取自一廠貼牆分機表（修訂日期 2026-07-08）；標「範例」的人員為虛構，只用來示範異動。按鈕只在這個畫面內有效，不會真的儲存。</div>
+<div class="toast hide" id="toast" role="status"></div>
+<main id="main"></main>
+<script>
+var DATA={"D": [["gm", "總經理室", null, null, 1, null, "100-109"], ["fz", "廠長室", null, null, 1, null, "100-109"], ["sg", "生管課", "fz", null, 0, null, "104-106"], ["hr", "人事室", null, null, 1, null, "110-119"], ["p1", "生產一部", null, null, 1, null, "200-209"], ["h1", "合一課", "p1", null, 0, null, "210-219"], ["z1", "製一組", "h1", null, 0, 211, null], ["z2", "製二組", "h1", null, 0, 211, null], ["h2", "合二課", "p1", null, 0, null, "220-229"], ["z3", "製三組", "h2", null, 0, 221, null], ["z4", "製四組", "h2", null, 0, 221, null], ["h3", "合三課", "p1", null, 0, 240, "240-249"], ["z7", "製七組", "h3", null, 0, 241, null], ["sb", "S棟", "h3", null, 0, 242, null], ["p3", "生產三部", null, null, 1, null, "200-209"], ["h4", "合四課", "p3", null, 0, null, "250-259"], ["z8", "製八組", "h4", null, 0, 251, null], ["lb", "L棟無塵室", "h4", null, 0, 252, null], ["al", "ALPHA ROOM", "h4", null, 0, 253, null], ["lab", "實驗工場", null, null, 1, null, "260-269"], ["hs", "安全衛生室", null, null, 1, null, "400-499"], ["p2", "生產二部", null, null, 2, null, "500-599"], ["s1", "噴乾一課", "p2", null, 0, 511, "510-519"], ["lq", "液品課", "p2", null, 0, null, "530-539"], ["cp", "成品課", "p2", null, 0, 541, "540-549"], ["gz", "乾燥課", "p2", null, 0, 541, "540-549"], ["jx", "精細課", "p2", null, 0, 550, "550-559"], ["qa", "品保部", null, null, 2, null, "300-399"], ["q1", "品一課", "qa", null, 0, 311, "310-319"], ["q2", "品二課", "qa", null, 0, 323, "320-329"], ["jy", "技銷處", null, null, 2, null, "150-189"], ["w5", "技銷處五部", "jy", "y", 0, null, "150-189"], ["mt", "金技課", "w5", "c", 0, 161, "160-169"], ["lt", "皮技課", "w5", null, 0, 170, "170-179"], ["pp", "紙技課", "w5", null, 0, 180, "180-189"], ["ep", "環保部", null, null, 2, null, "700-799"], ["e1", "環保課", "ep", null, 0, 710, "710-719"], ["e2", "環資課", "ep", null, 0, 720, "720-729"], ["fw", "廠務部", null, null, 3, null, "600-699"], ["zw", "總務課", "fw", null, 0, null, "610-619"], ["rm", "原料課", "fw", null, 0, 622, "620-629"], ["hz", "環資管理處", null, null, 3, null, "800-899"], ["wm", "工程管理暨智慧製造處", null, null, 3, null, "900-999"], ["m1", "工智處一部一課", "wm", "c", 0, 910, "910-919"], ["m2", "工智處工程管理部", "wm", "c", 0, null, "900-909"], ["m3", "工智處智慧製造部", "wm", "c", 0, null, "930-939"]], "R": [{"t": "U", "d": null, "n": "緊急專線", "pn": "緊急專線", "ext": 119, "note": "", "sort": 1}, {"t": "U", "d": null, "n": "總機", "pn": "總機", "ext": 613, "note": "", "sort": 2}, {"t": "P", "d": null, "n": "陳坤木", "title": "廠長", "ext": 101, "personal": true, "sort": 3}, {"t": "P", "d": null, "n": "陳勳振", "title": "副廠長", "ext": 103, "personal": true, "sort": 4}, {"t": "P", "d": "gm", "n": "康源昇", "title": "特助", "ext": 120, "personal": true, "sort": 5}, {"t": "P", "d": "gm", "n": "廖嘉鍾", "title": "特助", "ext": 102, "personal": true, "sort": 6}, {"t": "P", "d": "fz", "n": "李靜安", "title": "技術經理", "ext": 108, "personal": true, "sort": 7}, {"t": "P", "d": "fz", "n": "楊馥瑄", "title": "", "ext": 105, "personal": true, "sort": 8}, {"t": "P", "d": "fz", "n": "李欣庭", "title": "", "ext": 109, "personal": true, "sort": 9}, {"t": "P", "d": "fz", "n": "黃明傑", "title": "", "ext": 107, "personal": true, "sort": 10}, {"t": "P", "d": "sg", "n": "梁冬梅", "title": "副理", "ext": 104, "personal": true, "sort": 11}, {"t": "P", "d": "sg", "n": "吳家綺", "title": "", "ext": 106, "personal": true, "sort": 12}, {"t": "P", "d": "hr", "n": "邱曉芳", "title": "副理", "ext": 110, "personal": true, "sort": 13}, {"t": "U", "d": "hr", "n": "守衛室", "pn": "守衛室", "ext": 111, "note": "", "sort": 14}, {"t": "P", "d": "hr", "n": "吳靜怡", "title": "", "ext": 112, "personal": true, "sort": 15}, {"t": "P", "d": "hr", "n": "賴升美", "title": "", "ext": 113, "personal": true, "sort": 16}, {"t": "P", "d": "p1", "n": "楊育峰", "title": "經理", "ext": 201, "personal": true, "sort": 17}, {"t": "P", "d": "p1", "n": "孫立平", "title": "副理", "ext": 202, "personal": true, "sort": 18}, {"t": "P", "d": "h1", "n": "黃俊華", "title": "課長", "ext": 210, "personal": true, "sort": 19}, {"t": "U", "d": "z1", "n": "製一組", "pn": "製一組", "ext": 211, "note": "", "sort": 20}, {"t": "U", "d": "z2", "n": "製二組", "pn": "製二組", "ext": 211, "note": "", "sort": 21}, {"t": "P", "d": "h2", "n": "余政峰", "title": "課長", "ext": 220, "personal": true, "sort": 22}, {"t": "U", "d": "z3", "n": "製三組", "pn": "製三組", "ext": 221, "note": "", "sort": 23}, {"t": "U", "d": "z4", "n": "製四組", "pn": "製四組", "ext": 221, "note": "", "sort": 24}, {"t": "U", "d": "h3", "n": "合三課", "pn": "合三課", "ext": 240, "note": "", "sort": 25}, {"t": "U", "d": "z7", "n": "製七組", "pn": "製七組", "ext": 241, "note": "", "sort": 26}, {"t": "U", "d": "sb", "n": "S棟", "pn": "S棟", "ext": 242, "note": "", "sort": 27}, {"t": "P", "d": "p3", "n": "陳柏瑀", "title": "經理", "ext": 203, "personal": true, "sort": 28}, {"t": "P", "d": "p3", "n": "王凱民", "title": "副理", "ext": 204, "personal": true, "sort": 29}, {"t": "P", "d": "h4", "n": "温啟銘", "title": "課長", "ext": 250, "personal": true, "sort": 30}, {"t": "U", "d": "z8", "n": "製八組", "pn": "製八組", "ext": 251, "note": "", "sort": 31}, {"t": "U", "d": "lb", "n": "L棟無塵室", "pn": "L棟無塵室", "ext": 252, "note": "", "sort": 32}, {"t": "U", "d": "al", "n": "ALPHA ROOM", "pn": "ALPHA ROOM", "ext": 253, "note": "", "sort": 33}, {"t": "U", "d": "lab", "n": "實驗工場", "pn": "實驗工場", "ext": 260, "note": "", "sort": 34}, {"t": "U", "d": "lab", "n": "實驗室", "pn": "實驗室", "ext": 261, "note": "", "sort": 35}, {"t": "U", "d": "lab", "n": "連續製程辦公室", "pn": "連續製程辦公室", "ext": 262, "note": "", "sort": 36}, {"t": "U", "d": "lab", "n": "連續製程辦公室", "pn": "連續製程辦公室", "ext": 263, "note": "", "sort": 37}, {"t": "P", "d": "hs", "n": "許峰睿", "title": "副主任", "ext": 402, "personal": true, "sort": 38}, {"t": "P", "d": "hs", "n": "張惠鎔", "title": "", "ext": 403, "personal": true, "sort": 39}, {"t": "P", "d": "hs", "n": "余國馳", "title": "", "ext": 404, "personal": true, "sort": 40}, {"t": "P", "d": "p2", "n": "林忠鵬", "title": "經理", "ext": 501, "personal": true, "sort": 41}, {"t": "P", "d": "p2", "n": "周致豪", "title": "副理", "ext": 503, "personal": true, "sort": 42}, {"t": "P", "d": "s1", "n": "劉任偉", "title": "課長", "ext": 510, "personal": true, "sort": 43}, {"t": "U", "d": "s1", "n": "噴一課 (A棟)", "pn": "噴一課 (A棟)", "ext": 511, "note": "", "sort": 44}, {"t": "U", "d": "s1", "n": "噴一課 (M棟)", "pn": "噴一課 (M棟)", "ext": 512, "note": "", "sort": 45}, {"t": "P", "d": "lq", "n": "陳柏蒼", "title": "副課長", "ext": 530, "personal": true, "sort": 46}, {"t": "P", "d": "cp", "n": "陳文濬", "title": "課長", "ext": 540, "personal": true, "sort": 47}, {"t": "U", "d": "cp", "n": "成品課 (H棟)", "pn": "成品課 (H棟)", "ext": 541, "note": "", "sort": 48}, {"t": "U", "d": "cp", "n": "成品課 (J棟)", "pn": "成品課 (J棟)", "ext": 542, "note": "", "sort": 49}, {"t": "U", "d": "gz", "n": "乾燥課 (H棟)", "pn": "乾燥課 (H棟)", "ext": 541, "note": "", "sort": 50}, {"t": "U", "d": "gz", "n": "乾燥課 (J棟)", "pn": "乾燥課 (J棟)", "ext": 542, "note": "", "sort": 51}, {"t": "U", "d": "jx", "n": "精細課", "pn": "精細課", "ext": 550, "note": "", "sort": 52}, {"t": "U", "d": "jx", "n": "六樓", "pn": "六樓", "ext": 551, "note": "", "sort": 53}, {"t": "P", "d": "qa", "n": "楊賀鈞", "title": "經理", "ext": 301, "personal": true, "sort": 54}, {"t": "P", "d": "q1", "n": "林鈺偉", "title": "副理", "ext": 302, "personal": true, "sort": 55}, {"t": "U", "d": "q1", "n": "品一課 (2F)", "pn": "品一課 (2F)", "ext": 311, "note": "", "sort": 56}, {"t": "U", "d": "q1", "n": "品一課 (4F)", "pn": "品一課 (4F)", "ext": 312, "note": "", "sort": 57}, {"t": "P", "d": "q2", "n": "陳文斌", "title": "課長", "ext": 320, "personal": true, "sort": 58}, {"t": "U", "d": "q2", "n": "品二課 (X棟儀器室)", "pn": "品二課 (X棟儀器室)", "ext": 323, "note": "", "sort": 59}, {"t": "U", "d": "q2", "n": "應用組 (L棟)", "pn": "應用組 (L棟)", "ext": 321, "note": "", "sort": 60}, {"t": "U", "d": "q2", "n": "應用組實驗室", "pn": "應用組實驗室", "ext": 322, "note": "", "sort": 61}, {"t": "P", "d": "jy", "n": "王殷光", "title": "處長", "ext": 150, "personal": true, "sort": 62}, {"t": "P", "d": "w5", "n": "賴致中", "title": "經理", "ext": 151, "personal": true, "sort": 63}, {"t": "P", "d": "w5", "n": "王乃慶", "title": "副理", "ext": 152, "personal": true, "sort": 64}, {"t": "P", "d": "mt", "n": "江富誠", "title": "課長", "ext": 160, "personal": true, "sort": 65}, {"t": "U", "d": "mt", "n": "金技課", "pn": "金技課", "ext": 161, "note": "", "sort": 66}, {"t": "U", "d": "lt", "n": "皮技課", "pn": "皮技課", "ext": 170, "note": "", "sort": 67}, {"t": "U", "d": "lt", "n": "皮技課", "pn": "皮技課", "ext": 171, "note": "", "sort": 68}, {"t": "U", "d": "pp", "n": "紙技課", "pn": "紙技課", "ext": 180, "note": "", "sort": 69}, {"t": "P", "d": "ep", "n": "陳啟華", "title": "經理", "ext": 701, "personal": true, "sort": 70}, {"t": "U", "d": "e1", "n": "環保課", "pn": "環保課", "ext": 710, "note": "", "sort": 71}, {"t": "U", "d": "e2", "n": "環資課", "pn": "環資課", "ext": 720, "note": "", "sort": 72}, {"t": "P", "d": "fw", "n": "蘇聰賢", "title": "經理", "ext": 601, "personal": true, "sort": 73}, {"t": "P", "d": "zw", "n": "陳秋宏", "title": "課長", "ext": 610, "personal": true, "sort": 74}, {"t": "P", "d": "zw", "n": "黃傑", "title": "組長", "ext": 612, "personal": true, "sort": 75}, {"t": "P", "d": "zw", "n": "張淑如", "title": "", "ext": 611, "personal": true, "sort": 76}, {"t": "P", "d": "zw", "n": "余明柔", "title": "", "ext": 613, "personal": true, "sort": 77}, {"t": "U", "d": "zw", "n": "e-learning", "pn": "e-learning", "ext": 615, "note": "", "sort": 78}, {"t": "U", "d": "zw", "n": "外勞宿舍", "pn": "外勞宿舍", "ext": 616, "note": "", "sort": 79}, {"t": "U", "d": "zw", "n": "餐廳", "pn": "餐廳", "ext": 617, "note": "", "sort": 80}, {"t": "U", "d": "zw", "n": "2、3樓機房", "pn": "2、3樓機房", "ext": 619, "note": "", "sort": 81}, {"t": "U", "d": "zw", "n": "行動辦公室", "pn": "行動辦公室", "ext": 620, "note": "", "sort": 82}, {"t": "U", "d": "zw", "n": "會客室", "pn": "會客室", "ext": 640, "note": "", "sort": 83}, {"t": "U", "d": "zw", "n": "禮堂", "pn": "禮堂", "ext": 698, "note": "", "sort": 84}, {"t": "U", "d": "zw", "n": "第三會議室", "pn": "第三會議室", "ext": 699, "note": "", "sort": 85}, {"t": "P", "d": "rm", "n": "林品郡", "title": "組長", "ext": 621, "personal": true, "sort": 86}, {"t": "U", "d": "rm", "n": "原料課", "pn": "原料課", "ext": 622, "note": "", "sort": 87}, {"t": "P", "d": "hz", "n": "林礽龍", "title": "處長", "ext": 801, "personal": true, "sort": 88}, {"t": "P", "d": "hz", "n": "林日珅", "title": "", "ext": 811, "personal": true, "sort": 89}, {"t": "P", "d": "hz", "n": "鍾詠丞", "title": "", "ext": 812, "personal": true, "sort": 90}, {"t": "P", "d": "hz", "n": "蔡宜蓁", "title": "", "ext": 813, "personal": true, "sort": 91}, {"t": "P", "d": "hz", "n": "胡忠仁", "title": "", "ext": 814, "personal": true, "sort": 92}, {"t": "P", "d": "wm", "n": "黃樹瑆", "title": "副處長", "ext": 901, "personal": true, "sort": 93}, {"t": "P", "d": "m1", "n": "蔡道明", "title": "副理", "ext": 902, "personal": true, "sort": 94}, {"t": "U", "d": "m1", "n": "工智處一課", "pn": "工智處一課", "ext": 910, "note": "", "sort": 95}, {"t": "P", "d": "m2", "n": "穆彥池", "title": "副理", "ext": 903, "personal": true, "sort": 96}, {"t": "P", "d": "m2", "n": "李奕承", "title": "", "ext": 922, "personal": true, "sort": 97}, {"t": "P", "d": "m2", "n": "康睜芳", "title": "", "ext": 923, "personal": true, "sort": 98}, {"t": "P", "d": "m2", "n": "李安炖", "title": "", "ext": 925, "personal": true, "sort": 99}, {"t": "P", "d": "m3", "n": "劉子瑜", "title": "組長", "ext": 931, "personal": true, "sort": 100}, {"t": "P", "d": "m3", "n": "李鎮宇", "title": "", "ext": 932, "personal": true, "sort": 101}, {"t": "P", "d": "m3", "n": "董怡宣", "title": "", "ext": 933, "personal": true, "sort": 102}, {"t": "P", "d": "m3", "n": "楊梓盛", "title": "", "ext": 924, "personal": true, "sort": 103}], "SH": [{"t": "P", "d": "z1", "n": "陳六山", "title": "", "ext": 211, "personal": false, "sort": 1000}, {"t": "P", "d": "z1", "n": "徐耀宗", "title": "", "ext": 211, "personal": false, "sort": 1001}, {"t": "P", "d": "z1", "n": "黃柏霖", "title": "", "ext": 211, "personal": false, "sort": 1002}, {"t": "P", "d": "z1", "n": "簡淯", "title": "", "ext": 211, "personal": false, "sort": 1003}, {"t": "P", "d": "z2", "n": "鄭昕翀", "title": "", "ext": 211, "personal": false, "sort": 1004}, {"t": "P", "d": "z4", "n": "余能昌", "title": "", "ext": 221, "personal": false, "sort": 1005}, {"t": "P", "d": "z4", "n": "王晨霖", "title": "", "ext": 221, "personal": false, "sort": 1006}, {"t": "P", "d": "z4", "n": "周家興", "title": "", "ext": 221, "personal": false, "sort": 1007}, {"t": "P", "d": "z7", "n": "楊安財", "title": "", "ext": 241, "personal": false, "sort": 1008}, {"t": "P", "d": "z7", "n": "徐聰君", "title": "", "ext": 241, "personal": false, "sort": 1009}, {"t": "P", "d": "z7", "n": "羅竣頡", "title": "", "ext": 241, "personal": false, "sort": 1010}, {"t": "P", "d": "z7", "n": "李榮勳", "title": "", "ext": 241, "personal": false, "sort": 1011}, {"t": "P", "d": "z7", "n": "阮德功", "title": "", "ext": 241, "personal": false, "sort": 1012}, {"t": "P", "d": "h3", "n": "S棟", "title": "", "ext": 242, "personal": false, "sort": 1013}, {"t": "P", "d": "s1", "n": "蔣朝陽", "title": "", "ext": 511, "personal": false, "sort": 1014}, {"t": "P", "d": "s1", "n": "詹俊成", "title": "", "ext": 511, "personal": false, "sort": 1015}, {"t": "P", "d": "s1", "n": "王世裕", "title": "", "ext": 511, "personal": false, "sort": 1016}, {"t": "P", "d": "s1", "n": "楊銘輝", "title": "", "ext": 511, "personal": false, "sort": 1017}, {"t": "P", "d": "s1", "n": "阮光榮", "title": "", "ext": 511, "personal": false, "sort": 1018}, {"t": "P", "d": "s1", "n": "蕭明德", "title": "", "ext": 515, "personal": false, "sort": 1019}, {"t": "P", "d": "s1", "n": "游輝正", "title": "", "ext": 515, "personal": false, "sort": 1020}, {"t": "P", "d": "lq", "n": "李錦昌", "title": "", "ext": 530, "personal": false, "sort": 1021}, {"t": "P", "d": "lq", "n": "吳文正", "title": "", "ext": 530, "personal": false, "sort": 1022}, {"t": "P", "d": "lq", "n": "吳奕德", "title": "", "ext": 530, "personal": false, "sort": 1023}, {"t": "P", "d": "jx", "n": "六樓", "title": "", "ext": 232, "personal": false, "sort": 1024}, {"t": "P", "d": "jx", "n": "林揚舒", "title": "", "ext": 231, "personal": false, "sort": 1025}, {"t": "P", "d": "jx", "n": "鄭俊豪", "title": "", "ext": 231, "personal": false, "sort": 1026}, {"t": "P", "d": "gz", "n": "邱献毅", "title": "", "ext": 541, "personal": false, "sort": 1027}, {"t": "P", "d": "gz", "n": "曾清輝", "title": "", "ext": 541, "personal": false, "sort": 1028}, {"t": "P", "d": "cp", "n": "J棟", "title": "", "ext": 542, "personal": false, "sort": 1029}, {"t": "P", "d": "z8", "n": "李昀哲", "title": "", "ext": 252, "personal": false, "sort": 1030}, {"t": "P", "d": "z8", "n": "劉書凱", "title": "", "ext": 252, "personal": false, "sort": 1031}, {"t": "P", "d": "z8", "n": "陳宥任", "title": "", "ext": 252, "personal": false, "sort": 1032}, {"t": "P", "d": "z8", "n": "廖博淵", "title": "", "ext": 252, "personal": false, "sort": 1033}, {"t": "P", "d": "z8", "n": "王文宏", "title": "", "ext": 252, "personal": false, "sort": 1034}, {"t": "P", "d": "z8", "n": "李丞瑋", "title": "", "ext": 252, "personal": false, "sort": 1035}, {"t": "P", "d": "z8", "n": "羅祖源", "title": "", "ext": 252, "personal": false, "sort": 1036}, {"t": "P", "d": "z8", "n": "陳昱鴻", "title": "", "ext": 252, "personal": false, "sort": 1037}, {"t": "P", "d": "z8", "n": "吳奕辰", "title": "", "ext": 252, "personal": false, "sort": 1038}, {"t": "P", "d": "lab", "n": "林順德", "title": "", "ext": 261, "personal": false, "sort": 1039}, {"t": "P", "d": "lab", "n": "劉耀中", "title": "", "ext": 261, "personal": false, "sort": 1040}, {"t": "P", "d": "lab", "n": "陳亦群", "title": "", "ext": 261, "personal": false, "sort": 1041}, {"t": "P", "d": "lab", "n": "王名涵", "title": "", "ext": 261, "personal": false, "sort": 1042}, {"t": "P", "d": "lab", "n": "戴玟婷", "title": "", "ext": 261, "personal": false, "sort": 1043}, {"t": "P", "d": "lab", "n": "林佳蓉", "title": "", "ext": 261, "personal": false, "sort": 1044}, {"t": "P", "d": "e1", "n": "劉進財", "title": "", "ext": 710, "personal": false, "sort": 1045}, {"t": "P", "d": "e1", "n": "劉俊男", "title": "", "ext": 710, "personal": false, "sort": 1046}, {"t": "P", "d": "e1", "n": "劉德輝", "title": "", "ext": 710, "personal": false, "sort": 1047}, {"t": "P", "d": "e1", "n": "方緒明", "title": "", "ext": 710, "personal": false, "sort": 1048}, {"t": "P", "d": "e1", "n": "林志權", "title": "", "ext": 710, "personal": false, "sort": 1049}, {"t": "P", "d": "e1", "n": "陳傑維", "title": "", "ext": 710, "personal": false, "sort": 1050}, {"t": "P", "d": "q1", "n": "涂憲忠", "title": "", "ext": 311, "personal": false, "sort": 1051}, {"t": "P", "d": "q1", "n": "林鎮安", "title": "", "ext": 311, "personal": false, "sort": 1052}, {"t": "P", "d": "q1", "n": "王聖宏", "title": "", "ext": 311, "personal": false, "sort": 1053}, {"t": "P", "d": "q1", "n": "許顯龍", "title": "", "ext": 311, "personal": false, "sort": 1054}, {"t": "P", "d": "q1", "n": "張陳紹華", "title": "", "ext": 311, "personal": false, "sort": 1055}, {"t": "P", "d": "q1", "n": "湯佳勳", "title": "", "ext": 311, "personal": false, "sort": 1056}, {"t": "P", "d": "q1", "n": "陳政杰", "title": "", "ext": 311, "personal": false, "sort": 1057}, {"t": "P", "d": "q1", "n": "丁振邦", "title": "", "ext": 311, "personal": false, "sort": 1058}, {"t": "P", "d": "q2", "n": "陳學伃", "title": "", "ext": 323, "personal": false, "sort": 1059}, {"t": "P", "d": "q2", "n": "駱杰志", "title": "", "ext": 323, "personal": false, "sort": 1060}, {"t": "P", "d": "q2", "n": "梁世錡", "title": "", "ext": 323, "personal": false, "sort": 1061}, {"t": "P", "d": "q2", "n": "陳彥融", "title": "", "ext": 323, "personal": false, "sort": 1062}, {"t": "P", "d": "q2", "n": "黃寬銘", "title": "", "ext": 323, "personal": false, "sort": 1063}, {"t": "P", "d": "q2", "n": "阮芳苑", "title": "", "ext": 323, "personal": false, "sort": 1064}, {"t": "P", "d": "q2", "n": "林云亭", "title": "", "ext": 323, "personal": false, "sort": 1065}, {"t": "P", "d": "q2", "n": "王佳琪", "title": "", "ext": 321, "personal": false, "sort": 1066}, {"t": "P", "d": "q2", "n": "鄭宇成", "title": "", "ext": 321, "personal": false, "sort": 1067}, {"t": "P", "d": "mt", "n": "陳政銘", "title": "", "ext": 161, "personal": false, "sort": 1068}, {"t": "P", "d": "mt", "n": "陳慧琳", "title": "", "ext": 161, "personal": false, "sort": 1069}, {"t": "P", "d": "mt", "n": "陳亮佐", "title": "", "ext": 161, "personal": false, "sort": 1070}, {"t": "P", "d": "mt", "n": "李品儀", "title": "", "ext": 161, "personal": false, "sort": 1071}, {"t": "P", "d": "lt", "n": "陳清芳", "title": "", "ext": 171, "personal": false, "sort": 1072}, {"t": "P", "d": "lt", "n": "施彥慈", "title": "", "ext": 171, "personal": false, "sort": 1073}, {"t": "P", "d": "lt", "n": "游智宏", "title": "", "ext": 171, "personal": false, "sort": 1074}, {"t": "P", "d": "pp", "n": "徐靜怡", "title": "", "ext": 180, "personal": false, "sort": 1075}, {"t": "P", "d": "pp", "n": "蘇逸煥", "title": "", "ext": 180, "personal": false, "sort": 1076}, {"t": "P", "d": "m1", "n": "嚴增榮", "title": "", "ext": 910, "personal": false, "sort": 1077}, {"t": "P", "d": "m1", "n": "唐孝平", "title": "", "ext": 910, "personal": false, "sort": 1078}, {"t": "P", "d": "m1", "n": "沈建宇", "title": "", "ext": 910, "personal": false, "sort": 1079}, {"t": "P", "d": "m1", "n": "呂晉安", "title": "", "ext": 910, "personal": false, "sort": 1080}, {"t": "P", "d": "zw", "n": "禮堂", "title": "", "ext": 698, "personal": false, "sort": 1081}, {"t": "P", "d": "zw", "n": "外勞宿舍", "title": "", "ext": 616, "personal": false, "sort": 1082}, {"t": "P", "d": "rm", "n": "張又仁", "title": "", "ext": 622, "personal": false, "sort": 1083}, {"t": "P", "d": "rm", "n": "林鈞勳", "title": "", "ext": 622, "personal": false, "sort": 1084}, {"t": "P", "d": "rm", "n": "江文光", "title": "", "ext": 622, "personal": false, "sort": 1085}], "GR": {"119": "B", "613": "A", "501": "A", "601": "A", "101": "A", "503": "A", "103": "A", "610": "A", "510": "B", "612": "A", "120": "A", "511": "B", "611": "A", "102": "A", "512": "B", "614": "A", "108": "A", "530": "B", "615": "A", "105": "A", "616": "B", "109": "A", "540": "B", "617": "B", "107": "A", "541": "B", "619": "A", "542": "B", "620": "A", "104": "A", "640": "B", "106": "A", "698": "A", "699": "A", "110": "A", "111": "B", "550": "B", "621": "A", "112": "A", "551": "B", "622": "B", "113": "A", "301": "A", "801": "A", "201": "A", "811": "A", "202": "A", "302": "A", "812": "A", "311": "B", "813": "A", "210": "B", "312": "B", "814": "A", "211": "B", "815": "A", "320": "A", "816": "A", "323": "B", "817": "A", "220": "B", "321": "B", "818": "A", "221": "B", "322": "B", "819": "A", "150": "A", "901": "A", "240": "B", "241": "B", "151": "A", "902": "A", "242": "B", "152": "A", "910": "A", "203": "A", "160": "A", "903": "A", "204": "A", "161": "A", "922": "A", "923": "A", "250": "B", "170": "A", "925": "A", "251": "B", "171": "B", "252": "B", "253": "B", "180": "A", "931": "A", "932": "A", "260": "A", "701": "A", "933": "A", "261": "B", "924": "A", "262": "B", "710": "A", "263": "B", "720": "A", "402": "A", "403": "A", "404": "A"}, "EMPTY": {"614": "zw", "815": "hz", "816": "hz", "817": "hz", "818": "hz", "819": "hz"}};
+</script>
 <script>
 (function(){
-var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var $=function(id){return document.getElementById(id)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var TODAY='2026-11-08';
 
-/* ---------- 導覽 ---------- */
-var VIEWS=[['search','查詢'],['edit','維護'],['dept','部門'],['export','匯出'],['p1','列印版 1'],['p2','列印版 2']];
-function go(v){
-  VIEWS.forEach(function(x){$('v-'+x[0]).classList.toggle('hide',x[0]!==v)});
-  var b=$('nav').children;for(var i=0;i<b.length;i++){b[i].classList.toggle('on',VIEWS[i][0]===v);b[i].setAttribute('aria-selected',VIEWS[i][0]===v)}
-  try{history.replaceState(null,'','#'+v)}catch(e){}
-  if(v==='search'&&typeof renderSearch==='function'&&typeof list!=='undefined')renderSearch();
-  fitSheets();
+/* ================= 資料 ================= */
+var depts=DATA.D.map(function(d,i){return {id:d[0],name:d[1],parent:d[2],fill:d[3],col:d[4]||0,def:d[5],range:d[6],sort:i,active:true,hdr:true}});
+['z1','z2','z3','z4','z7','z8','sb','lb','al'].forEach(function(k){dById(k).hdr=false});
+function dById(id){for(var i=0;i<depts.length;i++)if(depts[i].id===id)return depts[i];return null}
+var ordCnt={};depts.forEach(function(d){if(d.col){ordCnt[d.col]=(ordCnt[d.col]||0)+1;d.ord=ordCnt[d.col]}});
+var nid=0;
+var recs=[];
+DATA.R.forEach(function(r){recs.push({id:++nid,t:r.t,name:r.n,pn:r.pn||'',dept:r.d,title:r.title||'',ext:r.ext,personal:!!r.personal,inDir:true,hide:false,active:true,sort:r.sort,note:r.note||'',email:'e'+(1000+nid)+'@ecic.com.tw'})});
+DATA.SH.forEach(function(r){
+  var d=dById(r.d);var e=(d&&d.def)?d.def:r.ext;
+  if(r.n==='六樓')return;
+  recs.push({id:++nid,t:'P',name:r.n,pn:'',dept:r.d,title:'',ext:e,personal:false,inDir:true,hide:false,active:true,sort:r.sort,note:'',email:'e'+(1000+nid)+'@ecic.com.tw'});
+});
+var GRADE={};Object.keys(DATA.GR).forEach(function(k){GRADE[k]=DATA.GR[k]});
+var exts=[];var seenE={};
+function ownerOf(e){
+  if(e===613)return 'zw';
+  var u=recs.filter(function(r){return r.ext===e&&r.dept&&r.t==='U'})[0];if(u)return u.dept;
+  var p=recs.filter(function(r){return r.ext===e&&r.dept})[0];if(p)return p.dept;
+  return DATA.EMPTY[String(e)]||null;
 }
-/* 平板：列印預覽縮放到螢幕寬度 */
-function fitSheets(){
-  document.querySelectorAll('.sheetscroll').forEach(function(w){
-    var s=w.firstElementChild,avail=w.clientWidth;
-    if(!avail){return}
-    s.style.zoom=Math.min(1,avail/(s.classList.contains('portrait')?794:1123));
-  });
-}
-window.addEventListener('resize',fitSheets);
-window.addEventListener('orientationchange',function(){setTimeout(fitSheets,200)});
-VIEWS.forEach(function(x){var b=document.createElement('button');b.textContent=x[1];b.setAttribute('role','tab');b.onclick=function(){go(x[0])};$('nav').appendChild(b)});
-document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(b.getAttribute('data-go'))}});
-document.querySelectorAll('[data-demo]').forEach(function(b){b.onclick=function(){alert('範例畫面：正式版會由系統產生 Excel 檔下載。')}});
+recs.forEach(function(r){if(!seenE[r.ext]){seenE[r.ext]=1;exts.push({ext:r.ext,dept:ownerOf(r.ext),grade:GRADE[r.ext]||'',note:''})}});
+Object.keys(DATA.EMPTY).forEach(function(k){var e=+k;if(!seenE[e]){seenE[e]=1;exts.push({ext:e,dept:DATA.EMPTY[k],grade:GRADE[e]||'',note:'空號'})}});
+exts.sort(function(a,b){return a.ext-b.ext});
+var PLANT={name:'一廠',foot:['專線: 公司#80   一廠#81   二廠#82   三廠#83   四廠#84  聽到忙線音後直撥分機號碼，由總機小姐接聽，代轉分機。','台北公司:TEL(02)2706-6006   FAX(02)2708-1254','永光一廠:TEL(03)386-8081　 FAX(03)386-8048','永光二廠:TEL(03)483-8088　 FAX(03)483-8008　　中部辦事處:TEL(04)2358-3378   FAX(04)2358-2378','永光三廠:TEL(03)483-7682　 FAX(03)483-7683　　南部辦事處:TEL(06)215-2589　 FAX(06)215-3639','永光四廠:TEL(03)473-7366　 FAX(03)473-7909','上海明德專線：工廠撥打上海明德，先按#80，再按888，等響鈴聲結束後，再按66，由總機小姐接聽，代轉分機。']};
+var LOG=[];var changed=3;
+function log(who,what){LOG.unshift({t:TODAY+' '+('0'+(new Date().getHours())).slice(-2)+':'+('0'+(new Date().getMinutes())).slice(-2),who:who,what:what})}
+var seedLog=[['系統','自動處理：新進 林小華（範例）加入「製三組」，使用公用分機 221'],['系統','自動處理：離職 陳小強（範例）停用，原用公用分機 211'],['系統','自動處理：調部門 黃小美（範例）「品一課」→「品二課」，分機改為 323'],['系統','Email 為 f＋數字的 2 位新進，已設為「不列入分機表」，未通知'],['廠務（範例）','修改分機號碼表：614 備註「空號」']];
+seedLog.slice().reverse().forEach(function(x){LOG.unshift({t:'2026-11-07 08:0'+LOG.length,who:x[0],what:x[1]})});
+function touch(who,what){log(who||'廠務（範例）',what);changed++}
 
-/* ---------- 查詢 ---------- */
-var DATA=[
-{plant:'一廠',dept:"第一廠",name:"陳坤木",title:"廠長",ext:"101",type:'人員',ab:'A'},
-{plant:'一廠',dept:"第一廠",name:"陳勳振",title:"副廠長",ext:"103",type:'人員',ab:'A'},
-{plant:'一廠',dept:"總經理室",name:"廖嘉鍾",title:"特助",ext:"102",type:'人員',ab:'A'},
-{plant:'一廠',dept:"總經理室",name:"康源昇",title:"特助",ext:"120",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠長室",name:"李靜安",title:"技術經理",ext:"108",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠長室",name:"黃明傑",title:"",ext:"107",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠長室",name:"楊馥瑄",title:"",ext:"105",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠長室",name:"李欣庭",title:"",ext:"109",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠長室 › 生管課",name:"梁冬梅",title:"副理",ext:"104",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠長室 › 生管課",name:"吳家綺",title:"",ext:"106",type:'人員',ab:'A'},
-{plant:'一廠',dept:"人事室",name:"邱曉芳",title:"副理",ext:"110",type:'人員',ab:'A'},
-{plant:'一廠',dept:"人事室",name:"賴升美",title:"",ext:"113",type:'人員',ab:'A'},
-{plant:'一廠',dept:"人事室",name:"吳靜怡",title:"",ext:"112",type:'人員',ab:'A'},
-{plant:'一廠',dept:"人事室",name:"守衛室",title:"",ext:"111",type:'單位',ab:'B'},
-{plant:'一廠',dept:"生產一部",name:"楊育峰",title:"經理",ext:"201",type:'人員',ab:'A'},
-{plant:'一廠',dept:"生產一部",name:"孫立平",title:"副理",ext:"202",type:'人員',ab:'A'},
-{plant:'一廠',dept:"生產一部 › 合一課",name:"黃俊華",title:"課長",ext:"210",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合一課 › 製一組",name:"陳六山",title:"",ext:"211",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合一課 › 製一組",name:"徐耀宗",title:"",ext:"211",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合一課 › 製一組",name:"黃柏霖",title:"",ext:"211",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合一課 › 製一組",name:"簡淯",title:"",ext:"211",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合一課 › 製二組",name:"鄭昕翀",title:"",ext:"211",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合二課",name:"余政峰",title:"課長",ext:"220",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合二課 › 製三組",name:"謝浡浩",title:"組長",ext:"221",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合二課 › 製四組",name:"余能昌",title:"",ext:"221",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合二課 › 製四組",name:"王晨霖",title:"",ext:"221",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合二課 › 製四組",name:"周家興",title:"",ext:"221",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合三課 › 製七組",name:"張軒銘",title:"組長",ext:"241",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合三課 › 製七組",name:"楊安財",title:"",ext:"241",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合三課 › 製七組",name:"徐聰君",title:"",ext:"241",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合三課 › 製七組",name:"羅竣頡",title:"",ext:"241",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合三課 › 製七組",name:"李榮勳",title:"",ext:"241",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合三課 › 製七組",name:"阮德功",title:"",ext:"241",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產一部 › 合三課",name:"S棟",title:"",ext:"242",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部",name:"林忠鵬",title:"經理",ext:"501",type:'人員',ab:'A'},
-{plant:'一廠',dept:"生產二部",name:"周致豪",title:"副理",ext:"503",type:'人員',ab:'A'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"劉任偉",title:"課長",ext:"510",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"徐世緯",title:"組長",ext:"511",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"劉啟同",title:"組長",ext:"515",type:'人員',ab:''},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"洪鈿壹",title:"組長",ext:"511",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"蔣朝陽",title:"",ext:"511",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"詹俊成",title:"",ext:"511",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"王世裕",title:"",ext:"511",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"楊銘輝",title:"",ext:"511",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"阮光榮",title:"",ext:"511",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"蕭明德",title:"",ext:"515",type:'人員',ab:''},
-{plant:'一廠',dept:"生產二部 › 噴一課",name:"游輝正",title:"",ext:"515",type:'人員',ab:''},
-{plant:'一廠',dept:"生產二部 › 液品課",name:"陳柏蒼",title:"副課長",ext:"530",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 液品課",name:"陳敬燁",title:"組長",ext:"530",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 液品課",name:"李錦昌",title:"",ext:"530",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 液品課",name:"吳文正",title:"",ext:"530",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 液品課",name:"吳奕德",title:"",ext:"530",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 精細課",name:"吳承憲",title:"組長",ext:"230",type:'人員',ab:''},
-{plant:'一廠',dept:"生產二部 › 精細課",name:"六樓",title:"",ext:"232",type:'人員',ab:''},
-{plant:'一廠',dept:"生產二部 › 精細課",name:"林揚舒",title:"",ext:"231",type:'人員',ab:''},
-{plant:'一廠',dept:"生產二部 › 精細課",name:"鄭俊豪",title:"",ext:"231",type:'人員',ab:''},
-{plant:'一廠',dept:"生產二部 › 成品課",name:"陳文濬",title:"課長",ext:"540",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 成品課 › 乾燥組",name:"謝春和",title:"組長",ext:"541",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 成品課 › 乾燥組",name:"邱献毅",title:"",ext:"541",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 成品課 › 乾燥組",name:"曾清輝",title:"",ext:"541",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產二部 › 成品課",name:"J棟",title:"",ext:"542",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部",name:"陳柏瑀",title:"經理",ext:"203",type:'人員',ab:'A'},
-{plant:'一廠',dept:"生產三部",name:"王凱民",title:"副理",ext:"204",type:'人員',ab:'A'},
-{plant:'一廠',dept:"生產三部 › 合四課",name:"温啟銘",title:"課長",ext:"250",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"陳冠華",title:"組長",ext:"251",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"楊鴻昇",title:"組長",ext:"251",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"李昀哲",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"劉書凱",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"陳宥任",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"廖博淵",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"王文宏",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"李丞瑋",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"羅祖源",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"陳昱鴻",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課 › 製八組",name:"吳奕辰",title:"",ext:"252",type:'人員',ab:'B'},
-{plant:'一廠',dept:"生產三部 › 合四課",name:"ALPHA ROOM",title:"",ext:"253",type:'單位',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"林坤德",title:"組長",ext:"261",type:'人員',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"林順德",title:"",ext:"261",type:'人員',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"劉耀中",title:"",ext:"261",type:'人員',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"陳亦群",title:"",ext:"261",type:'人員',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"王名涵",title:"",ext:"261",type:'人員',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"戴玟婷",title:"",ext:"261",type:'人員',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"林佳蓉",title:"",ext:"261",type:'人員',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"實驗室",title:"",ext:"261",type:'單位',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"連續製程辦公室",title:"",ext:"262",type:'單位',ab:'B'},
-{plant:'一廠',dept:"實驗工場",name:"連續製程辦公室",title:"",ext:"263",type:'單位',ab:'B'},
-{plant:'一廠',dept:"環保部",name:"陳啟華",title:"經理",ext:"701",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環保課",name:"洪建旭",title:"組長",ext:"710",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環保課",name:"劉進財",title:"",ext:"710",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環保課",name:"劉俊男",title:"",ext:"710",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環保課",name:"劉德輝",title:"",ext:"710",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環保課",name:"方緒明",title:"",ext:"710",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環保課",name:"林志權",title:"",ext:"710",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環保課",name:"陳傑維",title:"",ext:"710",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環保部 › 環資課",name:"陳彥合",title:"組長",ext:"720",type:'人員',ab:'A'},
-{plant:'一廠',dept:"品保部",name:"楊賀鈞",title:"經理",ext:"301",type:'人員',ab:'A'},
-{plant:'一廠',dept:"品保部",name:"林鈺偉",title:"副理",ext:"302",type:'人員',ab:'A'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"張韶娟",title:"組長",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"涂憲忠",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"林鎮安",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"王聖宏",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"許顯龍",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"張陳紹華",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"湯佳勳",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"陳政杰",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"丁振邦",title:"",ext:"311",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品一課",name:"品一課4樓",title:"",ext:"312",type:'單位',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"陳文斌",title:"課長",ext:"320",type:'人員',ab:'A'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"陳學伃",title:"",ext:"323",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"駱杰志",title:"",ext:"323",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"梁世錡",title:"",ext:"323",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"陳彥融",title:"",ext:"323",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"黃寬銘",title:"",ext:"323",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"阮芳苑",title:"",ext:"323",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課",name:"林云亭",title:"",ext:"323",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課 › 應用組",name:"游博淵",title:"組長",ext:"321",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課 › 應用組",name:"王佳琪",title:"",ext:"321",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課 › 應用組",name:"鄭宇成",title:"",ext:"321",type:'人員',ab:'B'},
-{plant:'一廠',dept:"品保部 › 品二課 › 應用組",name:"實驗室",title:"",ext:"322",type:'單位',ab:'B'},
-{plant:'一廠',dept:"技銷處",name:"王殷光",title:"處長",ext:"150",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部",name:"賴致中",title:"經理",ext:"151",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部",name:"王乃慶",title:"副理",ext:"152",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 金技課",name:"江富誠",title:"課長",ext:"160",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 金技課",name:"陳政銘",title:"",ext:"161",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 金技課",name:"陳慧琳",title:"",ext:"161",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 金技課",name:"陳亮佐",title:"",ext:"161",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 金技課",name:"李品儀",title:"",ext:"161",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 皮技課",name:"陳清芳",title:"",ext:"171",type:'人員',ab:'B'},
-{plant:'一廠',dept:"技銷處五部 › 皮技課",name:"施彥慈",title:"",ext:"171",type:'人員',ab:'B'},
-{plant:'一廠',dept:"技銷處五部 › 皮技課",name:"許至皓",title:"組長",ext:"170",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 皮技課",name:"游智宏",title:"",ext:"171",type:'人員',ab:'B'},
-{plant:'一廠',dept:"技銷處五部 › 紙技課",name:"徐靜怡",title:"",ext:"180",type:'人員',ab:'A'},
-{plant:'一廠',dept:"技銷處五部 › 紙技課",name:"蘇逸煥",title:"",ext:"180",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處",name:"黃樹瑆",title:"副處長",ext:"901",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 一部",name:"蔡道明",title:"副理",ext:"902",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 一部一課",name:"林文慶",title:"組長",ext:"910",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 一部一課",name:"嚴增榮",title:"",ext:"910",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 一部一課",name:"唐孝平",title:"",ext:"910",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 一部一課",name:"沈建宇",title:"",ext:"910",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 一部一課",name:"呂晉安",title:"",ext:"910",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 工程管理部",name:"穆彥池",title:"副理",ext:"903",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 工程管理部",name:"李奕承",title:"",ext:"922",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 工程管理部",name:"康睜芳",title:"",ext:"923",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 工程管理部",name:"李安炖",title:"",ext:"925",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 智慧製造部",name:"劉子瑜",title:"組長",ext:"931",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 智慧製造部",name:"李鎮宇",title:"",ext:"932",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 智慧製造部",name:"董怡宣",title:"",ext:"933",type:'人員',ab:'A'},
-{plant:'一廠',dept:"工程管理暨智慧製造處 › 智慧製造部",name:"楊梓盛",title:"",ext:"924",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環資管理處",name:"林礽龍",title:"處長",ext:"801",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環資管理處 › 永續資源組",name:"胡忠仁",title:"",ext:"814",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環資管理處 › 環境資訊組",name:"鍾詠丞",title:"",ext:"812",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環資管理處 › 環保技術組",name:"林日珅",title:"",ext:"811",type:'人員',ab:'A'},
-{plant:'一廠',dept:"環資管理處 › 環境資訊組",name:"蔡宜蓁",title:"",ext:"813",type:'人員',ab:'A'},
-{plant:'一廠',dept:"安衛室",name:"許峰睿",title:"副主任",ext:"402",type:'人員',ab:'A'},
-{plant:'一廠',dept:"安衛室",name:"張惠鎔",title:"",ext:"403",type:'人員',ab:'A'},
-{plant:'一廠',dept:"安衛室",name:"余國馳",title:"",ext:"404",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部",name:"蘇聰賢",title:"經理",ext:"601",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"陳秋宏",title:"課長",ext:"610",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"黃傑",title:"組長",ext:"612",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"張淑如",title:"",ext:"611",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"余明柔",title:"",ext:"613",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"行動辦公室",title:"",ext:"620",type:'單位',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"第三會議室",title:"",ext:"699",type:'單位',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"禮堂",title:"",ext:"698",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"2、3樓機房",title:"",ext:"619",type:'單位',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"餐廳",title:"",ext:"617",type:'單位',ab:'B'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"外勞宿舍",title:"",ext:"616",type:'人員',ab:'B'},
-{plant:'一廠',dept:"廠務部 › 總務課",name:"e-learning",title:"",ext:"615",type:'單位',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 原料課",name:"林品郡",title:"組長",ext:"621",type:'人員',ab:'A'},
-{plant:'一廠',dept:"廠務部 › 原料課",name:"張又仁",title:"",ext:"622",type:'人員',ab:'B'},
-{plant:'一廠',dept:"廠務部 › 原料課",name:"林鈞勳",title:"",ext:"622",type:'人員',ab:'B'},
-{plant:'一廠',dept:"廠務部 › 原料課",name:"江文光",title:"",ext:"622",type:'人員',ab:'B'},
-{plant:'一廠',dept:"廠務部",name:"緊急專線",title:"",ext:"119",type:'人員',ab:'B'},
-{plant:'一廠',dept:"廠務部",name:"總機",title:"",ext:"613",type:'單位',ab:'A'},
-{plant:'一廠',dept:"廠務部",name:"會客室",title:"",ext:"640",type:'單位',ab:'B'}
+/* ================= 部門工具 ================= */
+function kids(pid){return depts.filter(function(d){return d.parent===pid&&d.active}).sort(function(a,b){return a.sort-b.sort})}
+function tops(){return depts.filter(function(d){return !d.parent&&d.active}).sort(function(a,b){return a.sort-b.sort})}
+function flat(){var out=[];(function walk(pid,lv){(pid===null?tops():kids(pid)).forEach(function(d){out.push({d:d,lv:lv});walk(d.id,lv+1)})})(null,0);return out}
+function path(id){if(!id)return '（置頂・無部門）';var a=[],d=dById(id);while(d){a.unshift(d.name);d=d.parent?dById(d.parent):null}return a.join(' › ')}
+function short(id){if(!id)return '（置頂）';var d=dById(id);return d.parent?dById(d.parent).name+' › '+d.name:d.name}
+function topOf(id){var d=dById(id);while(d&&d.parent)d=dById(d.parent);return d}
+function inTree(id,root){var d=dById(id);while(d){if(d.id===root)return true;d=d.parent?dById(d.parent):null}return false}
+function deptOpts(sel,withNone){var h=withNone?'<option value="">（置頂・無部門）</option>':'';flat().forEach(function(x){h+='<option value="'+x.d.id+'"'+(x.d.id===sel?' selected':'')+'>'+'　'.repeat(x.lv)+esc(x.d.name)+'</option>'});return h}
+function spaced(n){return n.length<=5?n.split('').join('　'):n}
+var MGR=['課長','副理','經理','處長','副處長','廠長','副廠長','技術經理','副主任'];
+function isMgr(t){return MGR.indexOf(t)>-1}
+function gradeOf(e){var x=extOf(e);return x?x.grade:''}
+function extOf(e){for(var i=0;i<exts.length;i++)if(exts[i].ext===e)return exts[i];return null}
+function users(e){return recs.filter(function(r){return r.active&&r.ext===e})}
+function inRange(e,rg){if(!rg)return true;var m=rg.split('-');return e>=+m[0]&&e<=+m[1]}
+function titleRank(t){var o=['廠長','副廠長','處長','副處長','部長','經理','技術經理','副理','課長','副課長','副主任','組長'];var i=o.indexOf(t);return i<0?99:i}
+
+/* ================= 導覽 ================= */
+var VIEWS=[['search','查詢'],['inbox','異動收件匣'],['edit','人員與單位'],['dept','部門表'],['ext','分機號碼表'],['layout','列印版面'],['export','匯出'],['log','異動紀錄']];
+var view='search';
+function go(v,arg){view=v;if(arg)goArg=arg;render()}
+var goArg=null;
+function renderNav(){
+  var h='';VIEWS.forEach(function(x){var on=x[0]===view||(view==='p2'&&x[0]==='export');h+='<button role="tab" aria-selected="'+on+'" class="'+(on?'on':'')+'" data-v="'+x[0]+'">'+x[1]+(x[0]==='inbox'&&pendingN()?'<span class="cnt">'+pendingN()+'</span>':'')+'</button>'});
+  $('nav').innerHTML=h;
+  Array.prototype.forEach.call($('nav').children,function(b){b.onclick=function(){go(b.getAttribute('data-v'))}});
+}
+function toast(t){var e=$('toast');e.textContent=t;e.classList.remove('hide');clearTimeout(toast.h);toast.h=setTimeout(function(){e.classList.add('hide')},3200)}
+
+/* ================= 異動收件匣資料 ================= */
+var INBOX=[
+ {id:'a1',kind:'auto',tag:'new',label:'新進',who:'林小華（範例）',det:'Domino 部門「製三組」對得上、非主管、部門預設分機 221 → 已加入，使用公用分機 221。',done:false,rid:null},
+ {id:'a2',kind:'auto',tag:'out',label:'離職',who:'陳小強（範例）',det:'原使用「製一組」公用分機 211 → 已停用（不刪除）。',done:false,rid:null},
+ {id:'a3',kind:'auto',tag:'mv',label:'調部門',who:'黃小美（範例）',det:'「品一課」→「品二課」，新部門預設分機 323 → 分機由 311 改為 323。',done:false,rid:null},
+ {id:'p1',kind:'pend',tag:'new',label:'新進・主管',who:'周大成（範例）',det:'Domino 部門「環資管理處」，職稱「副理」。主管需要個人分機，系統列出該部門空號供挑選。',btn:'新增並選分機',act:'newMgr'},
+ {id:'p2',kind:'pend',tag:'new',label:'新進・部門對不上',who:'吳小芬（範例）',det:'Domino 部門名稱「資訊管理課」在部門表裡沒有對應。',btn:'到部門表指定',act:'mapDept'},
+ {id:'p3',kind:'pend',tag:'out',label:'離職・有個人分機',who:'蔡小宇（範例）',det:'環資管理處，個人分機 815。貼牆表會少一列，分機可能交接。確認後 815 回到環資管理處的空號。',btn:'確認停用',act:'confirmOut'},
+ {id:'p4',kind:'pend',tag:'up',label:'原地升遷',who:'謝小春（範例）',det:'乾燥課，職稱「組長」→「課長」，但沒有個人分機。',btn:'新增個人分機',act:'newMgr2'},
+ {id:'p5',kind:'pend',tag:'mv',label:'可能是部門改名',who:'9 人',det:'9 人同時從「品一課」換到「品質一課」。請到部門表改名後整批套用，不要逐人處理。',btn:'改名並整批套用',act:'renameBatch'}
 ];
-var PLANTS=['全部','一廠','二廠','三廠','四廠','台北'],sPlant='一廠',sQ='';
-function hit(d){var k=sQ.trim().toLowerCase();return !k||[d.dept,d.name,d.title,d.ext].some(function(s){return s.toLowerCase().indexOf(k)>-1})}
-var MYPLANT='一廠';
-function rowsAll(){return list.map(function(r){return Object.assign({},r,{plant:'一廠'})}).concat(DATA.filter(function(d){return d.plant!=='一廠'}))}
-function nameCell(d){return (d.plant===MYPLANT&&d.id)?'<button class="who" data-ed="'+d.id+'" aria-label="編輯 '+esc(d.name)+'">'+esc(d.name)+' ✎</button>':esc(d.name)}
-function bindEd(box){box.querySelectorAll('[data-ed]').forEach(function(b){b.onclick=function(){
-  var r=list.filter(function(x){return x.id==b.getAttribute('data-ed')})[0];if(!r)return;
-  form=Object.assign({},r);go('edit');renderEdit();fillForm();$('f-title-h').scrollIntoView({behavior:'smooth',block:'center'});
-}})}
-function renderSearchList(){
-  $('tabs').innerHTML=PLANTS.map(function(p){
-    var n=rowsAll().filter(function(d){return (p==='全部'||d.plant===p)&&hit(d)}).length;
-    return '<button class="chip'+(p===sPlant?' on':'')+'" data-p="'+p+'">'+p+'<small>'+n+'</small></button>'}).join('');
-  $('tabs').querySelectorAll('button').forEach(function(b){b.onclick=function(){sPlant=b.getAttribute('data-p');renderSearch()}});
-  var rows=rowsAll().filter(function(d){return (sPlant==='全部'||d.plant===sPlant)&&hit(d)});
-  var g='grid-template-columns:2.4fr 1.2fr 1fr .8fr .8fr';
-  $('list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">姓名／單位</div><div role="columnheader">職稱</div><div role="columnheader">分機</div><div role="columnheader">類型</div></div>'+
-    rows.map(function(d){return '<div class="row" role="row" style="'+g+'"><div role="cell" style="color:#3C4640">'+esc(d.dept)+'</div><div role="cell" style="font-weight:500">'+nameCell(d)+'</div><div role="cell" style="color:#3C4640">'+esc(d.title)+'</div><div role="cell" class="ext">'+esc(d.ext)+'</div><div role="cell"><span class="badge'+(d.type==='單位'?' u':'')+'">'+d.type+'</span></div></div>'}).join('')+
-    (rows.length?'':'<div style="padding:48px 24px;text-align:center;color:var(--mut)">找不到符合的分機。可以換個關鍵字，或切換到「全部」。</div>');
-  bindEd($('list'));
-}
-var sMode='list';
-function renderSearch(){
-  renderSearchList();
-  var rows=rowsAll().filter(function(d){return (sPlant==='全部'||d.plant===sPlant)&&hit(d)}),groups={},order=[];
-  rows.forEach(function(d){var top=d.dept.split(' › ')[0],key=(sPlant==='全部'?d.plant+'・':'')+top;if(!groups[key]){groups[key]=[];order.push(key)}groups[key].push(d)});
-  $('card-box').innerHTML=order.length?'<div class="cgrid">'+order.map(function(k){return '<div class="ccard"><h3>'+esc(k)+'</h3>'+groups[k].map(function(d){
-    var sub=d.dept.split(' › ').slice(1).join(' › '),extra=[sub,d.title].filter(Boolean).join('　');
-    return '<div><span class="n"><span class="dot" style="background:'+(d.type==='單位'?'var(--amber)':'transparent')+'"></span><span>'+nameCell(d)+(extra?'<small>'+esc(extra)+'</small>':'')+'</span></span><span class="x">'+esc(d.ext)+'</span></div>'}).join('')+'</div>'}).join('')+'</div><div class="muted" style="margin-top:12px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber)"></span> 會議室、守衛室、公用電話等單位</div>'
-    :'<div class="box" style="padding:48px 24px;text-align:center;color:var(--mut)">找不到符合的分機。可以換個關鍵字，或切換到「全部」。</div>';
-  bindEd($('card-box'));
-  $('list-box').classList.toggle('hide',sMode!=='list');$('card-box').classList.toggle('hide',sMode!=='card');
-  $('m-list').className='chip'+(sMode==='list'?' on':'');$('m-card').className='chip'+(sMode==='card'?' on':'');
-}
-$('m-list').onclick=function(){sMode='list';renderSearch()};
-$('m-card').onclick=function(){sMode='card';renderSearch()};
-$('q').oninput=function(e){sQ=e.target.value;renderSearch()};
+function pendingN(){return INBOX.filter(function(x){return x.kind==='pend'&&!x.done}).length}
+// 已自動處理的三筆：實際加到資料裡，才能示範「還原」
+(function(){
+  var r1={id:++nid,t:'P',name:'林小華（範例）',pn:'',dept:'z3',title:'',ext:221,personal:false,inDir:true,hide:false,active:true,sort:2000,note:'',email:'e'+(1000+nid)+'@ecic.com.tw'};recs.push(r1);INBOX[0].rid=r1.id;
+  var r2={id:++nid,t:'P',name:'陳小強（範例）',pn:'',dept:'z1',title:'',ext:211,personal:false,inDir:true,hide:false,active:false,sort:2001,note:'',email:'e'+(1000+nid)+'@ecic.com.tw'};recs.push(r2);INBOX[1].rid=r2.id;
+  var r3={id:++nid,t:'P',name:'黃小美（範例）',pn:'',dept:'q2',title:'',ext:323,personal:false,inDir:true,hide:false,active:true,sort:2002,note:'',email:'e'+(1000+nid)+'@ecic.com.tw'};recs.push(r3);INBOX[2].rid=r3.id;
+})();
+function rById(id){for(var i=0;i<recs.length;i++)if(recs[i].id===id)return recs[i];return null}
+var inboxDone=[];
 
-/* ---------- 維護 ---------- */
-var DOMINO=[["陳坤木", "第一廠", ""], ["陳勳振", "第一廠", ""], ["廖嘉鍾", "總經理室", ""], ["康源昇", "總經理室", ""], ["李靜安", "廠長室", ""], ["黃明傑", "廠長室", ""], ["楊馥瑄", "廠長室", ""], ["李欣庭", "廠長室", ""], ["梁冬梅", "廠長室 › 生管課", ""], ["吳家綺", "廠長室 › 生管課", ""], ["邱曉芳", "人事室", ""], ["賴升美", "人事室", ""], ["吳靜怡", "人事室", ""], ["楊育峰", "生產一部", ""], ["孫立平", "生產一部", ""], ["黃俊華", "生產一部 › 合一課", ""], ["陳六山", "生產一部 › 合一課 › 製一組", ""], ["徐耀宗", "生產一部 › 合一課 › 製一組", ""], ["黃柏霖", "生產一部 › 合一課 › 製一組", ""], ["簡淯", "生產一部 › 合一課 › 製一組", ""], ["鄭昕翀", "生產一部 › 合一課 › 製二組", ""], ["余政峰", "生產一部 › 合二課", ""], ["謝浡浩", "生產一部 › 合二課 › 製三組", ""], ["余能昌", "生產一部 › 合二課 › 製四組", ""], ["王晨霖", "生產一部 › 合二課 › 製四組", ""], ["周家興", "生產一部 › 合二課 › 製四組", ""], ["張軒銘", "生產一部 › 合三課 › 製七組", ""], ["楊安財", "生產一部 › 合三課 › 製七組", ""], ["徐聰君", "生產一部 › 合三課 › 製七組", ""], ["羅竣頡", "生產一部 › 合三課 › 製七組", ""], ["李榮勳", "生產一部 › 合三課 › 製七組", ""], ["阮德功", "生產一部 › 合三課 › 製七組", ""], ["S棟", "生產一部 › 合三課", ""], ["林忠鵬", "生產二部", ""], ["周致豪", "生產二部", ""], ["劉任偉", "生產二部 › 噴一課", ""], ["徐世緯", "生產二部 › 噴一課", ""], ["劉啟同", "生產二部 › 噴一課", ""], ["洪鈿壹", "生產二部 › 噴一課", ""], ["蔣朝陽", "生產二部 › 噴一課", ""], ["詹俊成", "生產二部 › 噴一課", ""], ["王世裕", "生產二部 › 噴一課", ""], ["楊銘輝", "生產二部 › 噴一課", ""], ["阮光榮", "生產二部 › 噴一課", ""], ["蕭明德", "生產二部 › 噴一課", ""], ["游輝正", "生產二部 › 噴一課", ""], ["陳柏蒼", "生產二部 › 液品課", ""], ["陳敬燁", "生產二部 › 液品課", ""], ["李錦昌", "生產二部 › 液品課", ""], ["吳文正", "生產二部 › 液品課", ""], ["吳奕德", "生產二部 › 液品課", ""], ["吳承憲", "生產二部 › 精細課", ""], ["六樓", "生產二部 › 精細課", ""], ["林揚舒", "生產二部 › 精細課", ""], ["鄭俊豪", "生產二部 › 精細課", ""], ["陳文濬", "生產二部 › 成品課", ""], ["謝春和", "生產二部 › 成品課 › 乾燥組", ""], ["邱献毅", "生產二部 › 成品課 › 乾燥組", ""], ["曾清輝", "生產二部 › 成品課 › 乾燥組", ""], ["J棟", "生產二部 › 成品課", ""], ["陳柏瑀", "生產三部", ""], ["王凱民", "生產三部", ""], ["温啟銘", "生產三部 › 合四課", ""], ["陳冠華", "生產三部 › 合四課 › 製八組", ""], ["楊鴻昇", "生產三部 › 合四課 › 製八組", ""], ["李昀哲", "生產三部 › 合四課 › 製八組", ""], ["劉書凱", "生產三部 › 合四課 › 製八組", ""], ["陳宥任", "生產三部 › 合四課 › 製八組", ""], ["廖博淵", "生產三部 › 合四課 › 製八組", ""], ["王文宏", "生產三部 › 合四課 › 製八組", ""], ["李丞瑋", "生產三部 › 合四課 › 製八組", ""], ["羅祖源", "生產三部 › 合四課 › 製八組", ""], ["陳昱鴻", "生產三部 › 合四課 › 製八組", ""], ["吳奕辰", "生產三部 › 合四課 › 製八組", ""], ["林坤德", "實驗工場", ""], ["林順德", "實驗工場", ""], ["劉耀中", "實驗工場", ""], ["陳亦群", "實驗工場", ""], ["王名涵", "實驗工場", ""], ["戴玟婷", "實驗工場", ""], ["林佳蓉", "實驗工場", ""], ["陳啟華", "環保部", ""], ["洪建旭", "環保部 › 環保課", ""], ["劉進財", "環保部 › 環保課", ""], ["劉俊男", "環保部 › 環保課", ""], ["劉德輝", "環保部 › 環保課", ""], ["方緒明", "環保部 › 環保課", ""], ["林志權", "環保部 › 環保課", ""], ["陳傑維", "環保部 › 環保課", ""], ["陳彥合", "環保部 › 環資課", ""], ["楊賀鈞", "品保部", ""], ["林鈺偉", "品保部", ""], ["張韶娟", "品保部 › 品一課", ""], ["涂憲忠", "品保部 › 品一課", ""], ["林鎮安", "品保部 › 品一課", ""], ["王聖宏", "品保部 › 品一課", ""], ["許顯龍", "品保部 › 品一課", ""], ["張陳紹華", "品保部 › 品一課", ""], ["湯佳勳", "品保部 › 品一課", ""], ["陳政杰", "品保部 › 品一課", ""], ["丁振邦", "品保部 › 品一課", ""], ["陳文斌", "品保部 › 品二課", ""], ["陳學伃", "品保部 › 品二課", ""], ["駱杰志", "品保部 › 品二課", ""], ["梁世錡", "品保部 › 品二課", ""], ["陳彥融", "品保部 › 品二課", ""], ["黃寬銘", "品保部 › 品二課", ""], ["阮芳苑", "品保部 › 品二課", ""], ["林云亭", "品保部 › 品二課", ""], ["游博淵", "品保部 › 品二課 › 應用組", ""], ["王佳琪", "品保部 › 品二課 › 應用組", ""], ["鄭宇成", "品保部 › 品二課 › 應用組", ""], ["王殷光", "技銷處", ""], ["賴致中", "技銷處五部", ""], ["王乃慶", "技銷處五部", ""], ["江富誠", "技銷處五部 › 金技課", ""], ["陳政銘", "技銷處五部 › 金技課", ""], ["陳慧琳", "技銷處五部 › 金技課", ""], ["陳亮佐", "技銷處五部 › 金技課", ""], ["李品儀", "技銷處五部 › 金技課", ""], ["陳清芳", "技銷處五部 › 皮技課", ""], ["施彥慈", "技銷處五部 › 皮技課", ""], ["許至皓", "技銷處五部 › 皮技課", ""], ["游智宏", "技銷處五部 › 皮技課", ""], ["徐靜怡", "技銷處五部 › 紙技課", ""], ["蘇逸煥", "技銷處五部 › 紙技課", ""], ["黃樹瑆", "工程管理暨智慧製造處", ""], ["蔡道明", "工程管理暨智慧製造處 › 一部", ""], ["林文慶", "工程管理暨智慧製造處 › 一部一課", ""], ["嚴增榮", "工程管理暨智慧製造處 › 一部一課", ""], ["唐孝平", "工程管理暨智慧製造處 › 一部一課", ""], ["沈建宇", "工程管理暨智慧製造處 › 一部一課", ""], ["呂晉安", "工程管理暨智慧製造處 › 一部一課", ""], ["穆彥池", "工程管理暨智慧製造處 › 工程管理部", ""], ["李奕承", "工程管理暨智慧製造處 › 工程管理部", ""], ["康睜芳", "工程管理暨智慧製造處 › 工程管理部", ""], ["李安炖", "工程管理暨智慧製造處 › 工程管理部", ""], ["劉子瑜", "工程管理暨智慧製造處 › 智慧製造部", ""], ["李鎮宇", "工程管理暨智慧製造處 › 智慧製造部", ""], ["董怡宣", "工程管理暨智慧製造處 › 智慧製造部", ""], ["楊梓盛", "工程管理暨智慧製造處 › 智慧製造部", ""], ["林礽龍", "環資管理處", ""], ["胡忠仁", "環資管理處 › 永續資源組", ""], ["鍾詠丞", "環資管理處 › 環境資訊組", ""], ["林日珅", "環資管理處 › 環保技術組", ""], ["蔡宜蓁", "環資管理處 › 環境資訊組", ""], ["許峰睿", "安衛室", ""], ["張惠鎔", "安衛室", ""], ["余國馳", "安衛室", ""], ["蘇聰賢", "廠務部", ""], ["陳秋宏", "廠務部 › 總務課", ""], ["黃傑", "廠務部 › 總務課", ""], ["張淑如", "廠務部 › 總務課", ""], ["余明柔", "廠務部 › 總務課", ""], ["禮堂", "廠務部 › 總務課", ""], ["外勞宿舍", "廠務部 › 總務課", ""], ["林品郡", "廠務部 › 原料課", ""], ["張又仁", "廠務部 › 原料課", ""], ["林鈞勳", "廠務部 › 原料課", ""], ["江文光", "廠務部 › 原料課", ""], ["緊急專線", "廠務部", ""]];
-var EMPTY={id:null,type:'人員',name:'',dept:'',title:'',ext:'',email:'',ab:''};
-var form=Object.assign({},EMPTY),nextId=100;
-var list=DATA.filter(function(d){return d.plant==='一廠'}).map(function(d,i){var m=DOMINO.filter(function(x){return x[0]===d.name&&d.dept.indexOf(x[1])===0})[0];return Object.assign({id:i+1,email:m?m[2]:''},d)});
-function renderEdit(){
-  var g='grid-template-columns:2fr 1.2fr .8fr .6fr 1.3fr';
-  var k=($('e-q').value||'').trim().toLowerCase(),cd=$('e-dept').value;
-  $('e-dept').innerHTML='<option value="">全部部門</option>'+DEPTS.filter(function(d){return dep(d.path)===1}).map(function(d){return '<option value="'+esc(d.path)+'">'+esc(d.path)+'</option>'}).join('');
-  $('e-dept').value=cd;var df=$('e-dept').value;
-  var rows=list.filter(function(r){return (!df||inDept(r.dept,df))&&(!k||[r.name,r.dept,r.title,r.ext,r.email].some(function(s){return String(s||'').toLowerCase().indexOf(k)>-1}))});
-  $('e-count').textContent='顯示 '+rows.length+' / '+list.length+' 筆';
-  $('e-list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">姓名／單位</div><div role="columnheader">分機</div><div role="columnheader">線路</div><div role="columnheader">操作</div></div>'+
-    rows.map(function(r){return '<div class="row" role="row" style="'+g+(r.id===form.id?';background:#E3F0EC':'')+'"><div role="cell" style="color:#3C4640">'+esc(r.dept)+'</div><div role="cell" style="font-weight:500">'+esc(r.name)+(r.type==='單位'?' <span style="font-size:12px;color:#7A4B00">單位</span>':'')+'</div><div role="cell" class="ext" style="font-size:17px">'+esc(r.ext)+'</div><div role="cell" style="color:#3C4640">'+(esc(r.ab)||'<span style="color:#9AA39C">—</span>')+'</div><div role="cell" style="display:flex;gap:8px"><button class="btn s" data-e="'+r.id+'" aria-label="編輯 '+esc(r.name)+'">編輯</button><button class="btn s d" data-d="'+r.id+'" aria-label="刪除 '+esc(r.name)+'">刪除</button></div></div>'}).join('');
-  $('e-list').querySelectorAll('[data-e]').forEach(function(b){b.onclick=function(){var r=list.filter(function(x){return x.id==b.getAttribute('data-e')})[0];form=Object.assign({},r);renderEdit();fillForm()}});
-  $('e-list').querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){var id=+b.getAttribute('data-d');list=list.filter(function(x){return x.id!==id});if(form.id===id)form=Object.assign({},EMPTY);renderEdit();fillForm()}});
-}
-$('e-q').oninput=renderEdit;$('e-dept').onchange=renderEdit;
-function fillForm(){
-  var p=form.type==='人員';
-  $('f-title-h').textContent=form.id?'編輯分機':'新增分機';
-  $('t-p').className='chip'+(p?' on':'');$('t-u').className='chip'+(!p?' on':'');
-  $('f-name-l').textContent=p?'姓名（從 Domino 選）':'單位／地點名稱';
-  $('f-name').placeholder=p?'輸入姓名，例如：李':'例如：第三會議室';
-  ['name','dept','title','ext','ab'].forEach(function(k){if($('f-'+k).value!==form[k])$('f-'+k).value=form[k]});
-  suggest();
-}
-function suggest(){
-  var p=form.type==='人員',n=form.name.trim(),box=$('f-sug');
-  $('f-linked').textContent=(p&&form.email)?'已連結 Domino：'+form.email:'';
-  if(!(p&&n&&!form.email)){box.innerHTML='';return}
-  var m=DOMINO.filter(function(d){return d[0].indexOf(n)>-1});
-  box.innerHTML='<div class="sug">'+(m.length?m.map(function(d,i){return '<button data-s="'+DOMINO.indexOf(d)+'"><b>'+esc(d[0])+'</b><span style="color:var(--mut)">　'+esc(d[1])+'　'+esc(d[2])+'</span></button>'}).join(''):'<div style="padding:10px 12px;font-size:14px;color:var(--mut)">Domino 找不到這個姓名，請確認是否在職。</div>')+'</div>';
-  box.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){var d=DOMINO[+b.getAttribute('data-s')];form.name=d[0];form.email=d[2];if(!form.dept)form.dept=d[1];fillForm()}});
-}
-['name','dept','title','ext','ab'].forEach(function(k){$('f-'+k).oninput=function(e){form[k]=e.target.value;if(k==='name'){form.email='';suggest()}}});
-$('t-p').onclick=function(){form.type='人員';form.email='';fillForm()};
-$('t-u').onclick=function(){form.type='單位';form.email='';fillForm()};
-$('e-new').onclick=$('f-clear').onclick=function(){form=Object.assign({},EMPTY);renderEdit();fillForm()};
-$('f-save').onclick=function(){
-  if(!form.name.trim())return;
-  var r=Object.assign({plant:'一廠'},form);
-  if(r.id){list=list.map(function(x){return x.id===r.id?r:x})}else{r.id=nextId++;list.push(r)}
-  form=Object.assign({},EMPTY);renderEdit();fillForm();
-};
-
-/* ---------- 部門表 ---------- */
-var DEPTS=["第一廠", "總經理室", "廠長室", "廠長室 › 生管課", "人事室", "生產一部", "生產一部 › 合一課", "生產一部 › 合一課 › 製一組", "生產一部 › 合一課 › 製二組", "生產一部 › 合二課", "生產一部 › 合二課 › 製三組", "生產一部 › 合二課 › 製四組", "生產一部 › 合三課", "生產一部 › 合三課 › 製七組", "生產二部", "生產二部 › 噴一課", "生產二部 › 液品課", "生產二部 › 精細課", "生產二部 › 成品課", "生產二部 › 成品課 › 乾燥組", "生產三部", "生產三部 › 合四課", "生產三部 › 合四課 › 製八組", "實驗工場", "環保部", "環保部 › 環保課", "環保部 › 環資課", "品保部", "品保部 › 品一課", "品保部 › 品二課", "品保部 › 品二課 › 應用組", "技銷處", "技銷處五部", "技銷處五部 › 金技課", "技銷處五部 › 皮技課", "技銷處五部 › 紙技課", "工程管理暨智慧製造處", "工程管理暨智慧製造處 › 一部", "工程管理暨智慧製造處 › 一部一課", "工程管理暨智慧製造處 › 工程管理部", "工程管理暨智慧製造處 › 智慧製造部", "環資管理處", "環資管理處 › 永續資源組", "環資管理處 › 環境資訊組", "環資管理處 › 環保技術組", "安衛室", "廠務部", "廠務部 › 總務課", "廠務部 › 原料課"].map(function(p){return {path:p,on:true}});
-var MAPD={};
-function par(p){var a=p.split(' › ');a.pop();return a.join(' › ')}
-function dep(p){return p.split(' › ').length}
-function dIdx(p){for(var i=0;i<DEPTS.length;i++){if(DEPTS[i].path===p)return i}return -1}
-function blk(i){var j=i+1;while(j<DEPTS.length&&DEPTS[j].path.indexOf(DEPTS[i].path+' › ')===0)j++;return [i,j]}
-function ensureDept(p){
-  if(dIdx(p)>-1)return;
-  var pp=par(p);if(pp)ensureDept(pp);
-  if(!pp){DEPTS.push({path:p,on:true});return}
-  DEPTS.splice(blk(dIdx(pp))[1],0,{path:p,on:true});
-}
-function moveD(i,dir){
-  var b=blk(i),d=dep(DEPTS[i].path),pp=par(DEPTS[i].path),k;
-  if(dir<0){
-    k=i-1;while(k>=0&&dep(DEPTS[k].path)>d)k--;
-    if(k<0||dep(DEPTS[k].path)!==d||par(DEPTS[k].path)!==pp)return;
-    var cut=DEPTS.splice(b[0],b[1]-b[0]);DEPTS.splice.apply(DEPTS,[k,0].concat(cut));
-  }else{
-    var n=b[1];if(n>=DEPTS.length||dep(DEPTS[n].path)!==d||par(DEPTS[n].path)!==pp)return;
-    var nb=blk(n),nx=DEPTS.splice(n,nb[1]-nb[0]);DEPTS.splice.apply(DEPTS,[b[0],0].concat(nx));
-  }
-}
-function inDept(p,d){return p===d||p.indexOf(d+' › ')===0}
-function headCount(p){return list.filter(function(r){return r.dept===p}).length}
-function treeCount(p){return list.filter(function(r){return inDept(r.dept,p)}).length}
-function renameDept(from,to){
-  var sw=function(p){return inDept(p,from)?to+p.slice(from.length):p};
-  DEPTS.forEach(function(d){d.path=sw(d.path)});
-  list.forEach(function(r){r.dept=sw(r.dept)});
-  DATA.forEach(function(r){if(r.plant==='一廠')r.dept=sw(r.dept)});
-  if(form.dept)form.dept=sw(form.dept);
-  NOTES.forEach(function(n){if(n.dept)n.dept=sw(n.dept);if(n.from&&n.kind!=='改名')n.from=sw(n.from)});
-  Object.keys(MAPD).forEach(function(k){MAPD[k]=sw(MAPD[k])});
-}
-function mapNames(){
-  var s=[];DOMINO.forEach(function(d){if(s.indexOf(d[1])<0)s.push(d[1])});
-  NOTES.forEach(function(n){if(n.dept&&s.indexOf(n.dept)<0)s.push(n.dept)});
-  return s;
-}
-function renderDept(){
-  var g='grid-template-columns:2.6fr .7fr .9fr 2fr';
-  $('d-list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">人數</div><div role="columnheader">狀態</div><div role="columnheader">操作</div></div>'+
-   DEPTS.map(function(d,i){
-     var lv=dep(d.path)-1,nm=d.path.split(' › ').pop();
-     return '<div class="row" role="row" style="'+g+(d.on?'':';opacity:.55')+'"><div role="cell" style="padding-left:'+(lv*22)+'px;font-weight:'+(lv?400:700)+'">'+(lv?'└ ':'')+esc(nm)+'</div><div role="cell">'+treeCount(d.path)+'</div><div role="cell">'+(d.on?'使用中':'<span style="color:var(--mut)">已停用</span>')+'</div><div role="cell" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn s" data-u="'+i+'" aria-label="上移 '+esc(nm)+'">↑</button><button class="btn s" data-w="'+i+'" aria-label="下移 '+esc(nm)+'">↓</button><button class="btn s" data-r="'+i+'">改名</button><button class="btn s" data-v="'+i+'">移動</button><button class="btn s" data-t="'+i+'">'+(d.on?'停用':'啟用')+'</button></div></div>'}).join('');
-  var L=$('d-list');
-  L.querySelectorAll('[data-u]').forEach(function(b){b.onclick=function(){moveD(+b.getAttribute('data-u'),-1);renderDept()}});
-  L.querySelectorAll('[data-w]').forEach(function(b){b.onclick=function(){moveD(+b.getAttribute('data-w'),1);renderDept()}});
-  L.querySelectorAll('[data-r]').forEach(function(b){b.onclick=function(){
-    var d=DEPTS[+b.getAttribute('data-r')],old=d.path,cur=old.split(' › ').pop(),nn=prompt('部門改名（底下的人員會自動跟著變）：',cur);
-    if(!nn||!nn.trim()||nn.trim()===cur)return;
-    var np=(par(old)?par(old)+' › ':'')+nn.trim();
-    if(dIdx(np)>-1){alert('已經有同名的部門。');return}
-    renameDept(old,np);renderDept();renderEdit();renderNotes();
-  }});
-  L.querySelectorAll('[data-v]').forEach(function(b){b.onclick=function(){openMove(+b.getAttribute('data-v'))}});
-  L.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){
-    var d=DEPTS[+b.getAttribute('data-t')];
-    if(d.on){var c=treeCount(d.path);if(c){alert('「'+d.path.split(' › ').pop()+'」底下還有 '+c+' 位人員或單位，請先移到其他部門再停用。');return}}
-    d.on=!d.on;renderDept();
-  }});
-  var opt='<option value="">（最上層）</option>'+DEPTS.filter(function(d){return d.on}).map(function(d){return '<option value="'+esc(d.path)+'">'+'　'.repeat(dep(d.path)-1)+esc(d.path.split(' › ').pop())+'</option>'}).join('');
-  var cur=$('d-par').value;$('d-par').innerHTML=opt;$('d-par').value=cur;
-  var names=mapNames(),un=0;
-  $('d-map').innerHTML=names.map(function(n){
-    var tgt=dIdx(n)>-1?n:(MAPD[n]||'');
-    if(tgt)return '<div class="note" style="align-items:center"><div style="flex:1 1 260px"><b>'+esc(n)+'</b></div><div style="flex:1 1 260px;color:var(--acc-d)">→ '+esc(tgt)+'　<span class="muted">'+(dIdx(n)>-1?'名稱相同，自動對應':'廠務指定')+'</span></div></div>';
-    un++;
-    return '<div class="note" style="align-items:center"><div style="flex:1 1 260px"><span class="tag mv">未對應</span><b>'+esc(n)+'</b></div><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1 1 360px"><select class="in" style="width:auto;min-width:180px" data-m="'+esc(n)+'"><option value="">指定到…</option>'+DEPTS.filter(function(d){return d.on}).map(function(d){return '<option value="'+esc(d.path)+'">'+esc(d.path)+'</option>'}).join('')+'</select><button class="btn s" data-mn="'+esc(n)+'">新增為部門</button></div></div>'}).join('');
-  $('d-map-n').textContent=un?'（'+un+' 個未對應）':'（全部已對應）';
-  $('d-map').querySelectorAll('[data-m]').forEach(function(s){s.onchange=function(){if(s.value){MAPD[s.getAttribute('data-m')]=s.value;renderDept();renderNotes()}}});
-  $('d-map').querySelectorAll('[data-mn]').forEach(function(b){b.onclick=function(){ensureDept(b.getAttribute('data-mn'));renderDept();renderNotes()}});
-}
-function openMove(i){
-  var d=DEPTS[i],nm=d.path.split(' › ').pop(),box=$('d-move'),n=treeCount(d.path);
-  var opts='<option value="">（最上層）</option>'+DEPTS.filter(function(x){return x.on&&!inDept(x.path,d.path)}).map(function(x){return '<option value="'+esc(x.path)+'"'+(x.path===par(d.path)?' disabled':'')+'>'+'　'.repeat(dep(x.path)-1)+esc(x.path.split(' › ').pop())+(x.path===par(d.path)?'（目前）':'')+'</option>'}).join('');
-  box.innerHTML='<div style="font-size:18px;font-weight:700">移動「'+esc(nm)+'」</div><div class="muted">目前位置：'+(par(d.path)?esc(par(d.path)):'最上層')+'。移動後，這個部門底下的子部門和 '+n+' 位人員／單位會一起跟著搬，分機表和列印版會自動換位置。</div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><label for="d-mv" style="font-weight:500">移到</label><select class="in" style="width:auto;min-width:220px" id="d-mv">'+opts+'</select><button class="btn" id="d-mv-ok">確定移動</button><button class="btn s" id="d-mv-x">取消</button></div>';
-  box.classList.remove('hide');box.scrollIntoView({behavior:'smooth',block:'center'});
-  var cur=par(d.path);$('d-mv').value='';
-  if(cur==='')$('d-mv').options[0].disabled=true;
-  var f=[].filter.call($('d-mv').options,function(o){return !o.disabled})[0];if(f)$('d-mv').value=f.value;
-  $('d-mv-x').onclick=function(){box.classList.add('hide')};
-  $('d-mv-ok').onclick=function(){
-    var np=$('d-mv').value,newPath=(np?np+' › ':'')+nm;
-    if(dIdx(newPath)>-1){alert('目的地已經有同名的部門「'+nm+'」。');return}
-    renameDept(d.path,newPath);
-    var j=dIdx(newPath),b=blk(j),cut=DEPTS.splice(b[0],b[1]-b[0]);
-    if(np){DEPTS.splice.apply(DEPTS,[blk(dIdx(np))[1],0].concat(cut))}else{DEPTS.push.apply(DEPTS,cut)}
-    box.classList.add('hide');renderDept();renderEdit();renderNotes();renderSearch();fillForm();
-    showToast('已移動：'+nm+' → '+(np||'最上層'));
-  };
-}
-$('d-add').onclick=function(){
-  var n=$('d-name').value.trim();if(!n)return;
-  var p=$('d-par').value,np=p?p+' › '+n:n;
-  if(dIdx(np)>-1){alert('已經有同名的部門。');return}
-  ensureDept(np);$('d-name').value='';renderDept();renderNotes();
-};
-
-/* ---------- Domino 異動通知 ---------- */
-var NOTES=[];
-function unmapped(p){return dIdx(p)<0&&!MAPD[p]}
-function renderNotes(){
-  var n=$('bell-n');n.textContent=NOTES.length;n.classList.toggle('hide',!NOTES.length);
-  $('notes-count').textContent=NOTES.length?'（'+NOTES.length+' 筆待處理）':'';
-  var box=$('notes');
-  if(!NOTES.length){box.innerHTML='<div class="muted">目前沒有待處理的 Domino 異動。</div>';return}
-  box.innerHTML=NOTES.map(function(x){
-    var cls=x.kind==='新進'?'new':(x.kind==='異動'||x.kind==='改名')?'mv':'out',txt,btn;
-    if(x.kind==='改名'){var c=list.filter(function(r){return inDept(r.dept,x.from)}).length;txt='Domino 的部門名稱變了：'+esc(x.from)+' → <b>'+esc(x.dept)+'</b>。分機表上有 '+c+' 筆受影響，可以整批套用，不用一筆一筆改。';btn='整批套用（'+c+' 筆）'}
-    else if(x.kind==='新進'){txt='部門：'+esc(x.dept)+'　直屬主管：'+esc(x.sup)+'　Email：'+esc(x.email)+(unmapped(x.dept)?'<div style="color:#8A4B00;margin-top:4px">這個部門還沒對應到部門表，請先到「部門」頁指定。</div>':'');btn='帶入表單新增'}
-    else if(x.kind==='異動'){txt='部門：'+esc(x.from)+' → <b>'+esc(x.dept)+'</b>　直屬主管：'+esc(x.sup);btn='帶入表單更新'}
-    else{txt='已從 Domino 移除（'+esc(x.dept)+'）。分機表上若還有這個人，建議移除。';btn='移除這筆分機'}
-    return '<div class="note"><div style="min-width:0;flex:1 1 320px"><span class="tag '+cls+'">'+x.kind+'</span><b>'+esc(x.name)+'</b><div class="det">'+txt+'</div></div><div style="display:flex;gap:8px"><button class="btn s" style="background:var(--acc);color:#fff;border-color:var(--acc)" data-a="'+x.id+'">'+btn+'</button><button class="btn s" data-i="'+x.id+'">略過</button></div></div>'}).join('');
-  box.querySelectorAll('[data-a]').forEach(function(b){b.onclick=function(){applyNote(+b.getAttribute('data-a'))}});
-  box.querySelectorAll('[data-i]').forEach(function(b){b.onclick=function(){var id=+b.getAttribute('data-i');NOTES=NOTES.filter(function(x){return x.id!==id});renderNotes()}});
-}
-function applyNote(id){
-  var x=NOTES.filter(function(y){return y.id===id})[0];if(!x)return;
-  if(x.kind==='改名'){
-    renameDept(x.from,x.dept);NOTES=NOTES.filter(function(y){return y.id!==id});
-    renderNotes();renderEdit();renderDept();renderSearch();fillForm();
-    showToast('已整批套用：'+x.from+' → '+x.dept);return;
-  }
-  var rec=list.filter(function(r){return r.name===x.name})[0];
-  if(x.kind==='離職'){list=list.filter(function(r){return r.name!==x.name});if(form.name===x.name)form=Object.assign({},EMPTY)}
-  else if(x.kind==='異動'&&rec){form=Object.assign({},rec,{dept:x.dept,email:x.email})}
-  else{form=Object.assign({},EMPTY,{name:x.name,dept:x.dept,email:x.email,type:'人員'})}
-  NOTES=NOTES.filter(function(y){return y.id!==id});
-  renderNotes();renderEdit();fillForm();
-  if(x.kind!=='離職'){$('f-ext').scrollIntoView({behavior:'smooth',block:'center'});$('f-ext').focus()}
-}
-function showToast(t){$('toast-t').textContent=t;$('toast').classList.remove('hide')}
-$('toast-x').onclick=function(){$('toast').classList.add('hide')};
-$('toast-go').onclick=function(){$('toast').classList.add('hide');go('edit');$('notes-box').scrollIntoView({behavior:'smooth',block:'start'})};
-$('bell').onclick=function(){go('edit');$('notes-box').scrollIntoView({behavior:'smooth',block:'start'})};
-
-/* ---------- 列印版（由資料自動產生，多頁） ---------- */
-var ori='l',REV='2026 年 11 月 07 日';
-function flow(items,hOf,cap,N,rowH){
-  var pages=[],cols=[],cur=[],used=0,last=null;
-  function newCol(){cols.push(cur);cur=[];used=0;if(cols.length===N){pages.push(cols);cols=[]}}
-  items.forEach(function(it){
-    var h=hOf(it);
-    if(it.t==='h'){
-      if(cur.length&&used+h+2*rowH>cap)newCol();
-      last=it;cur.push(it);used+=h;return;
-    }
-    if(used+h>cap){newCol();if(last){var c={t:'h',n:last.n+'（續）'};cur.push(c);used+=hOf(c)}}
-    cur.push(it);used+=h;
+/* ================= 列印版面（貼牆版）建構 ================= */
+function printable(r){return r.active&&r.inDir&&!r.hide&&(r.t==='U'||r.personal)}
+function itemsOf(d){
+  var id=d?d.id:null,own=recs.filter(function(r){return printable(r)&&r.dept===id});
+  // 空號也印一列（名稱留空），位置接在所屬部門內前一支分機後面
+  exts.filter(function(x){return x.dept===id&&id&&users(x.ext).length===0}).forEach(function(x){
+    var prev=own.filter(function(r){return r.t!=='E'&&r.ext<x.ext}).sort(function(a,b){return b.ext-a.ext})[0];
+    own.push({t:'E',ext:x.ext,sort:(prev?prev.sort:0)+0.5+x.ext/100000,name:''});
   });
-  if(cur.length)cols.push(cur);
-  if(cols.length)pages.push(cols);
-  return pages;
+  return own.sort(function(a,b){return a.sort-b.sort})}
+function rowOfRec(r){if(r.t==='E')return {k:'e',text:'',ext:r.ext,rec:r};return r.t==='U'?{k:'u',text:r.pn||r.name,ext:r.ext,rec:r}:{k:'p',text:r.name+(r.title?'  '+r.title:''),ext:r.ext,rec:r}}
+function blockRows(d,lv){
+  var rows=[];
+  var own=itemsOf(d),ch=kids(d.id);
+  var showHead=d.hdr!==false||ch.length||own.some(function(r){return r.t==='P'});
+  if(showHead)rows.push({k:lv===0?'h1':'h2',text:lv===0?spaced(d.name):d.name,fill:d.fill,dept:d.id});
+  own.forEach(function(r){rows.push(rowOfRec(r))});
+  ch.forEach(function(c){blockRows(c,lv+1).forEach(function(x){rows.push(x)})});
+  return rows;
 }
-function items(){
-  var out=[];
-  DEPTS.forEach(function(d){
-    if(!d.on||!treeCount(d.path))return;
-    out.push({t:'h',n:d.path.split(' › ').pop(),path:d.path});
-    list.filter(function(r){return r.dept===d.path}).forEach(function(r){out.push({t:'r',n:r.name,ti:r.title,e:r.ext,a:r.ab,u:r.type==='單位'})});
-  });
+function dedupe(rows){ // 相鄰相同分機只印第一次
+  var prev=null;rows.forEach(function(r){if(r.ext!=null){r.blank=(prev===r.ext);prev=r.ext}else prev=null});
+  return rows;
+}
+function layout(){
+  var cols=[[],[],[]],lens=[0,0,0];
+  var top=itemsOf(null).map(rowOfRec);
+  var blocks=tops().slice().sort(function(a,b){return (a.col||9)-(b.col||9)||(a.ord||0)-(b.ord||0)});
+  var res={cols:[[],[],[]],blocks:[]};
+  if(top.length)res.cols[0].push({rows:dedupe(top),dept:null});
+  blocks.forEach(function(d){var rows=dedupe(blockRows(d,0));var c=d.col>=1&&d.col<=3?d.col-1:null;res.blocks.push({d:d,rows:rows,col:c});if(c!==null)res.cols[c].push({rows:rows,dept:d})});
+  res.counts=res.cols.map(function(c){return c.reduce(function(s,b){return s+b.rows.length},0)});
+  return res;
+}
+function fmtDate(){return '2026年11月08日'}
+function sheet1(){
+  var L=layout(),h='<div class="sheet portrait p1"><div class="tt">'+esc(PLANT.name)+'各單位分機號碼表<small>修訂日期：'+fmtDate()+'</small></div><div class="grid">';
+  L.cols.forEach(function(c){h+='<div class="col">';c.forEach(function(b){b.rows.forEach(function(r){
+    if(r.k==='h1')h+='<div class="r h1">'+esc(r.text)+'</div>';
+    else if(r.k==='h2')h+='<div class="r h2 '+(r.fill||'')+'">'+esc(r.text)+'</div>';
+    else h+='<div class="r"><div>'+esc(r.text)+'</div><div>'+(r.blank?'':r.ext)+'</div><div>'+(r.blank?'':esc(gradeOf(r.ext)))+'</div></div>';
+  })});h+='</div>'});
+  h+='</div><div class="foot">'+PLANT.foot.map(function(x){return '<div>'+esc(x)+'</div>'}).join('')+'</div></div>';
+  return h;
+}
+function checks(){
+  var out=[],L=layout();
+  recs.filter(function(r){return r.active&&r.t==='P'&&isMgr(r.title)&&!r.personal}).forEach(function(r){out.push({lv:'w',t:'課長以上沒有個人分機：'+r.name+'（'+r.title+'，'+short(r.dept)+'）'})});
+  var seenD={};recs.filter(function(r){return r.active&&r.inDir&&r.t==='P'&&!r.personal&&r.dept}).forEach(function(r){
+    var has=recs.some(function(u){return u.active&&u.t==='U'&&u.dept===r.dept&&u.ext===r.ext});var k=r.dept+'|'+r.ext;
+    if(!has&&!seenD[k]){seenD[k]=1;out.push({lv:'w',t:'「'+short(r.dept)+'」有人使用公用分機 '+r.ext+'，但該部門沒有單位紀錄，貼牆表印不出來'})}});
+  var byExt={};recs.filter(printable).forEach(function(r){(byExt[r.ext]=byExt[r.ext]||[]).push(r)});
+  Object.keys(byExt).forEach(function(e){var ds={};byExt[e].forEach(function(r){ds[r.dept||'_']=1});if(Object.keys(ds).length>1)out.push({lv:'w',t:'分機 '+e+' 出現在不同部門（'+Object.keys(ds).map(function(k){return k==='_'?'置頂':short(k)}).join('、')+'），而且都沒標「不列」'})});
+  tops().forEach(function(d){if(!(d.col>=1&&d.col<=3))out.push({lv:'w',t:'「'+d.name+'」沒有指定欄'})});
+  L.counts.forEach(function(n,i){if(n>52)out.push({lv:'w',t:'第 '+(i+1)+' 欄有 '+n+' 列，超過約 52 列'})});
   return out;
 }
-var FOOT1='<div class="foot"><div style="font-weight:700">專線：公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84　聽到忙線音後直撥分機號碼，由總機接聽，代轉分機。</div><div>台北公司 TEL (02)2706-6006　FAX (02)2708-1254　　永光一廠 TEL (03)386-8081　FAX (03)386-8048</div><div>永光二廠 TEL (03)483-8088　FAX (03)483-8008　　中部辦事處 TEL (04)2358-3378　FAX (04)2358-2378</div><div>永光三廠 TEL (03)483-7682　FAX (03)483-7683　　南部辦事處 TEL (06)215-2589　FAX (06)215-3639</div><div>永光四廠 TEL (03)473-7366　FAX (03)473-7909　　上海明德專線：先按 #80，再按 888，等響鈴聲結束後再按 66，由總機接聽，代轉分機。</div></div>',FOOT2='<div class="foot"><b style="color:var(--acc-d)">跨廠撥號</b><span>公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84，聽到忙線音後直撥分機。</span><span>上海明德：#80 → 888 → 響鈴結束後按 66，由總機代轉。</span><span style="width:100%">一廠 (03)386-8081　二廠 (03)483-8088　三廠 (03)483-7682　四廠 (03)473-7366　台北 (02)2706-6006　中部 (04)2358-3378　南部 (06)215-2589</span></div>';
-function best(its,hOf,capL,capP,optsL,optsP){
-  var land=ori==='l',cap=land?capL:capP,Ns=land?optsL:optsP,res=null,fb=null;
-  for(var ni=0;ni<Ns.length;ni++){
-    for(var rh=19;rh>=10;rh--){
-      var pages=flow(its,function(it){return hOf(it,rh)},cap-rh,Ns[ni],rh);
-      var c={pages:pages,N:Ns[ni],rh:rh};
-      if(rh===10)fb=(!fb||pages.length<fb.pages.length)?c:fb;
-      if(pages.length===1){if(!res||c.rh>res.rh)res=c;break}
-    }
-  }
-  return res||fb;
+
+/* ================= 頁面：查詢 ================= */
+var sQ='',sMode='list',sTop='';
+function vSearch(){
+  var h='<section class="wrap"><div><h1>找分機</h1><div class="sub">輸入姓名、部門或分機號碼；也可以搜尋會議室、守衛室等單位。</div><div class="muted" style="margin-top:6px">你的權限：一廠廠務。姓名旁的 ✎ 點下去直接編輯。其他廠區只能查詢（第二階段）。</div></div>'+
+  '<input class="in" style="max-width:560px;height:46px" type="search" id="q" value="'+esc(sQ)+'" placeholder="例如：品保、守衛室、211、陳文斌" aria-label="搜尋">'+
+  '<div style="display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between"><div class="chips" id="tops"></div><div class="chips"><button class="chip'+(sMode==='list'?' on':'')+'" data-m="list">清單</button><button class="chip'+(sMode==='card'?' on':'')+'" data-m="card">分機表</button></div></div>'+
+  '<div id="sres"></div><div class="muted">資料由廠務維護，最後更新：'+TODAY+'。撥打方式：先按廠別代碼（一廠 #81），聽到忙線音後直撥分機。</div></section>';
+  return h;
 }
-function drawP1(){
-  var r=best(items(),function(it,rh){return rh},620,935,[5,6],[3,4]),pages=r.pages,N=r.N,cls='sheet p1'+(ori==='p'?' portrait':'');
-  var st='--rh:'+r.rh+'px;--f:'+Math.min(13,Math.round(r.rh*.72*10)/10)+'px';
-  $('p1').innerHTML=pages.map(function(cols,pi){
-    while(cols.length<N)cols.push([]);
-    return '<div class="'+cls+'" style="'+st+'"><div class="tt"><b>一廠各部門分機號碼表</b><span style="font-size:12px">修訂日期：'+REV+(pages.length>1?'　第 '+(pi+1)+' / '+pages.length+' 頁':'')+'</span></div><div class="grid">'+
-    cols.map(function(c){return '<div class="col"><div class="r h0"><div>部門／姓名</div><div>分機</div><div>線</div></div>'+c.map(function(x){return x.t==='h'?'<div class="r h"><div>'+esc(x.n)+'</div><div></div><div></div></div>':'<div class="r"><div>'+esc(x.n+(x.ti?'　'+x.ti:''))+'</div><div class="e">'+esc(x.e)+'</div><div>'+esc(x.a)+'</div></div>'}).join('')+'</div>'}).join('')+'</div>'+FOOT1+'</div>';
-  }).join('');
+function sHit(r){
+  if(!r.active||!r.inDir)return false;
+  if(sTop&&!(r.dept&&inTree(r.dept,sTop)))return false;
+  var k=sQ.trim().toLowerCase();if(!k)return true;
+  return [r.name,r.pn,r.title,String(r.ext),path(r.dept)].some(function(s){return String(s).toLowerCase().indexOf(k)>-1});
+}
+function drawSearch(){
+  var t='<button class="chip'+(sTop===''?' on':'')+'" data-t="">全部</button>';tops().forEach(function(d){t+='<button class="chip'+(sTop===d.id?' on':'')+'" data-t="'+d.id+'">'+esc(d.name)+'</button>'});
+  $('tops').innerHTML=t;Array.prototype.forEach.call($('tops').children,function(b){b.onclick=function(){sTop=b.getAttribute('data-t');drawSearch()}});
+  var rs=recs.filter(sHit),h='';
+  if(sMode==='list'){
+    h='<div class="box scroll"><div style="min-width:720px"><div class="row head" style="grid-template-columns:1.3fr 1.6fr 1fr 80px 70px"><div>姓名／單位</div><div>部門</div><div>職稱</div><div>分機</div><div>等級</div></div>';
+    rs.sort(function(a,b){return a.ext-b.ext});
+    rs.slice(0,80).forEach(function(r){h+='<div class="row" style="grid-template-columns:1.3fr 1.6fr 1fr 80px 70px"><div><button class="who" data-ed="'+r.id+'" aria-label="編輯 '+esc(r.name)+'">'+esc(r.name)+' ✎</button> '+(r.t==='U'?'<span class="badge u">單位</span>':'')+'</div><div>'+esc(short(r.dept))+'</div><div>'+esc(r.title)+'</div><div class="ext">'+r.ext+'</div><div>'+esc(gradeOf(r.ext))+'</div></div>'});
+    if(!rs.length)h+='<div class="row">沒有符合的結果</div>';
+    h+='</div></div><div class="muted">'+(rs.length>80?'顯示前 80 筆，共 '+rs.length+' 筆。':'共 '+rs.length+' 筆。')+'</div>';
+  }else{
+    h='<div class="cgrid">';
+    tops().forEach(function(d){
+      var mine=rs.filter(function(r){return r.dept&&inTree(r.dept,d.id)});if(!mine.length)return;
+      h+='<div class="ccard"><h3>'+esc(d.name)+'</h3>';var lastDept=null;
+      mine.sort(function(a,b){return a.ext-b.ext}).forEach(function(r){
+        if(r.dept!==lastDept&&r.dept!==d.id){h+='<h4>'+esc(dById(r.dept).name)+'</h4>';lastDept=r.dept}
+        h+='<div><span><button class="who" data-ed="'+r.id+'">'+esc(r.name)+' ✎</button>'+(r.title?'<small>'+esc(r.title)+'</small>':'')+'</span><span class="x">'+r.ext+'</span></div>'});
+      h+='</div>'});
+    var tp=rs.filter(function(r){return !r.dept});
+    if(tp.length){h+='<div class="ccard"><h3>置頂</h3>';tp.forEach(function(r){h+='<div><span><button class="who" data-ed="'+r.id+'">'+esc(r.name)+' ✎</button></span><span class="x">'+r.ext+'</span></div>'});h+='</div>'}
+    h+='</div>';
+  }
+  $('sres').innerHTML=h;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ed]'),function(b){b.onclick=function(){go('edit',{edit:+b.getAttribute('data-ed')})}});
+}
+function bindSearch(){
+  $('q').oninput=function(){sQ=this.value;drawSearch()};
+  Array.prototype.forEach.call(document.querySelectorAll('[data-m]'),function(b){b.onclick=function(){sMode=b.getAttribute('data-m');render()}});
+  drawSearch();
+}
+
+/* ================= 頁面：異動收件匣 ================= */
+function vInbox(){
+  var pend=INBOX.filter(function(x){return x.kind==='pend'&&!x.done}),auto=INBOX.filter(function(x){return x.kind==='auto'});
+  var h='<section class="wrap"><div><h1>異動收件匣</h1><div class="sub">每天早上系統比對 Domino 名冊。能判斷的已自動處理；判斷不了的在這裡等你確認。</div></div>';
+  h+='<div class="box panel"><h2>待你確認 <span class="muted">'+pend.length+' 筆</span></h2>';
+  if(!pend.length)h+='<div class="ok">目前沒有需要確認的異動。</div>';
+  pend.forEach(function(x){h+='<div class="note"><div style="flex:1 1 360px"><span class="tag '+x.tag+'">'+x.label+'</span><b>'+esc(x.who)+'</b><div class="det">'+esc(x.det)+'</div></div><div style="display:flex;gap:8px"><button class="btn s" data-act="'+x.id+'" style="border-color:#0F6B5C;color:#0A4A40;font-weight:700">'+x.btn+'</button><button class="btn s" data-skip="'+x.id+'">略過</button></div></div>'});
+  h+='</div><div class="box panel"><h2>已自動處理 <span class="muted">今天 08:00 比對</span></h2>';
+  auto.forEach(function(x){h+='<div class="note"><div style="flex:1 1 360px"><span class="tag '+x.tag+'">'+x.label+'</span><b>'+esc(x.who)+'</b><div class="det">'+esc(x.det)+'</div></div><div>'+(x.done?'<span class="badge g">已還原</span>':'<button class="btn s" data-undo="'+x.id+'">還原</button>')+'</div></div>'});
+  h+='<div class="muted">另有 2 位新進的 Email 為 f＋數字，已自動設為「不列入分機表」，不通知。每天一封彙整信會寄給廠務（範例信件內容與這兩段相同）。</div></div>';
+  if(inboxDone.length){h+='<div class="box panel"><h2>已處理</h2>'+inboxDone.map(function(x){return '<div class="muted">'+esc(x)+'</div>'}).join('')+'</div>'}
+  h+='<div class="box panel"><h2>保護機制</h2><div class="muted" style="font-size:14px;line-height:1.7">單次比對離職超過 5 人或 3%，該次全部改為待確認（防止 Domino 回傳不完整名單）。自動處理的每一筆都記在「異動紀錄」，可一鍵還原。</div></div></section>';
+  return h;
+}
+function bindInbox(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-undo]'),function(b){b.onclick=function(){
+    var x=INBOX.filter(function(i){return i.id===b.getAttribute('data-undo')})[0],r=rById(x.rid);
+    if(x.id==='a1'){r.active=false}else if(x.id==='a2'){r.active=true}else if(x.id==='a3'){r.dept='q1';r.ext=311}
+    x.done=true;touch('廠務（範例）','還原自動處理：'+x.label+' '+x.who);toast('已還原：'+x.who);render()}});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-skip]'),function(b){b.onclick=function(){
+    var x=INBOX.filter(function(i){return i.id===b.getAttribute('data-skip')})[0];x.done=true;inboxDone.push('略過：'+x.label+' '+x.who);touch('廠務（範例）','略過異動：'+x.label+' '+x.who);render()}});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-act]'),function(b){b.onclick=function(){
+    var x=INBOX.filter(function(i){return i.id===b.getAttribute('data-act')})[0];
+    if(x.act==='newMgr')return go('edit',{draft:{t:'P',name:'周大成（範例）',dept:'hz',title:'副理',personal:true}});
+    if(x.act==='newMgr2')return go('edit',{draft:{t:'P',name:'謝小春（範例）',dept:'gz',title:'課長',personal:true}});
+    if(x.act==='mapDept')return go('dept',{focus:'map'});
+    if(x.act==='renameBatch')return go('dept',{rename:'q1',to:'品質一課'});
+    if(x.act==='confirmOut'){x.done=true;inboxDone.push('已確認停用：'+x.who+'，個人分機 815 回到環資管理處的空號');touch('廠務（範例）','確認離職停用：'+x.who+'，815 回到空號');render()}
+  }});
+}
+
+/* ================= 頁面：人員與單位 ================= */
+var eQ='',eDept='',eType='',eOff=false,eShow=50,eId=null,eDraft=null;
+var ROSTER=[{n:'周大成（範例）',dep:'合四課',email:'e9001@ecic.com.tw'},{n:'王小明（範例）',dep:'品一課',email:'e9002@ecic.com.tw'},{n:'林小美（範例）',dep:'總務課',email:'e9003@ecic.com.tw'}];
+function vEdit(){
+  return '<section class="wrap"><div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between"><div><h1>人員與單位</h1><div class="sub">人員與單位在同一頁維護，用類型篩選。你的權限：一廠廠務。</div></div><button class="btn" id="e-new">＋ 新增</button></div>'+
+  '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><input class="in" style="flex:1 1 260px;max-width:380px" type="search" id="e-q" value="'+esc(eQ)+'" placeholder="搜尋姓名、部門、分機、Email" aria-label="搜尋"><select class="in" style="width:auto;min-width:170px" id="e-dept" aria-label="依部門篩選"><option value="">全部部門</option>'+deptOpts(eDept)+'</select>'+
+  '<div class="chips" id="e-type"></div><label class="ck"><input type="checkbox" id="e-off"'+(eOff?' checked':'')+'>含已停用</label><span class="muted" id="e-count"></span></div>'+
+  '<div class="cols"><div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:700px" id="e-list"></div></div><div class="box panel" style="flex:1 1 360px;min-width:0" id="e-form"></div></div></section>';
+}
+function drawEList(){
+  var all=recs.filter(function(r){return (eOff||r.active)}),k=eQ.trim().toLowerCase();
+  var rs=all.filter(function(r){
+    if(eType&&r.t!==eType)return false;if(eDept&&!(r.dept&&inTree(r.dept,eDept)))return false;
+    return !k||[r.name,r.pn,r.title,String(r.ext),path(r.dept),r.email].some(function(s){return String(s).toLowerCase().indexOf(k)>-1})});
+  rs.sort(function(a,b){return a.ext-b.ext||a.sort-b.sort});
+  var h='<div class="row head" style="grid-template-columns:1.4fr 1.4fr 0.8fr 90px 1.2fr"><div>名稱</div><div>部門</div><div>職稱</div><div>分機</div><div>狀態</div></div>';
+  rs.slice(0,eShow).forEach(function(r){
+    var fl=[];if(!r.active)fl.push('<span class="badge r">停用</span>');if(!r.inDir)fl.push('<span class="badge g">不列入</span>');if(r.hide)fl.push('<span class="badge g">不列</span>');
+    h+='<div class="row'+(eId===r.id?' sel':'')+(r.active?'':' off')+'" style="grid-template-columns:1.4fr 1.4fr 0.8fr 90px 1.2fr"><div><button class="who" data-pick="'+r.id+'">'+esc(r.name)+'</button> '+(r.t==='U'?'<span class="badge u">單位</span>':'')+'</div><div>'+esc(short(r.dept))+'</div><div>'+esc(r.title)+'</div><div class="ext">'+r.ext+' <span class="muted">'+(r.t==='P'?(r.personal?'個人':'公用'):'')+'</span></div><div>'+fl.join(' ')+'</div></div>'});
+  if(rs.length>eShow)h+='<div class="row"><button class="btn s" id="e-more">顯示更多（還有 '+(rs.length-eShow)+' 筆）</button></div>';
+  $('e-list').innerHTML=h;$('e-count').textContent=rs.length+' / '+all.length+' 筆';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-pick]'),function(b){b.onclick=function(){eId=+b.getAttribute('data-pick');eDraft=null;drawEList();drawForm()}});
+  if($('e-more'))$('e-more').onclick=function(){eShow+=50;drawEList()};
+  var t='';[['','全部'],['P','人員'],['U','單位']].forEach(function(x){t+='<button class="chip'+(eType===x[0]?' on':'')+'" data-ty="'+x[0]+'">'+x[1]+'</button>'});$('e-type').innerHTML=t;
+  Array.prototype.forEach.call($('e-type').children,function(b){b.onclick=function(){eType=b.getAttribute('data-ty');drawEList()}});
+}
+function drawForm(){
+  var r=eId?rById(eId):null,d=eDraft;
+  var v=r?{t:r.t,name:r.name,pn:r.pn,dept:r.dept,title:r.title,ext:r.ext,personal:r.personal,inDir:r.inDir,hide:r.hide,note:r.note,active:r.active,email:r.email}:
+    {t:(d&&d.t)||'P',name:(d&&d.name)||'',pn:'',dept:(d&&d.dept)||'',title:(d&&d.title)||'',ext:'',personal:d?!!d.personal:false,inDir:true,hide:false,note:'',active:true,email:''};
+  var f=$('e-form');
+  f.innerHTML='<h2>'+(r?'編輯：'+esc(r.name):'新增')+'</h2>'+
+  '<div class="chips"><button class="chip'+(v.t==='P'?' on':'')+'" id="t-p">人員</button><button class="chip'+(v.t==='U'?' on':'')+'" id="t-u">單位</button></div>'+
+  '<div class="fld"><label for="f-name">'+(v.t==='P'?'姓名（從 Domino 名冊選）':'單位名稱')+'</label><input class="in" id="f-name" autocomplete="off" value="'+esc(v.name)+'"><div class="sug" id="f-sug"></div>'+(v.t==='P'&&v.email?'<div class="muted">已對應 Domino：'+esc(v.email)+'（範例信箱）</div>':'')+'</div>'+
+  (v.t==='U'?'<div class="fld"><label for="f-pn">列印名稱（貼牆表上印的字）</label><input class="in" id="f-pn" value="'+esc(v.pn)+'"></div>':'')+
+  '<div class="fld"><label for="f-dept">部門（不選＝置頂區塊）</label><select class="in" id="f-dept">'+deptOpts(v.dept,true)+'</select></div>'+
+  '<div style="display:flex;gap:10px"><div class="fld" style="flex:1"><label for="f-title">職稱</label><input class="in" id="f-title" value="'+esc(v.title)+'"'+(v.t==='U'?' disabled':'')+'></div><div class="fld" style="flex:1"><label for="f-ext">分機</label><input class="in" id="f-ext" inputmode="numeric" value="'+esc(v.ext)+'"></div></div>'+
+  '<div id="f-hint"></div>'+
+  (v.t==='P'?'<label class="ck"><input type="checkbox" id="f-per"'+(v.personal?' checked':'')+'>有個人分機（沒勾＝使用部門公用分機，貼牆表不印這個人）</label>':'')+
+  '<label class="ck"><input type="checkbox" id="f-dir"'+(v.inDir?' checked':'')+'>列入分機表</label>'+
+  '<label class="ck"><input type="checkbox" id="f-hide"'+(v.hide?' checked':'')+'>貼牆表不列（EIP 仍會匯出）</label>'+
+  '<div class="fld"><label for="f-note">備註</label><input class="in" id="f-note" value="'+esc(v.note)+'"></div>'+
+  '<div style="display:flex;gap:10px"><button class="btn" style="flex:1" id="f-save">儲存</button>'+(r?'<button class="btn s'+(r.active?' d':'')+'" id="f-off">'+(r.active?'停用':'重新啟用')+'</button>':'')+'</div>'+
+  '<div class="muted">儲存後，下次匯出的 EIP 與貼牆表會包含這筆變更。同一個分機可以有多人使用，不會被擋下。</div>';
+  var typ=v.t;
+  $('t-p').onclick=function(){eDraftType('P')};$('t-u').onclick=function(){eDraftType('U')};
+  function eDraftType(t){var cur=readForm(typ);cur.t=t;eId=r?eId:null;eDraft=cur;if(r&&r.t!==t)return;drawForm()}
+  function readForm(t){return {t:t,name:$('f-name').value,pn:$('f-pn')?$('f-pn').value:'',dept:$('f-dept').value||null,title:$('f-title').value,ext:$('f-ext').value,personal:$('f-per')?$('f-per').checked:false,inDir:$('f-dir').checked,hide:$('f-hide').checked,note:$('f-note').value}}
+  function hint(){
+    var dp=$('f-dept').value,e=+$('f-ext').value,tt=$('f-title').value,per=$('f-per')?$('f-per').checked:false,h='';
+    var dd=dp?dById(dp):null;
+    if(typ==='P'&&isMgr(tt)&&!per)h+='<div class="warn">職稱為「'+esc(tt)+'」（課長以上），應該有個人分機。</div>';
+    if(dd&&e&&!inRange(e,dd.range))h+='<div class="warn">分機 '+e+' 不在「'+esc(dd.name)+'」的號段（'+dd.range+'）。只是提醒，仍可儲存。</div>';
+    if(typ==='P'&&per&&dd){var em=exts.filter(function(x){return x.dept===dp&&users(x.ext).length===0}).map(function(x){return x.ext});if(em.length)h+='<div class="ok">「'+esc(dd.name)+'」的空號：'+em.join('、')+'（點一下帶入）</div>'}
+    if(typ==='P'&&!per&&dd&&dd.def&&!$('f-ext').value)h+='<div class="ok">使用部門預設分機 '+dd.def+'（點一下帶入）</div>';
+    $('f-hint').innerHTML=h;
+    Array.prototype.forEach.call($('f-hint').querySelectorAll('.ok'),function(o){o.style.cursor='pointer';o.onclick=function(){var m=(o.textContent.match(/\d{3}/)||[])[0];if(m){$('f-ext').value=m;hint()}}});
+  }
+  ['f-dept','f-ext','f-title'].forEach(function(i){$(i).oninput=hint;$(i).onchange=hint});if($('f-per'))$('f-per').onchange=hint;hint();
+  $('f-name').oninput=function(){
+    if(typ!=='P'){$('f-sug').innerHTML='';return}
+    var q=this.value.trim(),m=q?ROSTER.concat(recs.filter(function(x){return x.t==='P'&&x.active}).slice(0,60).map(function(x){return {n:x.name,dep:short(x.dept),email:x.email}})).filter(function(x){return x.n.indexOf(q)>-1}).slice(0,5):[];
+    $('f-sug').style.display=m.length?'flex':'none';
+    $('f-sug').innerHTML=m.map(function(x,i){return '<button data-s="'+i+'">'+esc(x.n)+'　<span class="muted">'+esc(x.dep)+'　'+esc(x.email)+'</span></button>'}).join('');
+    Array.prototype.forEach.call($('f-sug').children,function(b){b.onclick=function(){var x=m[+b.getAttribute('data-s')];$('f-name').value=x.n;$('f-sug').innerHTML='';$('f-sug').style.display='none'}});
+  };
+  $('f-sug').style.display='none';
+  $('f-save').onclick=function(){
+    var x=readForm(typ);if(!x.name.trim()||!+x.ext){toast('請填名稱與分機');return}
+    x.ext=+x.ext;
+    if(r){r.name=x.name;r.pn=x.pn;r.dept=x.dept;r.title=x.title;r.ext=x.ext;r.personal=x.personal;r.inDir=x.inDir;r.hide=x.hide;r.note=x.note;touch('廠務（範例）','修改 '+(r.t==='U'?'單位':'人員')+'：'+r.name+'，分機 '+r.ext)}
+    else{var n={id:++nid,t:typ,name:x.name,pn:x.pn,dept:x.dept,title:x.title,ext:x.ext,personal:typ==='P'?x.personal:false,inDir:x.inDir,hide:x.hide,active:true,sort:3000+nid,note:x.note,email:typ==='P'?'e'+(1000+nid)+'@ecic.com.tw':''};recs.push(n);
+      if(!extOf(x.ext))exts.push({ext:x.ext,dept:x.dept,grade:'',note:''});eId=n.id;touch('廠務（範例）','新增 '+(typ==='U'?'單位':'人員')+'：'+n.name+'，分機 '+n.ext)}
+    eDraft=null;toast('已儲存（範例）');drawEList();drawForm();renderNav();
+  };
+  if(r&&$('f-off'))$('f-off').onclick=function(){r.active=!r.active;touch('廠務（範例）',(r.active?'重新啟用：':'停用：')+r.name);drawEList();drawForm()};
+}
+function bindEdit(){
+  $('e-q').oninput=function(){eQ=this.value;eShow=50;drawEList()};
+  $('e-dept').onchange=function(){eDept=this.value;eShow=50;drawEList()};
+  $('e-off').onchange=function(){eOff=this.checked;drawEList()};
+  $('e-new').onclick=function(){eId=null;eDraft=null;drawEList();drawForm();$('f-name').focus()};
+  if(goArg&&goArg.edit){eId=goArg.edit;eDraft=null;eQ='';eDept='';eType=''}
+  else if(goArg&&goArg.draft){eId=null;eDraft=goArg.draft}
+  goArg=null;
+  $('e-q').value=eQ;$('e-dept').value=eDept;drawEList();drawForm();
+}
+
+/* ================= 頁面：部門表 ================= */
+var dMove=null,dFocus=null;
+function headCount(id){return recs.filter(function(r){return r.active&&r.dept===id}).length}
+function treeCount(id){return recs.filter(function(r){return r.active&&r.dept&&inTree(r.dept,id)}).length}
+function vDept(){
+  var h='<section class="wrap"><div><h1>部門表（一廠）</h1><div class="sub">決定分機表上怎麼分區、怎麼排序。這是分機表的顯示分組，不是人事的正式組織架構。依貼牆表展開。</div></div><div class="box panel hide" id="d-move" style="border-color:var(--acc)"></div>'+
+  '<div class="cols"><div class="box scroll" style="flex:999 1 620px;min-width:0"><div style="min-width:680px" id="d-list"></div></div>'+
+  '<div class="box panel" style="flex:1 1 300px;min-width:0"><h2>新增部門</h2><div class="fld"><label for="d-par">上層部門</label><select class="in" id="d-par">'+deptOpts('',true)+'</select></div><div class="fld"><label for="d-name">部門名稱</label><input class="in" id="d-name" placeholder="例如：製五組"></div><button class="btn" id="d-add">新增</button><div class="muted">新增在同層最後面，再用 ↑ ↓ 調整。改名只要改一次，底下人員自動跟著變。底下還有人員或單位時不能停用，只停用、不刪除。</div></div></div>'+
+  '<div class="box panel" id="d-map"></div></section>';
+  return h;
+}
+var MAPD=[{n:'資訊管理課',c:1}],MAPD_DONE=[];
+function drawDept(){
+  var h='<div class="row head" style="grid-template-columns:1.5fr 90px 110px 80px 250px"><div>部門</div><div>預設分機</div><div>號段</div><div>人員／單位</div><div>操作</div></div>';
+  flat().forEach(function(x,i){var d=x.d,sibs=(d.parent?kids(d.parent):tops()),ix=sibs.indexOf(d);
+    var ue=recs.filter(function(r){return r.active&&r.t==='U'&&r.dept===d.id}).map(function(r){return r.ext});
+    var sel='<select class="in" style="height:34px;padding:0 6px" data-def="'+d.id+'"><option value="">未設定</option>'+ue.map(function(e){return '<option'+(d.def===e?' selected':'')+'>'+e+'</option>'}).join('')+(d.def&&ue.indexOf(d.def)<0?'<option selected>'+d.def+'</option>':'')+'</select>';
+    h+='<div class="row" style="grid-template-columns:1.5fr 90px 110px 80px 250px"><div style="padding-left:'+(x.lv*22)+'px">'+(x.lv?'└ ':'')+esc(d.name)+(d.hdr===false?' <span class="badge g">不印標題列</span>':'')+'</div><div>'+sel+'</div><div><input class="in" style="height:34px" data-rg="'+d.id+'" value="'+esc(d.range||'')+'" placeholder="210-219"></div><div class="muted">'+headCount(d.id)+' ／ '+treeCount(d.id)+'</div><div style="display:flex;flex-wrap:wrap;gap:6px"><button class="btn s" data-up="'+d.id+'"'+(ix===0?' disabled':'')+' aria-label="上移">↑</button><button class="btn s" data-dn="'+d.id+'"'+(ix===sibs.length-1?' disabled':'')+' aria-label="下移">↓</button><button class="btn s" data-rn="'+d.id+'">改名</button><button class="btn s" data-mv="'+d.id+'">移動</button><button class="btn s d" data-off="'+d.id+'">停用</button></div></div>'});
+  $('d-list').innerHTML=h;
+  var m='<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline"><h2>Domino 部門名稱對照</h2><div class="muted">Domino 只有部門名稱、沒有階層。名稱相同自動對應；對不上的由廠務指定，對應一次後記住。</div></div>';
+  MAPD.forEach(function(x){m+='<div class="note"><div><span class="tag mv">未對應</span><b>'+esc(x.n)+'</b>　<span class="muted">'+x.c+' 人</span></div><div style="display:flex;gap:8px;align-items:center"><select class="in" style="width:auto" data-mp="'+esc(x.n)+'">'+deptOpts('',false)+'</select><button class="btn s" data-mpa="'+esc(x.n)+'">指定</button></div></div>'});
+  MAPD_DONE.forEach(function(x){m+='<div class="muted">已對應：Domino「'+esc(x.n)+'」→ '+esc(path(x.to))+'</div>'});
+  if(!MAPD.length&&!MAPD_DONE.length)m+='<div class="ok">全部對得上。</div>';
+  $('d-map').innerHTML=m;
+  var q=function(s,f){Array.prototype.forEach.call(document.querySelectorAll(s),f)};
+  q('[data-up]',function(b){b.onclick=function(){swap(b.getAttribute('data-up'),-1)}});
+  q('[data-dn]',function(b){b.onclick=function(){swap(b.getAttribute('data-dn'),1)}});
+  q('[data-rn]',function(b){b.onclick=function(){var d=dById(b.getAttribute('data-rn')),n=prompt('「'+d.name+'」改名為：',d.name);if(n&&n!==d.name)renameDept(d.id,n)}});
+  q('[data-off]',function(b){b.onclick=function(){var d=dById(b.getAttribute('data-off'));if(treeCount(d.id)||recs.some(function(r){return r.active&&r.dept===d.id})||kids(d.id).length){toast('底下還有人員、單位或子部門，不能停用');return}d.active=false;touch('廠務（範例）','停用部門：'+d.name);drawDept()}});
+  q('[data-mv]',function(b){b.onclick=function(){openMove(b.getAttribute('data-mv'))}});
+  q('[data-def]',function(s){s.onchange=function(){var d=dById(s.getAttribute('data-def'));d.def=s.value?+s.value:null;touch('廠務（範例）','設定「'+d.name+'」預設分機：'+(d.def||'未設定'));toast('已設定（範例）')}});
+  q('[data-rg]',function(s){s.onchange=function(){var d=dById(s.getAttribute('data-rg'));d.range=s.value;touch('廠務（範例）','設定「'+d.name+'」號段：'+s.value)}});
+  q('[data-mpa]',function(b){b.onclick=function(){var n=b.getAttribute('data-mpa'),sel=document.querySelector('[data-mp="'+n+'"]');MAPD=MAPD.filter(function(x){return x.n!==n});MAPD_DONE.push({n:n,to:sel.value});touch('廠務（範例）','Domino 部門「'+n+'」對應到 '+path(sel.value));
+    INBOX.forEach(function(i){if(i.id==='p2'&&!i.done){i.done=true;inboxDone.push('已指定部門：吳小芬（範例）→ '+path(sel.value))}});drawDept();renderNav()}});
+}
+function swap(id,dir){var d=dById(id),sibs=d.parent?kids(d.parent):tops(),i=sibs.indexOf(d),o=sibs[i+dir];if(!o)return;var t=d.sort;d.sort=o.sort;o.sort=t;touch('廠務（範例）','調整順序：'+d.name+(dir<0?' 上移':' 下移'));drawDept()}
+function renameDept(id,n){var d=dById(id),old=d.name;
+  if(depts.some(function(x){return x.active&&x.parent===d.parent&&x.name===n&&x.id!==id})){toast('同層已有同名部門');return}
+  d.name=n;touch('廠務（範例）','部門改名：「'+old+'」→「'+n+'」（底下 '+treeCount(id)+' 人自動跟著變）');toast('已改名，底下人員自動跟著變');drawDept()}
+function openMove(id){
+  var d=dById(id),box=$('d-move');box.classList.remove('hide');
+  var h='<h2>移動「'+esc(d.name)+'」</h2><div class="muted">連同底下 '+(depts.filter(function(x){return x.active&&x.id!==id&&inTree(x.id,id)}).length)+' 個子部門與 '+treeCount(id)+' 位人員／單位一起搬。</div><div class="fld"><label for="mv-to">搬到哪個上層（或最上層）</label><select class="in" id="mv-to"><option value="">（最上層）</option>';
+  flat().forEach(function(x){if(inTree(x.d.id,id))return;h+='<option value="'+x.d.id+'">'+'　'.repeat(x.lv)+esc(x.d.name)+'</option>'});
+  h+='</select></div><div id="mv-w"></div><div style="display:flex;gap:10px"><button class="btn" id="mv-ok">搬過去</button><button class="btn o" id="mv-no">取消</button></div>';
+  box.innerHTML=h;
+  $('mv-no').onclick=function(){box.classList.add('hide')};
+  $('mv-ok').onclick=function(){var to=$('mv-to').value||null;
+    if(depts.some(function(x){return x.active&&x.parent===to&&x.name===d.name&&x.id!==id})){$('mv-w').innerHTML='<div class="warn">目的地已有同名部門，不能搬。</div>';return}
+    d.parent=to;d.sort=1000+nid++;if(to===null){d.col=0}touch('廠務（範例）','移動部門：「'+d.name+'」→ '+(to?path(to):'最上層'));box.classList.add('hide');drawDept();toast('已移動，分機表與貼牆表自動換位置')};
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function bindDept(){
+  $('d-add').onclick=function(){var n=$('d-name').value.trim(),p=$('d-par').value||null;if(!n)return;
+    if(depts.some(function(x){return x.active&&x.parent===p&&x.name===n})){toast('同層已有同名部門');return}
+    depts.push({id:'n'+(++nid),name:n,parent:p,fill:null,col:0,def:null,range:'',sort:2000+nid,active:true,hdr:true});touch('廠務（範例）','新增部門：'+n+(p?'（上層：'+dById(p).name+'）':''));$('d-name').value='';drawDept()};
+  drawDept();
+  if(goArg&&goArg.rename){var id=goArg.rename,to=goArg.to;goArg=null;var d=dById(id);if(confirm('把 9 人整批套用，並將部門「'+d.name+'」改名為「'+to+'」？（範例）')){renameDept(id,to);INBOX.forEach(function(i){if(i.id==='p5'){i.done=true;inboxDone.push('已整批套用：「品一課」改名為「'+to+'」，9 人自動跟著變')}});renderNav()}}
+  else if(goArg&&goArg.focus==='map'){goArg=null;$('d-map').scrollIntoView({behavior:'smooth'})}
+}
+
+/* ================= 頁面：分機號碼表 ================= */
+var xQ='',xF='';
+function vExt(){
+  return '<section class="wrap"><div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between"><div><h1>分機號碼表</h1><div class="sub">每一支分機的所屬部門、等級與狀態。這張表本身不印，但「空號」會印在貼牆表上（名稱留空，只有分機與等級）。狀態由系統計算：有人員或單位使用是「使用中」，沒有就是「空號」。</div></div></div>'+
+  '<div class="box panel" style="gap:8px"><div class="muted" style="font-size:14px;line-height:1.7"><b>等級 A／B</b> 表示這支分機能否撥打外線，記在分機號碼上，改一次所有使用者跟著變。系統只記錄與列印，實際撥號權限仍由交換機設定。<br><b>號段</b>是約定俗成：百位數對應最上層部門、十位數對應課。號碼放到別的部門號段時只提醒，不擋。</div></div>'+
+  '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><input class="in" style="flex:1 1 240px;max-width:340px" type="search" id="x-q" value="'+esc(xQ)+'" placeholder="搜尋分機、部門、使用者" aria-label="搜尋"><div class="chips" id="x-f"></div><span class="muted" id="x-n"></span></div>'+
+  '<div class="cols"><div class="box scroll" style="flex:999 1 640px;min-width:0"><div style="min-width:720px" id="x-list"></div></div>'+
+  '<div class="box panel" style="flex:1 1 280px"><h2>新增分機號碼</h2><div class="fld"><label for="x-new">分機號碼</label><input class="in" id="x-new" inputmode="numeric"></div><div class="fld"><label for="x-nd">所屬部門</label><select class="in" id="x-nd">'+deptOpts('',true)+'</select></div><div class="fld"><label for="x-ng">等級</label><select class="in" id="x-ng"><option value="">未填</option><option>A</option><option>B</option></select></div><button class="btn" id="x-add">新增</button><div class="muted">所屬部門會依號段自動建議。新進人員要個人分機時，系統列出該部門的空號供挑選。</div></div></div></section>';
+}
+function suggestDept(e){var m=null;depts.forEach(function(d){if(d.active&&d.range&&inRange(e,d.range)){if(!m||(d.parent&&!m.parent))m=d}});return m}
+function drawExt(){
+  var rows=exts.map(function(x){var u=users(x.ext);return {x:x,u:u,st:u.length?'使用中':'空號'}}),k=xQ.trim().toLowerCase();
+  var all=rows.length;
+  rows=rows.filter(function(r){if(xF&&r.st!==xF)return false;return !k||String(r.x.ext).indexOf(k)>-1||path(r.x.dept).toLowerCase().indexOf(k)>-1||r.u.some(function(z){return z.name.toLowerCase().indexOf(k)>-1})});
+  var h='<div class="row head" style="grid-template-columns:70px 70px 1.4fr 80px 1.6fr 1fr"><div>分機</div><div>等級</div><div>所屬部門</div><div>狀態</div><div>使用者</div><div>備註</div></div>';
+  rows.forEach(function(r){var x=r.x,out=x.dept&&!inRange(x.ext,dById(x.dept).range);var nm=r.u.map(function(z){return z.name}),us=nm.length>3?nm.slice(0,3).join('、')+' 等 '+nm.length+' 筆':nm.join('、');
+    h+='<div class="row" style="grid-template-columns:70px 70px 1.4fr 80px 1.6fr 1fr"><div class="ext">'+x.ext+'</div><div><select class="in" style="height:34px;padding:0 6px" data-gr="'+x.ext+'"><option value="">—</option><option'+(x.grade==='A'?' selected':'')+'>A</option><option'+(x.grade==='B'?' selected':'')+'>B</option></select></div><div><select class="in" style="height:34px;padding:0 6px" data-xd="'+x.ext+'">'+deptOpts(x.dept,true)+'</select>'+(out?'<div class="muted" style="color:#7A4B00">不在號段 '+esc(dById(x.dept).range)+'</div>':'')+'</div><div><span class="badge'+(r.st==='空號'?' u':'')+'">'+r.st+'</span></div><div class="muted" style="font-size:13px">'+esc(us)+'</div><div><input class="in" style="height:34px" data-xn="'+x.ext+'" value="'+esc(x.note)+'"></div></div>'});
+  $('x-list').innerHTML=h;$('x-n').textContent=rows.length+' / '+all+' 支';
+  var c='';[['','全部'],['使用中','使用中'],['空號','空號']].forEach(function(f){c+='<button class="chip'+(xF===f[0]?' on':'')+'" data-xf="'+f[0]+'">'+f[1]+'</button>'});$('x-f').innerHTML=c;
+  var q=function(s,f){Array.prototype.forEach.call(document.querySelectorAll(s),f)};
+  q('[data-xf]',function(b){b.onclick=function(){xF=b.getAttribute('data-xf');drawExt()}});
+  q('[data-gr]',function(s){s.onchange=function(){var x=extOf(+s.getAttribute('data-gr'));x.grade=s.value;touch('廠務（範例）','分機 '+x.ext+' 等級改為 '+(s.value||'未填')+'（'+users(x.ext).length+' 個使用者跟著變）');toast('已改，使用這支分機的人一起變（範例）')}});
+  q('[data-xd]',function(s){s.onchange=function(){var x=extOf(+s.getAttribute('data-xd'));x.dept=s.value||null;touch('廠務（範例）','分機 '+x.ext+' 所屬部門改為 '+path(x.dept));drawExt()}});
+  q('[data-xn]',function(s){s.onchange=function(){var x=extOf(+s.getAttribute('data-xn'));x.note=s.value;touch('廠務（範例）','分機 '+x.ext+' 備註：'+s.value)}});
+}
+function bindExt(){
+  $('x-q').oninput=function(){xQ=this.value;drawExt()};
+  $('x-new').oninput=function(){var e=+this.value,d=suggestDept(e);if(d)$('x-nd').value=d.id};
+  $('x-add').onclick=function(){var e=+$('x-new').value;if(!e)return;if(extOf(e)){toast('這支分機已經在表裡');return}
+    var dd=$('x-nd').value||null;exts.push({ext:e,dept:dd,grade:$('x-ng').value,note:'空號'});exts.sort(function(a,b){return a.ext-b.ext});touch('廠務（範例）','新增分機號碼 '+e+'（'+path(dd)+'）');$('x-new').value='';drawExt()};
+  drawExt();
+}
+
+/* ================= 頁面：列印版面 ================= */
+function vLayout(){
+  return '<section class="wrap"><div><h1>列印版面（貼牆版）</h1><div class="sub">以最上層部門為一塊，整塊放在同一欄、不拆開。決定每塊放第幾欄與順序，再看預覽與列印前檢查。</div></div>'+
+  '<div class="cols"><div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:16px"><div class="box panel" id="l-blocks"></div><div class="box panel" id="l-checks"></div></div>'+
+  '<div style="flex:999 1 640px;min-width:0"><div class="sheetbar" style="margin-bottom:10px"><div class="muted">A4 直式、縮放 80%、一頁印完。實際輸出為 Excel；這裡是版面預覽。</div><div style="display:flex;gap:8px"><button class="btn s" onclick="window.print()">列印／存成 PDF</button></div></div><div class="sheetscroll" id="l-sheet"></div></div></div></section>';
+}
+function drawLayout(){
+  var L=layout(),h='<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px"><h2>各欄內容</h2><button class="btn s" id="l-bal">自動平衡欄高</button></div>';
+  for(var c=1;c<=3;c++){var n=L.counts[c-1];h+='<div><div style="display:flex;justify-content:space-between;font-weight:700;margin:6px 0"><span>第 '+c+' 欄</span><span class="muted" style="color:'+(n>52?'#B3261E':'var(--mut)')+'">'+n+' 列'+(n>52?'（過長）':'')+'</span></div>';
+    var bl=L.blocks.filter(function(b){return b.col===c-1});
+    if(c===1&&L.cols[0].length&&L.cols[0][0].dept===null)h+='<div class="note" style="padding:6px 12px"><span>（置頂：緊急專線、總機、廠長、副廠長）</span><span class="muted">'+L.cols[0][0].rows.length+' 列</span></div>';
+    bl.forEach(function(b,i){h+='<div class="note" style="padding:6px 12px;margin-top:4px"><span>'+esc(b.d.name)+' <span class="muted">'+b.rows.length+' 列</span></span><span style="display:flex;gap:4px;align-items:center"><button class="btn s" data-bu="'+b.d.id+'"'+(i===0?' disabled':'')+' aria-label="上移">↑</button><button class="btn s" data-bd="'+b.d.id+'"'+(i===bl.length-1?' disabled':'')+' aria-label="下移">↓</button><select class="in" style="height:34px;width:78px;padding:0 6px" data-bc="'+b.d.id+'" aria-label="換欄"><option value="1"'+(c===1?' selected':'')+'>第1欄</option><option value="2"'+(c===2?' selected':'')+'>第2欄</option><option value="3"'+(c===3?' selected':'')+'>第3欄</option></select></span></div>'});
+    h+='</div>'}
+  $('l-blocks').innerHTML=h;
+  var ck=checks(),k='<h2>列印前檢查 <span class="muted">'+(ck.length?ck.length+' 項提醒':'')+'</span></h2>';
+  if(!ck.length)k+='<div class="ok">沒有警告。</div>';ck.forEach(function(x){k+='<div class="warn">'+esc(x.t)+'</div>'});
+  k+='<div class="muted">警告只提醒、不擋匯出。</div>';$('l-checks').innerHTML=k;
+  $('l-sheet').innerHTML=sheet1();fit();
+  var q=function(s,f){Array.prototype.forEach.call(document.querySelectorAll(s),f)};
+  q('[data-bc]',function(s){s.onchange=function(){var d=dById(s.getAttribute('data-bc'));d.col=+s.value;var mx=0;tops().forEach(function(t){if(t.col===d.col&&t!==d)mx=Math.max(mx,t.ord||0)});d.ord=mx+1;touch('廠務（範例）','貼牆版：「'+d.name+'」移到第 '+d.col+' 欄');drawLayout()}});
+  q('[data-bu]',function(b){b.onclick=function(){mv(b.getAttribute('data-bu'),-1)}});q('[data-bd]',function(b){b.onclick=function(){mv(b.getAttribute('data-bd'),1)}});
+  $('l-bal').onclick=function(){var bs=layout().blocks.slice().sort(function(a,b){return (a.d.col-b.d.col)||(a.d.ord-b.d.ord)}),len=[0,0,0],top=layout().cols[0].filter(function(x){return x.dept===null}).reduce(function(s,x){return s+x.rows.length},0);len[0]=top;
+    bs.forEach(function(b){var m=len.indexOf(Math.min.apply(null,len));b.d.col=m+1;b.d.ord=len[m]+1;len[m]+=b.rows.length});
+    var o={};bs.forEach(function(b){o[b.d.col]=(o[b.d.col]||0)+1;b.d.ord=o[b.d.col]});touch('廠務（範例）','貼牆版：自動平衡欄高');drawLayout();toast('已依序填入最短的欄')};
+}
+function mv(id,dir){var d=dById(id),sib=tops().filter(function(t){return t.col===d.col}).sort(function(a,b){return a.ord-b.ord}),i=sib.indexOf(d),o=sib[i+dir];if(!o)return;var t=d.ord;d.ord=o.ord;o.ord=t;touch('廠務（範例）','貼牆版：調整「'+d.name+'」順序');drawLayout()}
+function fit(){Array.prototype.forEach.call(document.querySelectorAll('.sheetscroll'),function(w){var s=w.firstElementChild;if(!s)return;var a=w.clientWidth,need=s.classList.contains('landscape')?1123:794;s.style.zoom=a&&a<need?a/need:1})}
+window.addEventListener('resize',fit);
+function bindLayout(){drawLayout()}
+
+/* ================= 頁面：匯出 / 版 2 ================= */
+var lastExport='2026-11-07 17:30',ori2='l';
+function vExport(){
+  var n=recs.filter(function(r){return r.active&&r.inDir}).length,pr=layout().counts.reduce(function(a,b){return a+b},0);
+  return '<section class="wrap"><div><h1>匯出</h1><div class="sub">檔案由系統即時從資料庫整理，下載到的一定是目前網站上的最新資料。</div></div>'+
+  '<div class="box panel" style="flex-direction:row;flex-wrap:wrap;gap:8px 28px;align-items:center"><div><b>一廠</b>　目前 '+n+' 筆列入分機表</div><div class="muted">上次匯出：'+lastExport+'</div><div class="'+(changed?'warn':'ok')+'" style="padding:6px 12px">上次匯出後又改了 '+changed+' 筆</div></div>'+
+  '<div class="cards">'+
+  '<div class="box card"><div class="k">給入口網站</div><div class="t">EIP 上傳檔</div><p>欄位：廠區／分公司、部門、姓名、職稱、市話、分機、簡碼、備註。部門以「\\」分層。列出所有「列入分機表」的人員與單位，「貼牆表不列」不影響這份。</p><div class="warn">上傳到入口網站會<strong>覆蓋整個廠區</strong>。請確認網站上的資料是最新的再匯出。</div><div style="flex:1"></div><button class="btn" data-dl="EIP 上傳檔">下載 .xlsx</button></div>'+
+  '<div class="box card"><div class="k">列印</div><div class="t">列印版 1：貼牆版</div><p>對齊現有貼牆表：A4 直式、三組（單位名稱／分機號碼／等級）、黃底部門列、檔尾撥號規則。預覽約 '+pr+' 列，欄位與分欄在「列印版面」調整。</p><div style="flex:1"></div><button class="btn s" style="width:fit-content" data-go="layout">到列印版面看預覽</button><button class="btn o" data-dl="貼牆版">下載 .xlsx</button></div>'+
+  '<div class="box card"><div class="k">列印</div><div class="t">列印版 2：新風格</div><p>依部門分區塊卡片，分機放大，單位與人員用顏色區分，遠處也看得清楚。橫式四欄、直式三欄，資料多時自動換頁。</p><div style="flex:1"></div><button class="btn s" style="width:fit-content" data-go="p2">看預覽</button><button class="btn o" data-dl="新風格版">下載 .xlsx</button></div></div></section>';
+}
+function bindExport(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-go]'),function(b){b.onclick=function(){go(b.getAttribute('data-go'))}});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-dl]'),function(b){b.onclick=function(){lastExport=TODAY+' '+('0'+(new Date().getHours())).slice(-2)+':'+('0'+(new Date().getMinutes())).slice(-2);changed=0;touch('廠務（範例）','匯出：'+b.getAttribute('data-dl'));changed=0;toast('範例畫面：正式版會下載 Excel。已記錄匯出時間。');render()}});
+}
+function vP2(){
+  return '<section class="wrap printview"><div class="sheetbar noprint"><div><h1 style="font-size:24px">列印版 2：新風格</h1><div class="sub">實際輸出為 Excel；這裡是版面預覽。<a href="#" id="p2-back">回匯出</a></div></div><div style="display:flex;gap:10px;align-items:center"><div class="chips"><button class="chip'+(ori2==='l'?' on':'')+'" data-o="l">橫式</button><button class="chip'+(ori2==='p'?' on':'')+'" data-o="p">直式</button></div><button class="btn" onclick="window.print()">列印／存成 PDF</button></div></div><div class="sheetscroll" id="p2"></div></section>';
 }
 function drawP2(){
-  var its=[];
-  DEPTS.forEach(function(d){
-    if(!d.on||!treeCount(d.path))return;
-    var top=dep(d.path)===1;
-    if(top)its.push({t:'h',n:d.path});
-    var ppl=list.filter(function(r){return r.dept===d.path});
-    if(!top&&ppl.length)its.push({t:'s',n:d.path.split(' › ').slice(1).join(' ＞ ')});
-    ppl.forEach(function(r){its.push({t:'r',n:r.name,ti:r.title,e:r.ext,u:r.type==='單位'})});
-  });
-  var hh=function(rh){return Math.round(rh*1.6)};
-  var r=best(its,function(it,rh){return it.t==='h'?hh(rh)+15:rh},628,957,[5,6],[3,4]),pages=r.pages,N=r.N,cls='sheet p2'+(ori==='p'?' portrait':'');
-  var st='--rh:'+r.rh+'px;--hh:'+hh(r.rh)+'px;--f:'+Math.min(13,Math.round(r.rh*.74*10)/10)+'px';
-  var revS=REV.replace(/ 年 /,'-').replace(/ 月 /,'-').replace(/ 日/,'');
-  $('p2').innerHTML=pages.map(function(cols,pi){
-    while(cols.length<N)cols.push([]);
-    return '<div class="'+cls+'" style="'+st+'"><div class="tt"><div style="display:flex;align-items:baseline;gap:14px"><span style="font-size:30px;font-weight:900;color:var(--acc);line-height:1">一廠</span><span style="font-size:20px;font-weight:700">分機表</span></div><div style="display:flex;align-items:center;gap:16px;font-size:12px;color:#3C4640"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block"></span>會議室、守衛室、公用電話等單位</span><span>修訂：'+revS+(pages.length>1?'　第 '+(pi+1)+' / '+pages.length+' 頁':'')+'</span></div></div><div class="g">'+
-    cols.map(function(c){
-      var h='',open=false;
-      c.forEach(function(it){
-        if(it.t==='h'){if(open)h+='</div>';h+='<div class="c"><h3>'+esc(it.n)+'</h3>';open=true}
-        else if(it.t==='s')h+='<div class="sh">'+esc(it.n)+'</div>';
-        else h+='<div><span class="n"><span class="dot" style="background:'+(it.u?'var(--amber)':'transparent')+'"></span>'+esc(it.n)+(it.ti?'<i>'+esc(it.ti)+'</i>':'')+'</span><span class="x">'+esc(it.e)+'</span></div>';
-      });
-      if(open)h+='</div>';
-      return '<div class="pc">'+h+'</div>';
-    }).join('')+'</div>'+FOOT2+'</div>';
-  }).join('');
+  var h='<div class="sheet '+(ori2==='p'?'portrait':'landscape')+' p2'+(ori2==='p'?' portrait':'')+'"><div class="tt"><div><b style="font-size:20px">'+PLANT.name+'分機表</b></div><div class="muted">'+fmtDate()+'</div></div><div class="g">';
+  var tp=recs.filter(function(r){return printable(r)&&!r.dept});
+  if(tp.length){h+='<div class="c"><h3>置頂</h3>'+tp.map(function(r){return '<div class="i"><span>'+esc(r.pn||r.name)+'</span><span class="x">'+r.ext+'</span></div>'}).join('')+'</div>'}
+  tops().forEach(function(d){var rows=blockRows(d,0);h+='<div class="c"><h3>'+esc(d.name)+'</h3>';
+    rows.forEach(function(r,i){if(r.k==='e')return;if(i===0&&r.k==='h1')return;if(r.k==='h2')h+='<h5>'+esc(r.text)+'</h5>';else if(r.k!=='h1')h+='<div class="i" style="'+(r.k==='u'?'background:#FFFBEF':'')+'"><span>'+esc(r.text)+'</span><span class="x">'+r.ext+'</span></div>'});h+='</div>'});
+  h+='</div><div class="foot">'+PLANT.foot.slice(0,3).map(esc).join('　｜　')+'</div></div>';
+  $('p2').innerHTML=h;fit();
 }
-function setOri(o){
-  ori=o;
-  [].forEach.call(document.querySelectorAll('[data-ori]'),function(b){b.classList.toggle('on',b.getAttribute('data-ori')===o)});
-  $('pg').textContent='@media print{@page{size:A4 '+(o==='p'?'portrait':'landscape')+';margin:0}}';
-  drawP1();drawP2();fitSheets();
+function bindP2(){drawP2();$('p2-back').onclick=function(e){e.preventDefault();go('export')};Array.prototype.forEach.call(document.querySelectorAll('[data-o]'),function(b){b.onclick=function(){ori2=b.getAttribute('data-o');render()}})}
+
+/* ================= 頁面：異動紀錄 ================= */
+function vLog(){
+  var h='<section class="wrap"><div><h1>異動紀錄</h1><div class="sub">誰（含系統自動處理）在何時改了什麼。這個畫面上的操作也會即時出現在這裡。</div></div><div class="box scroll"><div style="min-width:620px"><div class="row head" style="grid-template-columns:150px 130px 1fr"><div>時間</div><div>誰</div><div>內容</div></div>';
+  LOG.forEach(function(x){h+='<div class="row" style="grid-template-columns:150px 130px 1fr"><div class="muted">'+esc(x.t)+'</div><div>'+(x.who==='系統'?'<span class="badge b">系統</span>':esc(x.who))+'</div><div>'+esc(x.what)+'</div></div>'});
+  return h+'</div></div></section>';
 }
-[].forEach.call(document.querySelectorAll('[data-ori]'),function(b){b.onclick=function(){setOri(b.getAttribute('data-ori'))}});
-renderSearch();renderEdit();fillForm();renderNotes();renderDept();drawP1();drawP2();
-setTimeout(function(){if(NOTES.length)showToast('Domino 有 '+NOTES.length+' 筆人員異動，請維護人員確認分機。')},700);
-var h=(location.hash||'').slice(1);go(VIEWS.some(function(x){return x[0]===h})?h:'search');
+
+/* ================= 主流程 ================= */
+function render(){
+  renderNav();var m=$('main');
+  var map={search:[vSearch,bindSearch],inbox:[vInbox,bindInbox],edit:[vEdit,bindEdit],dept:[vDept,bindDept],ext:[vExt,bindExt],layout:[vLayout,bindLayout],export:[vExport,bindExport],p2:[vP2,bindP2],log:[vLog,function(){}]};
+  var v=map[view];m.innerHTML=v[0]();v[1]();window.scrollTo(0,0);
+  try{history.replaceState(null,'','#'+view)}catch(e){}
+}
+var h0=(location.hash||'').slice(1);if(h0&&['search','inbox','edit','dept','ext','layout','export','p2','log'].indexOf(h0)>-1)view=h0;
+window.__demo={recs:recs,depts:depts,exts:exts,layout:layout,checks:checks,go:go};
+render();
 })();
+
 </script>
 </body>
 </html>
