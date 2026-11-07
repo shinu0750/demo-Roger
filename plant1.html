@@ -59,6 +59,8 @@ h2{margin:0;font-size:18px}
 .card .k{font-size:13px;font-weight:700;color:var(--acc)}
 .card .t{font-size:19px;font-weight:700}
 .card p{margin:0;font-size:14px;color:#3C4640;line-height:1.6}
+.nd{display:inline-block;width:.62em;text-align:center}
+.p2 .c .x,.ccard .x{white-space:nowrap;flex:none}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .ccard{border:1.5px solid var(--acc);border-radius:10px;overflow:hidden;background:#fff}
 .ccard h3{margin:0;background:var(--acc);color:#fff;padding:7px 14px;font-size:15px}
@@ -99,7 +101,7 @@ h2{margin:0;font-size:18px}
 .p2 .c h5{margin:0;background:#EEF5F2;color:var(--acc-d);padding:0 8px;height:var(--rh);display:flex;align-items:center;font-size:var(--f)}
 .p2 .c div.i{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 8px;height:var(--rh);border-bottom:1px solid #E6EAE5;font-size:var(--f)}
 .p2 .c div.i.u{background:#FFFBEF}
-.p2 .c div.i span:first-child{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.p2 .c div.i>span:first-child{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .p2 .c .x{font-size:calc(var(--f) + 3px);font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
 .p2 .foot{margin-top:auto;background:#EEF5F2;border-radius:8px;padding:6px 12px;font-size:10px;line-height:1.5}
 .sheetbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
@@ -127,6 +129,8 @@ var DATA={"D": [["gm", "總經理室", null, null, 1, null, "100-109"], ["fz", "
 var $=function(id){return document.getElementById(id)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var TODAY='2026-11-08';
+// 分機數字：每個數字固定寬度，不受字型影響（有些字型的 1 比較窄，數字會對不齊）
+function nd(n){return String(n).split('').map(function(c){return '<span class="nd">'+c+'</span>'}).join('')}
 
 /* ================= 資料 ================= */
 var depts=DATA.D.map(function(d,i){return {id:d[0],name:d[1],parent:d[2],fill:d[3],col:d[4]||0,def:d[5],range:d[6],sort:i,active:true,hdr:true}});
@@ -300,10 +304,10 @@ function drawSearch(){
       h+='<div class="ccard"><h3>'+esc(d.name)+'</h3>';var lastDept=null;
       mine.sort(function(a,b){return a.ext-b.ext}).forEach(function(r){
         if(r.dept!==lastDept&&r.dept!==d.id){h+='<h4>'+esc(dById(r.dept).name)+'</h4>';lastDept=r.dept}
-        h+='<div><span><button class="who" data-ed="'+r.id+'">'+esc(r.name)+' ✎</button>'+(r.title?'<small>'+esc(r.title)+'</small>':'')+'</span><span class="x">'+r.ext+'</span></div>'});
+        h+='<div><span><button class="who" data-ed="'+r.id+'">'+esc(r.name)+' ✎</button>'+(r.title?'<small>'+esc(r.title)+'</small>':'')+'</span><span class="x">'+nd(r.ext)+'</span></div>'});
       h+='</div>'});
     var tp=rs.filter(function(r){return !r.dept});
-    if(tp.length){h+='<div class="ccard"><h3>置頂</h3>';tp.forEach(function(r){h+='<div><span><button class="who" data-ed="'+r.id+'">'+esc(r.name)+' ✎</button></span><span class="x">'+r.ext+'</span></div>'});h+='</div>'}
+    if(tp.length){h+='<div class="ccard"><h3>置頂</h3>';tp.forEach(function(r){h+='<div><span><button class="who" data-ed="'+r.id+'">'+esc(r.name)+' ✎</button></span><span class="x">'+nd(r.ext)+'</span></div>'});h+='</div>'}
     h+='</div>';
   }
   $('sres').innerHTML=h;
@@ -590,7 +594,7 @@ function sheet2(o){
   var P=p2Cols(o),h='<div class="sheet '+(o==='p'?'portrait':'landscape')+' p2" style="--rh:'+P.rh+'px;--f:'+(P.rh*0.62).toFixed(1)+'px"><div class="tt"><b>'+esc(PLANT.name)+'分機表</b><span class="muted">'+fmtDate()+'</span></div><div class="g">';
   P.cols.forEach(function(c){h+='<div class="pc">';c.forEach(function(b){
     h+='<div class="c"><h3>'+esc(b.name)+'</h3>';
-    b.rows.forEach(function(r,i){if(r.k==='h1')return;if(r.k==='h2')h+='<h5>'+esc(r.text)+'</h5>';else h+='<div class="i'+(r.k==='u'?' u':'')+'"><span>'+esc(r.text)+'</span><span class="x">'+r.ext+'</span></div>'});
+    b.rows.forEach(function(r,i){if(r.k==='h1')return;if(r.k==='h2')h+='<h5>'+esc(r.text)+'</h5>';else h+='<div class="i'+(r.k==='u'?' u':'')+'"><span>'+esc(r.text)+'</span><span class="x">'+nd(r.ext)+'</span></div>'});
     h+='</div>'});h+='</div>'});
   h+='</div><div class="foot">'+PLANT.foot.slice(0,3).map(esc).join('　｜　')+'</div></div>';
   return h;
