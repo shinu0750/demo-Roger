@@ -364,7 +364,7 @@ function bindInbox(){
     var x=INBOX.filter(function(i){return i.id===b.getAttribute('data-act')})[0];
     if(x.act==='newMgr')return go('edit',{draft:{t:'P',name:'周大成（範例）',dept:'hz',title:'副理',personal:true,inbox:'p1'}});
     if(x.act==='newMgr2')return go('edit',{edit:x.rid,patch:{title:'課長',personal:true,ext:''},inbox:'p4'});
-    if(x.act==='mapDept')return go('dept',{focus:'map'});
+    if(x.act==='mapDept')return go('dept',{focus:'map',name:'資訊管理課'});
     if(x.act==='newHire')return go('edit',{draft:{t:'P',name:x.person,dept:x.deptId,title:'',personal:false,ext:x.defExt||'',inbox:x.id}});
     if(x.act==='renameBatch')return go('dept',{rename:'q1',to:'品質一課'});
     if(x.act==='confirmOut'){var lr=rById(x.rid);lr.active=false;x.done=true;inboxDone.push('已確認停用：'+x.who+'，個人分機 815 回到環資管理處的空號（貼牆版該列名稱變空白、號碼仍印出）');touch('廠務（範例）','確認離職停用：'+x.who+'，815 回到空號');render()}
@@ -472,7 +472,7 @@ var dMove=null,dFocus=null;
 function headCount(id){return recs.filter(function(r){return r.active&&r.dept===id}).length}
 function treeCount(id){return recs.filter(function(r){return r.active&&r.dept&&inTree(r.dept,id)}).length}
 function vDept(){
-  var h='<section class="wrap"><div><h1>部門表（一廠）</h1><div class="sub">決定分機表上怎麼分區、怎麼排序。這是分機表的顯示分組，不是人事的正式組織架構。依貼牆表展開。</div></div><div class="box panel hide" id="d-move" style="border-color:var(--acc)"></div>'+
+  var h='<section class="wrap"><div><h1>部門表（一廠）</h1><div class="sub">決定分機表上怎麼分區、怎麼排序。這是分機表的顯示分組，不是人事的正式組織架構。依貼牆表展開。</div></div><div class="ok hide" id="d-from" style="line-height:1.7"></div><div class="box panel hide" id="d-move" style="border-color:var(--acc)"></div>'+
   '<div class="cols"><div class="box scroll" style="flex:999 1 620px;min-width:0"><div style="min-width:680px" id="d-list"></div></div>'+
   '<div class="box panel" style="flex:1 1 300px;min-width:0"><h2>新增部門</h2><div class="fld"><label for="d-par">上層部門</label><select class="in" id="d-par">'+deptOpts('',true)+'</select></div><div class="fld"><label for="d-name">部門名稱</label><input class="in" id="d-name" placeholder="例如：製五組"></div><button class="btn" id="d-add">新增</button><div class="muted">新增在同層最後面，再用 ↑ ↓ 調整。改名只要改一次，底下人員自動跟著變。底下還有人員或單位時不能停用，只停用、不刪除。</div></div></div>'+
   '<div class="box panel" id="d-map"></div></section>';
@@ -541,7 +541,10 @@ function bindDept(){
     depts.push({id:'n'+(++nid),name:n,parent:p,fill:null,col:0,def:null,range:'',sort:2000+nid,active:true,hdr:true});touch('廠務（範例）','新增部門：'+n+(p?'（上層：'+dById(p).name+'）':''));mapDomino(n,depts[depts.length-1],true);$('d-name').value='';drawDept()};
   drawDept();
   if(goArg&&goArg.rename){var id=goArg.rename,to=goArg.to;goArg=null;var d=dById(id);if(confirm('把 9 人整批套用，並將部門「'+d.name+'」改名為「'+to+'」？（範例）')){renameDept(id,to);INBOX.forEach(function(i){if(i.id==='p5'){i.done=true;inboxDone.push('已整批套用：「品一課」改名為「'+to+'」，9 人自動跟著變')}});renderNav()}}
-  else if(goArg&&goArg.focus==='map'){goArg=null;$('d-map').scrollIntoView({behavior:'smooth'})}
+  else if(goArg&&goArg.focus==='map'){var nm=goArg.name||'';goArg=null;
+    if(nm){$('d-name').value=nm;var fb=$('d-from');fb.classList.remove('hide');
+      fb.innerHTML='<b>來自異動收件匣：</b>新進的部門「'+esc(nm)+'」在部門表裡沒有對應。兩種做法擇一：<br>① 在下方「Domino 部門名稱對照」，指定到既有部門，或選「＋ 新增為部門」按「確定」。<br>② 在右邊「新增部門」按「新增」。名稱已幫你填好「'+esc(nm)+'」，同名會自動對應。'}
+    $('d-map').scrollIntoView({behavior:'smooth'})}
 }
 
 /* ================= 頁面：分機號碼表 ================= */
