@@ -136,7 +136,7 @@ button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 <main>
 <!-- 查詢 -->
 <section class="wrap" id="v-search">
-  <div><h1>找分機</h1><div class="sub">輸入姓名、部門或分機號碼；也可以搜尋會議室、守衛室等單位。</div></div>
+  <div><h1>找分機</h1><div class="sub">輸入姓名、部門或分機號碼；也可以搜尋會議室、守衛室、公用電話等單位。</div></div>
   <input class="in" style="max-width:560px;height:48px" type="search" id="q" aria-label="搜尋姓名、部門或分機" placeholder="例如：品保、守衛室、211">
   <div style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between">
     <div class="chips" id="tabs"></div>
@@ -274,7 +274,7 @@ function renderSearch(){
   rows.forEach(function(d){var top=d.dept.split(' › ')[0],key=(sPlant==='全部'?d.plant+'・':'')+top;if(!groups[key]){groups[key]=[];order.push(key)}groups[key].push(d)});
   $('card-box').innerHTML=order.length?'<div class="cgrid">'+order.map(function(k){return '<div class="ccard"><h3>'+esc(k)+'</h3>'+groups[k].map(function(d){
     var sub=d.dept.split(' › ').slice(1).join(' › '),extra=[sub,d.title].filter(Boolean).join('　');
-    return '<div><span class="n"><span class="dot" style="background:'+(d.type==='單位'?'var(--amber)':'transparent')+'"></span><span>'+esc(d.name)+(extra?'<small>'+esc(extra)+'</small>':'')+'</span></span><span class="x">'+esc(d.ext)+'</span></div>'}).join('')+'</div>'}).join('')+'</div><div class="muted" style="margin-top:12px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber)"></span> 會議室、守衛室等單位</div>'
+    return '<div><span class="n"><span class="dot" style="background:'+(d.type==='單位'?'var(--amber)':'transparent')+'"></span><span>'+esc(d.name)+(extra?'<small>'+esc(extra)+'</small>':'')+'</span></span><span class="x">'+esc(d.ext)+'</span></div>'}).join('')+'</div>'}).join('')+'</div><div class="muted" style="margin-top:12px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber)"></span> 會議室、守衛室、公用電話等單位</div>'
     :'<div class="box" style="padding:48px 24px;text-align:center;color:var(--mut)">找不到符合的分機。可以換個關鍵字，或切換到「全部」。</div>';
   $('list-box').classList.toggle('hide',sMode!=='list');$('card-box').classList.toggle('hide',sMode!=='card');
   $('m-list').className='chip'+(sMode==='list'?' on':'');$('m-card').className='chip'+(sMode==='card'?' on':'');
@@ -371,7 +371,7 @@ $('p1').innerHTML='<div class="tt"><b>一廠各部門分機號碼表</b><span st
 
 var P=function(n,e){return {n:n,e:e,u:0}},U=function(n,e){return {n:n,e:e,u:1}};
 var CARDS=[['廠長室',[P('王小明　廠長','101'),P('李美華　特助','102'),P('張志偉　副理','104')]],['人事室',[P('林雅婷　副理','110'),P('陳建宏','112'),U('守衛室','111')]],['生產一部',[P('黃淑芬　經理','201'),P('吳家豪　副理','202'),P('蔡佳穎　合一課課長','210'),P('周柏翰　合二課課長','220')]],['生產二部',[P('楊雅筑　經理','301'),P('鄭宇軒　副理','302'),P('噴一課','311'),P('液品課','321')]],['品保部',[P('劉子瑜　經理','501'),P('蕭家榮　副理','503'),P('品一課　許峰睿','510'),P('品二課　余國良','530')]],['環保部',[P('呂明哲　經理','701'),P('環保課','710'),P('環資課','720')]],['廠務部',[P('孫立文　經理','150'),P('總務課','151'),P('原料課','160')]],['實驗工場',[U('實驗工場','260'),U('實驗室','261'),U('連續製程辦公室','262')]],['技銷處五部',[P('金技課','161'),P('皮技課','170'),P('紙技課','180')]],['工程管理處',[P('戴志明　處長','801'),P('工程管理部','811'),P('智慧製造部','931')]],['會議室',[U('第一會議室','697'),U('第二會議室','698'),U('第三會議室','699')]],['其他',[U('L 棟無塵室','252'),U('e-learning','615'),U('餐廳','617')]]];
-$('p2').innerHTML='<div class="tt"><div style="display:flex;align-items:baseline;gap:14px"><span style="font-size:34px;font-weight:900;color:var(--acc);line-height:1">一廠</span><span style="font-size:22px;font-weight:700">分機表</span></div><div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#3C4640"><span style="display:flex;align-items:center;gap:6px"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block"></span>會議室、守衛室等單位</span><span>修訂：2026-07-08</span></div></div><div class="g">'+
+$('p2').innerHTML='<div class="tt"><div style="display:flex;align-items:baseline;gap:14px"><span style="font-size:34px;font-weight:900;color:var(--acc);line-height:1">一廠</span><span style="font-size:22px;font-weight:700">分機表</span></div><div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#3C4640"><span style="display:flex;align-items:center;gap:6px"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block"></span>會議室、守衛室、公用電話等單位</span><span>修訂：2026-07-08</span></div></div><div class="g">'+
  CARDS.map(function(c){return '<div class="c"><h3>'+c[0]+'</h3>'+c[1].map(function(r){return '<div><span class="n"><span class="dot" style="background:'+(r.u?'var(--amber)':'transparent')+'"></span>'+esc(r.n)+'</span><span class="x">'+r.e+'</span></div>'}).join('')+'</div>'}).join('')+'</div>'+
  '<div class="foot"><b style="color:var(--acc-d)">跨廠撥號</b><span>公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84，聽到忙線音後直撥分機。</span><span>上海明德：#80 → 888 → 響鈴結束後按 66，由總機代轉。</span><span style="width:100%">一廠 (03)386-8081　二廠 (03)483-8088　三廠 (03)483-7682　四廠 (03)473-7366　台北 (02)2706-6006　中部 (04)2358-3378　南部 (06)215-2589</span></div>';
 
