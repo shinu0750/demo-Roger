@@ -87,23 +87,63 @@ h1{margin:0;font-size:32px;line-height:1.25}
   .sheetscroll{overflow:visible;padding:0}
   .sheet{box-shadow:none;margin:0;width:1123px;height:794px;transform-origin:top left;zoom:.95}
 }
+.bell{background:#fff;border:1px solid #B8BFB8;border-radius:8px;height:40px;padding:0 14px;font-size:15px;color:var(--ink);cursor:pointer}
+.cnt{margin-left:8px;display:inline-block;min-width:22px;padding:0 6px;border-radius:999px;background:#B3261E;color:#fff;font-size:13px;font-weight:700;text-align:center;line-height:22px}
+.toast{position:fixed;right:20px;bottom:20px;max-width:400px;background:#1D2421;color:#fff;border-radius:12px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3);z-index:20;font-size:15px;line-height:1.5}
+.toast button{height:40px;padding:0 16px;font-size:14px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
+.toast .go{background:#fff;color:var(--ink)}.toast .x{background:transparent;color:#D5DBD6;border:1px solid #5B655F;font-weight:400}
+.note{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#FAFBF9}
+.note .tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;margin-right:10px}
+.tag.new{background:#E3F0EC;color:var(--acc-d)}.tag.mv{background:#E4ECFA;color:#1F3F7A}.tag.out{background:#F6E2DF;color:#8A2A20}
+.note .det{font-size:14px;color:#3C4640;margin-top:4px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.ccard{border:1.5px solid var(--acc);border-radius:10px;overflow:hidden;background:#fff}
+.ccard h3{margin:0;background:var(--acc);color:#fff;padding:8px 14px;font-size:15px}
+.ccard>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;min-height:44px;border-bottom:1px solid #E6EAE5;font-size:15px}
+.ccard .n{display:flex;align-items:center;gap:8px;min-width:0}
+.ccard .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.ccard small{display:block;font-size:12px;color:var(--mut)}
+.ccard .x{font-size:22px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
+@media print{.toast{display:none!important}}
+html{-webkit-text-size-adjust:100%}
+button,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+@media(pointer:coarse),(max-width:1100px){
+  .nav button{padding:12px 4px;font-size:16px}
+  .chip{height:48px;padding:0 20px;font-size:16px}
+  .btn{height:48px}
+  .btn.s{height:44px;padding:0 18px;font-size:15px}
+  .in{height:48px}
+  .row{padding:14px 20px;font-size:16px}
+  .ext{font-size:20px}
+  .sug button{padding:14px 14px;font-size:15px}
+  .wrap{padding:28px 24px}
+}
+@media print{.sheet{zoom:.95!important}}
 @media(max-width:700px){.wrap{padding:24px 16px}.top-in{padding:12px 16px}h1{font-size:26px}}
 </style>
 </head>
 <body>
 <div class="top"><div class="top-in">
   <div class="brand">分機通訊錄</div>
-  <div class="nav" id="nav" role="tablist"></div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px">
+    <div class="nav" id="nav" role="tablist"></div>
+    <button class="bell" id="bell" aria-label="Domino 人員異動通知">異動通知<span class="cnt" id="bell-n">3</span></button>
+  </div>
 </div></div>
 <div class="demo">範例畫面：所有姓名、Email 為虛構資料，按鈕功能僅示意。</div>
+<div class="toast hide" id="toast" role="status"><span id="toast-t"></span><button class="go" id="toast-go">查看</button><button class="x" id="toast-x">關閉</button></div>
 
 <main>
 <!-- 查詢 -->
 <section class="wrap" id="v-search">
   <div><h1>找分機</h1><div class="sub">輸入姓名、部門或分機號碼；也可以搜尋會議室、守衛室等單位。</div></div>
   <input class="in" style="max-width:560px;height:48px" type="search" id="q" aria-label="搜尋姓名、部門或分機" placeholder="例如：品保、守衛室、211">
-  <div class="chips" id="tabs"></div>
-  <div class="box scroll"><div style="min-width:760px" id="list" role="table" aria-label="分機清單"></div></div>
+  <div style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between">
+    <div class="chips" id="tabs"></div>
+    <div class="chips" role="group" aria-label="顯示方式"><button class="chip on" id="m-list">清單</button><button class="chip" id="m-card">分機表</button></div>
+  </div>
+  <div class="box scroll" id="list-box"><div style="min-width:760px" id="list" role="table" aria-label="分機清單"></div></div>
+  <div class="hide" id="card-box"></div>
   <div class="muted">分機資料由各廠廠務維護，最後更新：2026-11-07。撥打方式：先按廠別代碼（一廠 #81），聽到忙線音後直撥分機。</div>
 </section>
 
@@ -113,8 +153,15 @@ h1{margin:0;font-size:32px;line-height:1.25}
     <div><h1>維護一廠分機</h1><div class="sub">你的權限：一廠廠務，只能編輯一廠；其他廠可以查詢但不能修改。</div></div>
     <button class="btn" id="e-new">＋ 新增分機</button>
   </div>
+  <div class="box panel" id="notes-box" style="gap:12px">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline">
+      <div style="font-size:18px;font-weight:700">Domino 人員異動 <span class="muted" id="notes-count"></span></div>
+      <div class="muted">今天 08:30 已寄 Email 通知一廠廠務維護人員（3 位）</div>
+    </div>
+    <div id="notes" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
   <div class="cols">
-    <div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:640px" id="e-list" role="table" aria-label="一廠分機清單"></div></div>
+    <div class="box scroll" style="flex:999 1 560px;min-width:0"><div style="min-width:720px" id="e-list" role="table" aria-label="一廠分機清單"></div></div>
     <div class="box panel" style="flex:1 1 360px;min-width:0">
       <div style="font-size:18px;font-weight:700" id="f-title-h">新增分機</div>
       <div class="chips"><button class="chip" id="t-p">人員</button><button class="chip" id="t-u">單位／地點</button></div>
@@ -127,6 +174,9 @@ h1{margin:0;font-size:32px;line-height:1.25}
         <div class="fld" style="flex:1"><label for="f-title">職稱</label><input class="in" id="f-title"></div>
         <div class="fld" style="flex:1"><label for="f-ext">分機</label><input class="in" id="f-ext" inputmode="numeric"></div>
       </div>
+      <div class="fld"><label for="f-ab">線路（A／B）</label>
+        <select class="in" id="f-ab"><option value="">未填</option><option value="A">A</option><option value="B">B</option></select>
+        <div class="muted">A／B 的意義還需向廠務確認，先保留為選填。</div></div>
       <div class="muted">同一個分機可以有多人使用，不會被擋下。</div>
       <div style="display:flex;gap:12px"><button class="btn" style="flex:1" id="f-save">儲存</button><button class="btn o" style="border-width:1px;border-color:#B8BFB8;color:var(--ink)" id="f-clear">清除</button></div>
       <div class="muted">儲存後，下次匯出的 EIP 檔會包含這筆變更。</div>
@@ -180,21 +230,33 @@ function go(v){
   VIEWS.forEach(function(x){$('v-'+x[0]).classList.toggle('hide',x[0]!==v)});
   var b=$('nav').children;for(var i=0;i<b.length;i++){b[i].classList.toggle('on',VIEWS[i][0]===v);b[i].setAttribute('aria-selected',VIEWS[i][0]===v)}
   try{history.replaceState(null,'','#'+v)}catch(e){}
+  fitSheets();
 }
+/* 平板：列印預覽縮放到螢幕寬度 */
+function fitSheets(){
+  document.querySelectorAll('.sheetscroll').forEach(function(w){
+    var s=w.firstElementChild,avail=w.clientWidth;
+    if(!avail){return}
+    s.style.zoom=Math.min(1,avail/1123);
+  });
+}
+window.addEventListener('resize',fitSheets);
+window.addEventListener('orientationchange',function(){setTimeout(fitSheets,200)});
 VIEWS.forEach(function(x){var b=document.createElement('button');b.textContent=x[1];b.setAttribute('role','tab');b.onclick=function(){go(x[0])};$('nav').appendChild(b)});
 document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(b.getAttribute('data-go'))}});
 document.querySelectorAll('[data-demo]').forEach(function(b){b.onclick=function(){alert('範例畫面：正式版會由系統產生 Excel 檔下載。')}});
 
 /* ---------- 查詢 ---------- */
+var AB={'101':'A','110':'A','111':'B','210':'B','211':'B','252':'B','260':'A','301':'A','699':'A'};
 var DATA=[
  ['一廠','廠長室','王小明','廠長','101','人員'],['一廠','人事室','李美華','副理','110','人員'],['一廠','人事室','守衛室','','111','單位'],
  ['一廠','生產一部 › 合一課','張志偉','課長','210','人員'],['一廠','生產一部 › 合一課 › 製一組','林雅婷','','211','人員'],['一廠','生產一部 › 合一課 › 製一組','陳建宏','','211','人員'],
  ['一廠','技銷處五部 › 製八組','L 棟無塵室','','252','單位'],['一廠','實驗工場','實驗工場','','260','單位'],['一廠','品保部 › 品一課','黃淑芬','課長','301','人員'],['一廠','總務','第三會議室','','699','單位'],
  ['二廠','廠長室','吳宗憲','廠長','101','人員'],['二廠','品保課','蔡佳穎','組長','215','人員'],['三廠','安衛室','周柏翰','主任','402','人員'],['四廠','廠務課','楊雅筑','','118','人員'],['台北','總機','總機','','0','單位']
-].map(function(r){return {plant:r[0],dept:r[1],name:r[2],title:r[3],ext:r[4],type:r[5]}});
+].map(function(r){return {plant:r[0],dept:r[1],name:r[2],title:r[3],ext:r[4],type:r[5],ab:r[0]==='一廠'?(AB[r[4]]||''):''}});
 var PLANTS=['全部','一廠','二廠','三廠','四廠','台北'],sPlant='一廠',sQ='';
 function hit(d){var k=sQ.trim().toLowerCase();return !k||[d.dept,d.name,d.title,d.ext].some(function(s){return s.toLowerCase().indexOf(k)>-1})}
-function renderSearch(){
+function renderSearchList(){
   $('tabs').innerHTML=PLANTS.map(function(p){
     var n=DATA.filter(function(d){return (p==='全部'||d.plant===p)&&hit(d)}).length;
     return '<button class="chip'+(p===sPlant?' on':'')+'" data-p="'+p+'">'+p+'<small>'+n+'</small></button>'}).join('');
@@ -205,17 +267,31 @@ function renderSearch(){
     rows.map(function(d){return '<div class="row" role="row" style="'+g+'"><div role="cell" style="color:#3C4640">'+esc(d.dept)+'</div><div role="cell" style="font-weight:500">'+esc(d.name)+'</div><div role="cell" style="color:#3C4640">'+esc(d.title)+'</div><div role="cell" class="ext">'+esc(d.ext)+'</div><div role="cell"><span class="badge'+(d.type==='單位'?' u':'')+'">'+d.type+'</span></div></div>'}).join('')+
     (rows.length?'':'<div style="padding:48px 24px;text-align:center;color:var(--mut)">找不到符合的分機。可以換個關鍵字，或切換到「全部」。</div>');
 }
+var sMode='list';
+function renderSearch(){
+  renderSearchList();
+  var rows=DATA.filter(function(d){return (sPlant==='全部'||d.plant===sPlant)&&hit(d)}),groups={},order=[];
+  rows.forEach(function(d){var top=d.dept.split(' › ')[0],key=(sPlant==='全部'?d.plant+'・':'')+top;if(!groups[key]){groups[key]=[];order.push(key)}groups[key].push(d)});
+  $('card-box').innerHTML=order.length?'<div class="cgrid">'+order.map(function(k){return '<div class="ccard"><h3>'+esc(k)+'</h3>'+groups[k].map(function(d){
+    var sub=d.dept.split(' › ').slice(1).join(' › '),extra=[sub,d.title].filter(Boolean).join('　');
+    return '<div><span class="n"><span class="dot" style="background:'+(d.type==='單位'?'var(--amber)':'transparent')+'"></span><span>'+esc(d.name)+(extra?'<small>'+esc(extra)+'</small>':'')+'</span></span><span class="x">'+esc(d.ext)+'</span></div>'}).join('')+'</div>'}).join('')+'</div><div class="muted" style="margin-top:12px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber)"></span> 會議室、守衛室等單位</div>'
+    :'<div class="box" style="padding:48px 24px;text-align:center;color:var(--mut)">找不到符合的分機。可以換個關鍵字，或切換到「全部」。</div>';
+  $('list-box').classList.toggle('hide',sMode!=='list');$('card-box').classList.toggle('hide',sMode!=='card');
+  $('m-list').className='chip'+(sMode==='list'?' on':'');$('m-card').className='chip'+(sMode==='card'?' on':'');
+}
+$('m-list').onclick=function(){sMode='list';renderSearch()};
+$('m-card').onclick=function(){sMode='card';renderSearch()};
 $('q').oninput=function(e){sQ=e.target.value;renderSearch()};
 
 /* ---------- 維護 ---------- */
-var DOMINO=[['王小明','廠長室','xm.wang@ecic.com.tw'],['李美華','人事室','mh.lee@ecic.com.tw'],['李美華','品保部','meihua@ecic.com.tw'],['張志偉','生產一部','zw.chang@ecic.com.tw'],['林雅婷','生產一部','yt.lin@ecic.com.tw'],['陳建宏','生產一部','jh.chen@ecic.com.tw'],['黃淑芬','品保部','sf.huang@ecic.com.tw']];
-var EMPTY={id:null,type:'人員',name:'',dept:'',title:'',ext:'',email:''};
+var DOMINO=[['王小明','廠長室','xm.wang@ecic.com.tw'],['李美華','人事室','mh.lee@ecic.com.tw'],['李美華','品保部','meihua@ecic.com.tw'],['張志偉','生產一部','zw.chang@ecic.com.tw'],['林雅婷','生產一部','yt.lin@ecic.com.tw'],['陳建宏','生產一部','jh.chen@ecic.com.tw'],['黃淑芬','品保部','sf.huang@ecic.com.tw'],['蔡宗翰','生產二部 › 噴一課','th.tsai@ecic.com.tw']];
+var EMPTY={id:null,type:'人員',name:'',dept:'',title:'',ext:'',email:'',ab:''};
 var form=Object.assign({},EMPTY),nextId=100;
 var list=DATA.filter(function(d){return d.plant==='一廠'}).map(function(d,i){var m=DOMINO.filter(function(x){return x[0]===d.name&&d.dept.indexOf(x[1])===0})[0];return Object.assign({id:i+1,email:m?m[2]:''},d)});
 function renderEdit(){
-  var g='grid-template-columns:2fr 1.2fr .8fr 1.3fr';
-  $('e-list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">姓名／單位</div><div role="columnheader">分機</div><div role="columnheader">操作</div></div>'+
-    list.map(function(r){return '<div class="row" role="row" style="'+g+(r.id===form.id?';background:#E3F0EC':'')+'"><div role="cell" style="color:#3C4640">'+esc(r.dept)+'</div><div role="cell" style="font-weight:500">'+esc(r.name)+(r.type==='單位'?' <span style="font-size:12px;color:#7A4B00">單位</span>':'')+'</div><div role="cell" class="ext" style="font-size:17px">'+esc(r.ext)+'</div><div role="cell" style="display:flex;gap:8px"><button class="btn s" data-e="'+r.id+'" aria-label="編輯 '+esc(r.name)+'">編輯</button><button class="btn s d" data-d="'+r.id+'" aria-label="刪除 '+esc(r.name)+'">刪除</button></div></div>'}).join('');
+  var g='grid-template-columns:2fr 1.2fr .8fr .6fr 1.3fr';
+  $('e-list').innerHTML='<div class="row head" role="row" style="'+g+'"><div role="columnheader">部門</div><div role="columnheader">姓名／單位</div><div role="columnheader">分機</div><div role="columnheader">線路</div><div role="columnheader">操作</div></div>'+
+    list.map(function(r){return '<div class="row" role="row" style="'+g+(r.id===form.id?';background:#E3F0EC':'')+'"><div role="cell" style="color:#3C4640">'+esc(r.dept)+'</div><div role="cell" style="font-weight:500">'+esc(r.name)+(r.type==='單位'?' <span style="font-size:12px;color:#7A4B00">單位</span>':'')+'</div><div role="cell" class="ext" style="font-size:17px">'+esc(r.ext)+'</div><div role="cell" style="color:#3C4640">'+(esc(r.ab)||'<span style="color:#9AA39C">—</span>')+'</div><div role="cell" style="display:flex;gap:8px"><button class="btn s" data-e="'+r.id+'" aria-label="編輯 '+esc(r.name)+'">編輯</button><button class="btn s d" data-d="'+r.id+'" aria-label="刪除 '+esc(r.name)+'">刪除</button></div></div>'}).join('');
   $('e-list').querySelectorAll('[data-e]').forEach(function(b){b.onclick=function(){var r=list.filter(function(x){return x.id==b.getAttribute('data-e')})[0];form=Object.assign({},r);renderEdit();fillForm()}});
   $('e-list').querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){var id=+b.getAttribute('data-d');list=list.filter(function(x){return x.id!==id});if(form.id===id)form=Object.assign({},EMPTY);renderEdit();fillForm()}});
 }
@@ -225,7 +301,7 @@ function fillForm(){
   $('t-p').className='chip'+(p?' on':'');$('t-u').className='chip'+(!p?' on':'');
   $('f-name-l').textContent=p?'姓名（從 Domino 選）':'單位／地點名稱';
   $('f-name').placeholder=p?'輸入姓名，例如：李':'例如：第三會議室';
-  ['name','dept','title','ext'].forEach(function(k){if($('f-'+k).value!==form[k])$('f-'+k).value=form[k]});
+  ['name','dept','title','ext','ab'].forEach(function(k){if($('f-'+k).value!==form[k])$('f-'+k).value=form[k]});
   suggest();
 }
 function suggest(){
@@ -236,7 +312,7 @@ function suggest(){
   box.innerHTML='<div class="sug">'+(m.length?m.map(function(d,i){return '<button data-s="'+DOMINO.indexOf(d)+'"><b>'+esc(d[0])+'</b><span style="color:var(--mut)">　'+esc(d[1])+'　'+esc(d[2])+'</span></button>'}).join(''):'<div style="padding:10px 12px;font-size:14px;color:var(--mut)">Domino 找不到這個姓名，請確認是否在職。</div>')+'</div>';
   box.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){var d=DOMINO[+b.getAttribute('data-s')];form.name=d[0];form.email=d[2];if(!form.dept)form.dept=d[1];fillForm()}});
 }
-['name','dept','title','ext'].forEach(function(k){$('f-'+k).oninput=function(e){form[k]=e.target.value;if(k==='name'){form.email='';suggest()}}});
+['name','dept','title','ext','ab'].forEach(function(k){$('f-'+k).oninput=function(e){form[k]=e.target.value;if(k==='name'){form.email='';suggest()}}});
 $('t-p').onclick=function(){form.type='人員';form.email='';fillForm()};
 $('t-u').onclick=function(){form.type='單位';form.email='';fillForm()};
 $('e-new').onclick=$('f-clear').onclick=function(){form=Object.assign({},EMPTY);renderEdit();fillForm()};
@@ -246,6 +322,41 @@ $('f-save').onclick=function(){
   if(r.id){list=list.map(function(x){return x.id===r.id?r:x})}else{r.id=nextId++;list.push(r)}
   form=Object.assign({},EMPTY);renderEdit();fillForm();
 };
+
+/* ---------- Domino 異動通知 ---------- */
+var NOTES=[
+ {id:1,kind:'新進',name:'蔡宗翰',dept:'生產二部 › 噴一課',email:'th.tsai@ecic.com.tw',sup:'鄭宇軒'},
+ {id:2,kind:'異動',name:'林雅婷',from:'生產一部 › 合一課 › 製一組',dept:'生產一部 › 合二課 › 製三組',email:'yt.lin@ecic.com.tw',sup:'周柏翰'},
+ {id:3,kind:'離職',name:'陳建宏',dept:'生產一部 › 合一課 › 製一組',email:'jh.chen@ecic.com.tw'}
+];
+function renderNotes(){
+  var n=$('bell-n');n.textContent=NOTES.length;n.classList.toggle('hide',!NOTES.length);
+  $('notes-count').textContent=NOTES.length?'（'+NOTES.length+' 筆待處理）':'';
+  var box=$('notes');
+  if(!NOTES.length){box.innerHTML='<div class="muted">目前沒有待處理的 Domino 異動。</div>';return}
+  box.innerHTML=NOTES.map(function(x){
+    var cls=x.kind==='新進'?'new':x.kind==='異動'?'mv':'out',txt,btn;
+    if(x.kind==='新進'){txt='部門：'+esc(x.dept)+'　直屬主管：'+esc(x.sup)+'　Email：'+esc(x.email);btn='帶入表單新增'}
+    else if(x.kind==='異動'){txt='部門：'+esc(x.from)+' → <b>'+esc(x.dept)+'</b>　直屬主管：'+esc(x.sup);btn='帶入表單更新'}
+    else{txt='已從 Domino 移除（'+esc(x.dept)+'）。分機表上若還有這個人，建議移除。';btn='移除這筆分機'}
+    return '<div class="note"><div style="min-width:0;flex:1 1 320px"><span class="tag '+cls+'">'+x.kind+'</span><b>'+esc(x.name)+'</b><div class="det">'+txt+'</div></div><div style="display:flex;gap:8px"><button class="btn s" style="background:var(--acc);color:#fff;border-color:var(--acc)" data-a="'+x.id+'">'+btn+'</button><button class="btn s" data-i="'+x.id+'">略過</button></div></div>'}).join('');
+  box.querySelectorAll('[data-a]').forEach(function(b){b.onclick=function(){applyNote(+b.getAttribute('data-a'))}});
+  box.querySelectorAll('[data-i]').forEach(function(b){b.onclick=function(){var id=+b.getAttribute('data-i');NOTES=NOTES.filter(function(x){return x.id!==id});renderNotes()}});
+}
+function applyNote(id){
+  var x=NOTES.filter(function(y){return y.id===id})[0];if(!x)return;
+  var rec=list.filter(function(r){return r.name===x.name})[0];
+  if(x.kind==='離職'){list=list.filter(function(r){return r.name!==x.name});if(form.name===x.name)form=Object.assign({},EMPTY)}
+  else if(x.kind==='異動'&&rec){form=Object.assign({},rec,{dept:x.dept,email:x.email})}
+  else{form=Object.assign({},EMPTY,{name:x.name,dept:x.dept,email:x.email,type:'人員'})}
+  NOTES=NOTES.filter(function(y){return y.id!==id});
+  renderNotes();renderEdit();fillForm();
+  if(x.kind!=='離職'){$('f-ext').scrollIntoView({behavior:'smooth',block:'center'});$('f-ext').focus()}
+}
+function showToast(t){$('toast-t').textContent=t;$('toast').classList.remove('hide')}
+$('toast-x').onclick=function(){$('toast').classList.add('hide')};
+$('toast-go').onclick=function(){$('toast').classList.add('hide');go('edit');$('notes-box').scrollIntoView({behavior:'smooth',block:'start'})};
+$('bell').onclick=function(){go('edit');$('notes-box').scrollIntoView({behavior:'smooth',block:'start'})};
 
 /* ---------- 列印版 ---------- */
 var H=function(n){return {h:1,n:n}},R=function(n,e,a){return {n:n,e:e,a:a}};
@@ -264,7 +375,8 @@ $('p2').innerHTML='<div class="tt"><div style="display:flex;align-items:baseline
  CARDS.map(function(c){return '<div class="c"><h3>'+c[0]+'</h3>'+c[1].map(function(r){return '<div><span class="n"><span class="dot" style="background:'+(r.u?'var(--amber)':'transparent')+'"></span>'+esc(r.n)+'</span><span class="x">'+r.e+'</span></div>'}).join('')+'</div>'}).join('')+'</div>'+
  '<div class="foot"><b style="color:var(--acc-d)">跨廠撥號</b><span>公司 #80　一廠 #81　二廠 #82　三廠 #83　四廠 #84，聽到忙線音後直撥分機。</span><span>上海明德：#80 → 888 → 響鈴結束後按 66，由總機代轉。</span><span style="width:100%">一廠 (03)386-8081　二廠 (03)483-8088　三廠 (03)483-7682　四廠 (03)473-7366　台北 (02)2706-6006　中部 (04)2358-3378　南部 (06)215-2589</span></div>';
 
-renderSearch();renderEdit();fillForm();
+renderSearch();renderEdit();fillForm();renderNotes();
+setTimeout(function(){if(NOTES.length)showToast('Domino 有 '+NOTES.length+' 筆人員異動，請維護人員確認分機。')},700);
 var h=(location.hash||'').slice(1);go(VIEWS.some(function(x){return x[0]===h})?h:'search');
 })();
 </script>
